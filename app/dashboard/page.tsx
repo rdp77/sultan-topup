@@ -24,7 +24,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/"
-              className="flex shrink-0 items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_16px_rgba(99,102,241,0.35)]"
+              className="press flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
             >
               <Plus className="size-4" aria-hidden="true" />
               <span className="hidden sm:inline">Top Up Baru</span>

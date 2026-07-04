@@ -51,7 +51,7 @@ export default function LeaderboardPage() {
                 <div
                   key={entry.rank}
                   className={cn(
-                    'flex flex-col items-center gap-2 rounded-xl border bg-card p-6 text-center transition-transform duration-200 hover:scale-[1.02]',
+                    'flex flex-col items-center gap-2 rounded-xl border bg-card p-6 text-center',
                     style.ring,
                     i === 0 && 'sm:order-2',
                     i === 1 && 'sm:order-1',

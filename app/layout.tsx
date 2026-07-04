@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   title: 'TopUpin — Top Up Game Cepat & Aman',
   description:
     'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
-  generator: 'v0.app',
 }
 
 export const viewport: Viewport = {

@@ -79,9 +79,9 @@ export function CheckoutForm({ game }: { game: Game }) {
                 type="button"
                 onClick={() => setSelectedDenom(d)}
                 className={cn(
-                  'relative flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all duration-200 hover:scale-[1.02]',
+                  'relative flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-colors duration-200',
                   selected
-                    ? 'border-primary bg-primary/10 shadow-[0_0_16px_rgba(99,102,241,0.2)]'
+                    ? 'border-primary bg-primary/10'
                     : 'border-border bg-background hover:border-primary/50',
                 )}
                 aria-pressed={selected}
@@ -274,9 +274,9 @@ export function CheckoutForm({ game }: { game: Game }) {
           onClick={handleSubmit}
           disabled={submitting}
           className={cn(
-            'mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-200',
+            'mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors duration-200',
             canSubmit && !submitting
-              ? 'hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]'
+              ? 'press hover:bg-primary/90'
               : 'opacity-60',
           )}
         >

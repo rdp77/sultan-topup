@@ -118,7 +118,7 @@ export function ResultCard() {
       <div className="mt-6 flex w-full flex-col gap-3 sm:flex-row">
         <Link
           href="/"
-          className="flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]"
+          className="press flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
         >
           <RotateCcw className="size-4" aria-hidden="true" />
           Top Up Lagi

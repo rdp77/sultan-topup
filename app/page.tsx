@@ -22,7 +22,7 @@ export default function HomePage() {
           <div className="mt-8 flex justify-center">
             <Link
               href="#games"
-              className="rounded-md bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]"
+              className="press rounded-lg bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
             >
               Mulai Top Up
             </Link>

@@ -6,7 +6,7 @@ export function GameCard({ game }: { game: Game }) {
   return (
     <Link
       href={`/game/${game.slug}`}
-      className="group relative overflow-hidden rounded-xl bg-card transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(99,102,241,0.25)]"
+      className="group relative overflow-hidden rounded-xl border border-border/60 bg-card transition-colors duration-200 hover:border-primary/40"
     >
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         <Image

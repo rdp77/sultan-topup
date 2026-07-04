@@ -57,7 +57,7 @@ export function OrderLookup() {
         <button
           type="submit"
           disabled={loading || !invoice.trim() || !contact.trim()}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 enabled:hover:scale-[1.02] enabled:hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] disabled:opacity-60"
+          className="press flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 enabled:hover:bg-primary/90 disabled:opacity-60"
         >
           {loading ? (
             <>
