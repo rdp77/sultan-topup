@@ -40,7 +40,7 @@ export default async function GamePage({
         <div className="mx-auto max-w-[1200px] px-4 md:px-6">
           {/* Game info */}
           <div className="-mt-14 flex items-end gap-4 md:-mt-16">
-            <div className="relative size-24 shrink-0 overflow-hidden rounded-xl border border-border shadow-lg md:size-28">
+            <div className="relative size-24 shrink-0 overflow-hidden rounded-xl border border-border shadow-[0_8px_24px_-6px_rgba(99,102,241,0.25)] md:size-28">
               <Image
                 src={game.image || '/placeholder.svg'}
                 alt={game.name}
