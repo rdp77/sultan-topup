@@ -120,6 +120,28 @@ export function OrderLookup() {
           </dl>
         </div>
       )}
+
+      {/* Skeleton — same shape as the result card, shown while searching */}
+      {loading && !result && (
+        <div className="rounded-xl bg-card p-5" aria-busy="true" aria-label="Mencari pesanan">
+          <div className="flex items-center justify-between gap-4">
+            <span className="h-3 w-32 animate-pulse rounded bg-muted" />
+            <span className="h-5 w-20 animate-pulse rounded bg-muted" />
+          </div>
+          <dl className="mt-4 flex flex-col gap-2.5 border-t border-border pt-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex justify-between gap-4">
+                <span className="h-3 w-16 animate-pulse rounded bg-muted" />
+                <span className="h-3 w-28 animate-pulse rounded bg-muted" />
+              </div>
+            ))}
+            <div className="mt-1 flex justify-between gap-4 border-t border-border pt-2.5">
+              <span className="h-4 w-12 animate-pulse rounded bg-muted" />
+              <span className="h-4 w-24 animate-pulse rounded bg-muted" />
+            </div>
+          </dl>
+        </div>
+      )}
     </div>
   )
 }
