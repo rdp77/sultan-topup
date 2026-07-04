@@ -70,7 +70,7 @@ export default async function GamePage({
           </div>
 
           {/* Checkout */}
-          <div className="mx-auto mt-6 max-w-3xl md:mt-8">
+          <div className="mx-auto mt-6 max-w-3xl pb-16 md:mt-8 md:pb-24">
             <CheckoutForm game={game} />
           </div>
         </div>

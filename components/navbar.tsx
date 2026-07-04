@@ -31,7 +31,7 @@ export function Navbar() {
           <span className="flex size-8 items-center justify-center rounded-md bg-primary">
             <Zap className="size-4 text-primary-foreground" aria-hidden="true" />
           </span>
-          <span className="text-lg font-bold tracking-tight">TopUpin</span>
+          <span className="text-lg font-bold tracking-tight">SultanTopUp</span>
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">

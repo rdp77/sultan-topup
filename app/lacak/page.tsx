@@ -3,7 +3,7 @@ import { Footer } from '@/components/footer'
 import { OrderLookup } from '@/components/order-lookup'
 
 export const metadata = {
-  title: 'Lacak Pesanan — TopUpin',
+  title: 'Lacak Pesanan — SultanTopUp',
 }
 
 export default function LookupPage() {

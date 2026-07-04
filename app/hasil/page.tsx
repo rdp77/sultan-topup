@@ -4,7 +4,7 @@ import { Footer } from '@/components/footer'
 import { ResultCard } from '@/components/result-card'
 
 export const metadata = {
-  title: 'Status Pesanan — TopUpin',
+  title: 'Status Pesanan — SultanTopUp',
 }
 
 export default function ResultPage() {
