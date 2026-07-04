@@ -96,5 +96,16 @@
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* On-load lift — above-the-fold content (hero) animates once on mount. */
+    .lift-in {
+      animation: lift-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .lift-in-2 { animation-delay: 0.08s; }
+    .lift-in-3 { animation-delay: 0.16s; }
+    .lift-in-4 { animation-delay: 0.24s; }
+    @keyframes lift-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   }
 }

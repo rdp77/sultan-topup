@@ -4,7 +4,7 @@ import { Zap } from 'lucide-react'
 export function Footer() {
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
+      <div className="mx-auto flex max-w-300 flex-col gap-8 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
         <div className="max-w-xs">
           <div className="flex items-center gap-2">
             <span className="flex size-8 items-center justify-center rounded-md bg-primary">
