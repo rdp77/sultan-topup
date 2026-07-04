@@ -12,9 +12,9 @@ export function generateStaticParams() {
 
 export default async function GamePage({
   params,
-}: {
+}: Readonly<{
   params: Promise<{ slug: string }>
-}) {
+}>) {
   const { slug } = await params
   const game = getGame(slug)
   if (!game) notFound()
