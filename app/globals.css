@@ -72,6 +72,10 @@
     @apply font-sans bg-background;
     scroll-behavior: smooth;
   }
+  /* Sticky navbar (64px) anchor offset */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
   }
@@ -80,5 +84,17 @@
 @layer utilities {
   .press {
     @apply transition-transform duration-150 active:translate-y-px active:scale-[0.99];
+  }
+  /* Scroll-driven reveal. Native CSS, zero JS, no scroll listener. */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+    @keyframes reveal-in {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   }
 }

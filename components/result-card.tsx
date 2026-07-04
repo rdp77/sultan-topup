@@ -125,7 +125,7 @@ export function ResultCard() {
         </Link>
         <Link
           href="/lacak"
-          className="flex flex-1 items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-card"
+          className="press flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-card"
         >
           <Search className="size-4" aria-hidden="true" />
           Cek Status

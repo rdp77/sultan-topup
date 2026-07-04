@@ -33,17 +33,17 @@ export default function LeaderboardPage() {
   return (
     <div className="flex min-h-svh flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <div className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
-          <h1 className="text-balance text-center text-2xl font-bold tracking-tight md:text-3xl">
+          <h1 className="reveal text-balance text-center text-2xl font-bold tracking-tight md:text-3xl">
             Leaderboard Top Spender
           </h1>
-          <p className="mt-2 text-center text-sm leading-relaxed text-muted-foreground">
+          <p className="reveal mt-2 text-center text-sm leading-relaxed text-muted-foreground">
             Peringkat pembeli terbanyak bulan ini. Terus top up untuk naik peringkat!
           </p>
 
           {/* Top 3 */}
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="reveal mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {top3.map((entry, i) => {
               const style = topStyles[i]
               const Icon = style.icon

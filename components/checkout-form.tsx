@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PaymentLogo } from '@/components/payment-logo'
 import {
   calcFee,
   formatRupiah,
@@ -223,7 +224,20 @@ export function CheckoutForm({ game }: { game: Game }) {
                       )}
                       aria-pressed={selected}
                     >
-                      <span className="text-sm">{m.name}</span>
+                      <span className="flex items-center gap-2.5">
+                        <span
+                          className={cn(
+                            'flex size-8 shrink-0 items-center justify-center rounded-md border',
+                            selected
+                              ? 'border-primary/40 bg-primary/10 text-primary'
+                              : 'border-border bg-background text-muted-foreground',
+                          )}
+                          aria-hidden="true"
+                        >
+                          <PaymentLogo id={m.id} />
+                        </span>
+                        <span className="text-sm">{m.name}</span>
+                      </span>
                       <span className="flex items-center gap-2">
                         {mFee !== null && (
                           <span className="text-xs text-muted-foreground">

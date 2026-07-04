@@ -10,7 +10,7 @@ export default function LookupPage() {
   return (
     <div className="flex min-h-svh flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <div className="mx-auto max-w-lg px-4 py-12 md:px-6 md:py-16">
           <h1 className="text-balance text-center text-2xl font-bold tracking-tight md:text-3xl">
             Lacak Pesanan

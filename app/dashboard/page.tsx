@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, PackageOpen } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { OrderStatusBadge } from '@/components/order-status-badge'
@@ -13,7 +13,7 @@ export default function DashboardPage() {
   return (
     <div className="flex min-h-svh flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <div className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -32,7 +32,7 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <ul className="mt-8 flex flex-col gap-3">
+          <ul className="reveal mt-8 flex flex-col gap-3">
             {mockOrders.map((order) => (
               <li
                 key={order.invoice}
@@ -57,6 +57,26 @@ export default function DashboardPage() {
               </li>
             ))}
           </ul>
+
+          {/* Empty state — shown only when there are no orders */}
+          {mockOrders.length === 0 && (
+            <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-card/40 px-6 py-12 text-center">
+              <span className="flex size-12 items-center justify-center rounded-full bg-card text-muted-foreground">
+                <PackageOpen className="size-6" aria-hidden="true" />
+              </span>
+              <p className="text-sm font-medium">Belum ada transaksi</p>
+              <p className="max-w-xs text-xs text-muted-foreground">
+                Pesanan top up kamu akan muncul di sini setelah checkout selesai.
+              </p>
+              <Link
+                href="/"
+                className="press mt-1 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
+              >
+                <Plus className="size-4" aria-hidden="true" />
+                Top Up Sekarang
+              </Link>
+            </div>
+          )}
         </div>
       </main>
       <Footer />

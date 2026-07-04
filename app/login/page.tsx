@@ -10,7 +10,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-svh flex-col">
       <Navbar />
-      <main className="flex flex-1 items-center px-4 py-16 md:px-6">
+      <main id="main" className="flex flex-1 items-center px-4 py-16 md:px-6">
         <AuthForm mode="login" />
       </main>
       <Footer />

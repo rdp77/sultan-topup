@@ -23,7 +23,7 @@ export default async function GamePage({
     <div className="flex min-h-svh flex-col">
       <Navbar />
 
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* Banner */}
         <div className="relative h-40 w-full overflow-hidden md:h-56">
           <Image
@@ -37,9 +37,11 @@ export default async function GamePage({
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
 
-        <div className="mx-auto max-w-[1200px] px-4 md:px-6">
-          {/* Game info */}
-          <div className="-mt-14 flex items-end gap-4 md:-mt-16">
+        <div className="mx-auto max-w-300 px-4 md:px-6">
+          {/* Game info — pulls up over the banner. Name wraps to a second line
+              instead of clipping; the text sits on the gradient backdrop so it
+              stays readable regardless of banner content. */}
+          <div className="-mt-14 flex flex-col gap-3 md:-mt-20 md:flex-row md:items-end md:gap-5">
             <div className="relative size-24 shrink-0 overflow-hidden rounded-xl border border-border shadow-[0_8px_24px_-6px_rgba(99,102,241,0.25)] md:size-28">
               <Image
                 src={game.image || '/placeholder.svg'}
@@ -50,8 +52,10 @@ export default async function GamePage({
               />
             </div>
             <div className="pb-1">
-              <h1 className="text-xl font-bold tracking-tight md:text-2xl">{game.name}</h1>
-              <p className="mt-0.5 text-sm text-muted-foreground">{game.publisher}</p>
+              <h1 className="max-w-[16rem] text-xl font-bold leading-tight tracking-tight md:max-w-none md:text-2xl">
+                {game.name}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">{game.publisher}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <span className="flex items-center gap-1 rounded-md bg-card px-2 py-1 text-xs text-muted-foreground">
                   <Zap className="size-3 text-primary" aria-hidden="true" />

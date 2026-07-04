@@ -11,7 +11,7 @@ export default function ResultPage() {
   return (
     <div className="flex min-h-svh flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <div className="mx-auto max-w-lg px-4 py-12 md:px-6 md:py-16">
           <Suspense
             fallback={
