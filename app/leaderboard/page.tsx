@@ -5,7 +5,7 @@ import { formatRupiah, leaderboard } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 export const metadata = {
-  title: 'Leaderboard — SultanTop Up',
+  title: 'Leaderboard — Sultan Top Up',
 }
 
 const topStyles = [

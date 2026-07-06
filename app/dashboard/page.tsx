@@ -5,7 +5,7 @@ import { Footer } from '@/components/footer'
 import { OrderList } from '@/components/order-list'
 
 export const metadata = {
-  title: 'Dashboard — SultanTopUp',
+  title: 'Dashboard — Sultan Top Up',
 }
 
 export default function DashboardPage() {

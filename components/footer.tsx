@@ -10,7 +10,7 @@ export function Footer() {
             <span className="flex size-8 items-center justify-center rounded-md bg-primary">
               <Zap className="size-4 text-primary-foreground" aria-hidden="true" />
             </span>
-            <span className="text-lg font-bold tracking-tight">SultanTop Up</span>
+            <span className="text-lg font-bold tracking-tight">Sultan Top Up</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap, harga bersahabat.
@@ -92,7 +92,7 @@ export function Footer() {
       </div>
       <div className="border-t border-border py-4">
         <p className="text-center text-xs text-muted-foreground">
-          © 2026 SultanTop Up. Semua hak dilindungi.
+          © 2026 Sultan Top Up. Semua hak dilindungi.
         </p>
       </div>
     </footer>

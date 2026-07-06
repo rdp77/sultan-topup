@@ -3,7 +3,7 @@ import { Footer } from '@/components/footer'
 import { AuthForm } from '@/components/auth-form'
 
 export const metadata = {
-  title: 'Daftar — SultanTop Up',
+  title: 'Daftar — Sultan Top Up',
 }
 
 export default function RegisterPage() {

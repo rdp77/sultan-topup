@@ -24,7 +24,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
           <Zap className="size-5 text-primary-foreground" aria-hidden="true" />
         </span>
         <h1 className="mt-4 text-2xl font-bold tracking-tight">
-          {isLogin ? 'Masuk ke SultanTopUp' : 'Buat Akun SultanTopUp'}
+          {isLogin ? 'Masuk ke Sultan Top Up' : 'Buat Akun Sultan Top Up'}
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
           {isLogin

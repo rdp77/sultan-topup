@@ -9,7 +9,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'SultanTop Up — Top Up Game Cepat & Aman',
+  title: 'Sultan Top Up — Top Up Game Cepat & Aman',
   description:
     'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
 }
