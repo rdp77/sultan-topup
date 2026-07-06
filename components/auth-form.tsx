@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Loader2, Zap } from 'lucide-react'
 
-export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
+export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const isLogin = mode === 'login'

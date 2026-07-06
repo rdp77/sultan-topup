@@ -10,7 +10,7 @@ export function Footer() {
             <span className="flex size-8 items-center justify-center rounded-md bg-primary">
               <Zap className="size-4 text-primary-foreground" aria-hidden="true" />
             </span>
-            <span className="text-lg font-bold tracking-tight">SultanTopUp</span>
+            <span className="text-lg font-bold tracking-tight">SultanTop Up</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap, harga bersahabat.
@@ -18,6 +18,37 @@ export function Footer() {
         </div>
 
         <div className="flex gap-16">
+           </div>
+            <div>
+            <h3 className="text-sm font-semibold">Sosial Media</h3>
+            <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+              <li>
+                <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
+                  Instagram
+                </Link>
+              </li>
+              <li>
+                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
+                  Tiktok
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="transition-colors duration-200 hover:text-foreground">
+                  Threads
+                </Link>
+              </li>
+              <li>
+                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
+                  YouTube
+                </Link>
+              </li>
+              <li>
+                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
+                  Facebook
+                </Link>
+              </li>
+            </ul>
+          </div>
           <div>
             <h3 className="text-sm font-semibold">Menu</h3>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
@@ -57,12 +88,11 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
         </div>
       </div>
       <div className="border-t border-border py-4">
         <p className="text-center text-xs text-muted-foreground">
-          © 2026 SultanTopUp. Semua hak dilindungi.
+          © 2026 SultanTop Up. Semua hak dilindungi.
         </p>
       </div>
     </footer>
