@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2, Search, Info, AlertTriangle, UserCheck } from 'lucide-react'
+import { Check, Loader2, Search, Info, AlertTriangle, UserCheck, ShieldCheck } from 'lucide-react'
+import Turnstile from 'react-turnstile'
 import { cn } from '@/lib/utils'
 import { PaymentLogo } from '@/components/payment-logo'
 import {
@@ -68,6 +69,8 @@ export function CheckoutForm({ game }: { game: Game }) {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [touched, setTouched] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const devBypass = process.env.NEXT_PUBLIC_TURNSTILE_DEV_BYPASS === 'true'
 
   // Player ID validation
   const [validateState, setValidateState] = useState<ValidateState>('idle')
@@ -85,7 +88,8 @@ export function CheckoutForm({ game }: { game: Game }) {
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
-  const canSubmit = selectedDenom !== null && idValid && emailValid && waValid && selectedMethod !== null
+  const canSubmit = selectedDenom !== null && idValid && emailValid && waValid && selectedMethod !== null && (turnstileToken !== null || devBypass)
+  const canSubmitNoTurnstile = selectedDenom !== null && idValid && emailValid && waValid && selectedMethod !== null
 
   // Simulate player ID lookup
   function handleValidate() {
@@ -442,12 +446,34 @@ export function CheckoutForm({ game }: { game: Game }) {
           </div>
         </dl>
 
+        <div className="mt-4 rounded-lg bg-background/50 p-4">
+          <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="size-4 text-success" aria-hidden="true" />
+            Verifikasi keamanan
+          </div>
+          <Turnstile
+            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA'}
+            onVerify={(token) => setTurnstileToken(token)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+            theme="dark"
+          />
+          {!devBypass && !turnstileToken && (
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              Centang kotak di atas untuk melanjutkan.
+            </p>
+          )}
+          {devBypass && (
+            <p className="mt-3 text-center text-xs text-success">Mode dev bypass aktif</p>
+          )}
+        </div>
+
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || !canSubmit}
           className={cn(
-            'mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors duration-200',
+            'mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors duration-200',
             canSubmit && !submitting ? 'press hover:bg-primary/90' : 'opacity-60',
           )}
         >
@@ -460,9 +486,14 @@ export function CheckoutForm({ game }: { game: Game }) {
             'Lanjutkan Pembayaran'
           )}
         </button>
-        {touched && !canSubmit && (
+        {touched && !canSubmitNoTurnstile && (
           <p className="mt-2 text-center text-xs text-destructive">
             Lengkapi semua data di atas untuk melanjutkan pembayaran.
+          </p>
+        )}
+        {touched && canSubmitNoTurnstile && !canSubmit && (
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            Selesaikan verifikasi keamanan di atas.
           </p>
         )}
       </section>
