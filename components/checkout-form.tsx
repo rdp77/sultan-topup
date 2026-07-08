@@ -85,12 +85,25 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
     [selectedDenom, selectedMethod],
   )
 
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const emailValid = useMemo(
+    () => email.includes('@') && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    [email],
+  )
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
   const idChecked = validateState === 'found'
   const canSubmit = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null && (turnstileToken !== null || devBypass)
   const canSubmitNoTurnstile = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null
+
+  function getSubmitError(): string {
+    if (!selectedDenom) return 'Pilih nominal terlebih dahulu (Step 1).'
+    if (!idValid) return `Isi ${game.idLabel}${game.needsZone ? ' dan Zone ID' : ''} dengan benar (Step 3).`
+    if (!idChecked) return 'Cek Akun terlebih dahulu (Step 3). Klik tombol Cek Akun di samping input.'
+    if (!emailValid) return 'Masukkan email yang valid (Step 4).'
+    if (!waValid) return 'Masukkan nomor WhatsApp yang valid (Step 4).'
+    if (!selectedMethod) return 'Pilih metode pembayaran (Step 5).'
+    return 'Lengkapi semua data di atas untuk melanjutkan pembayaran.'
+  }
 
   // Simulate player ID lookup
   function handleValidate() {
@@ -102,17 +115,14 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
       const n = val.length
       // Dummy logic: length % 3 === 0 → found, length % 3 === 1 → not-found, else → error
       // User can test by typing: 3/6/9 chars = found | 4/7/10 chars = not-found | 5/8/11 chars = error
-      if (n < 3) {
+      if (n < 3 || n % 3 === 2) {
         setValidateState('error')
         setValidatePlayer(null)
       } else if (n % 3 === 0) {
         setValidateState('found')
         setValidatePlayer(`Player${val.slice(0, 3)}*** (Level ${27 + (n % 30)})`)
-      } else if (n % 3 === 1) {
-        setValidateState('not-found')
-        setValidatePlayer(null)
       } else {
-        setValidateState('error')
+        setValidateState('not-found')
         setValidatePlayer(null)
       }
     }, 800)
@@ -489,19 +499,7 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
         </button>
         {touched && !canSubmitNoTurnstile && (
           <div className="mt-2 rounded-lg bg-destructive/10 p-3 text-center text-xs text-destructive">
-            {!selectedDenom
-              ? 'Pilih nominal terlebih dahulu (Step 1).'
-              : !idValid
-                ? `Isi ${game.idLabel}${game.needsZone ? ' dan Zone ID' : ''} dengan benar (Step 3).`
-                : !idChecked
-                  ? 'Cek Akun terlebih dahulu (Step 3). Klik tombol Cek Akun di samping input.'
-                  : !emailValid
-                    ? 'Masukkan email yang valid (Step 4).'
-                    : !waValid
-                      ? 'Masukkan nomor WhatsApp yang valid (Step 4).'
-                      : !selectedMethod
-                        ? 'Pilih metode pembayaran (Step 5).'
-                        : 'Lengkapi semua data di atas untuk melanjutkan pembayaran.'}
+            {getSubmitError()}
           </div>
         )}
         {touched && canSubmitNoTurnstile && !canSubmit && (
