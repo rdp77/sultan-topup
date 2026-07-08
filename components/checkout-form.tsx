@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Search, Info, AlertTriangle, UserCheck, ShieldCheck } from 'lucide-react'
 import Turnstile from 'react-turnstile'
@@ -70,19 +70,6 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
   const [submitting, setSubmitting] = useState(false)
   const [touched, setTouched] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
-  const devBypass = process.env.NEXT_PUBLIC_TURNSTILE_DEV_BYPASS === 'true'
-
-  // If Turnstile widget hasn't fired onVerify within 4 seconds in dev mode,
-  // auto-bypass so the button isn't stuck forever.
-  useEffect(() => {
-    if (devBypass || turnstileToken) return
-    const t = setTimeout(() => {
-      if (!turnstileToken && !devBypass) {
-        setTurnstileToken('dev-timeout-bypass')
-      }
-    }, 4000)
-    return () => clearTimeout(t)
-  }, [devBypass, turnstileToken])
 
   // Player ID validation
   const [validateState, setValidateState] = useState<ValidateState>('idle')
@@ -106,7 +93,7 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
   const idChecked = validateState === 'found'
-  const canSubmit = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null && (turnstileToken !== null || devBypass)
+  const canSubmit = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null && turnstileToken !== null
   const canSubmitNoTurnstile = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null
 
   function getSubmitError(): string {
@@ -483,13 +470,10 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
             onError={() => setTurnstileToken(null)}
             theme="dark"
           />
-          {!devBypass && !turnstileToken && (
+          {!turnstileToken && (
             <p className="mt-3 text-center text-xs text-muted-foreground">
               Centang kotak di atas untuk melanjutkan.
             </p>
-          )}
-          {devBypass && (
-            <p className="mt-3 text-center text-xs text-success">Mode dev bypass aktif</p>
           )}
         </div>
 
