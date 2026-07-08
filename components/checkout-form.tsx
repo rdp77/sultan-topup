@@ -4,6 +4,7 @@ import { useMemo, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Search, Info, AlertTriangle, UserCheck, ShieldCheck } from 'lucide-react'
 import Turnstile from 'react-turnstile'
+import isEmail from 'validator/lib/isEmail'
 import { cn } from '@/lib/utils'
 import { PaymentLogo } from '@/components/payment-logo'
 import {
@@ -84,13 +85,9 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
     [selectedDenom, selectedMethod],
   )
 
-  const emailValid = useMemo(() => {
-    const trimmed = email.trim()
-    if (!trimmed.includes('@')) return false
-    const [local, domain] = trimmed.split('@')
-    return local.length > 0 && domain.includes('.') && domain.split('.').every((p) => p.length > 0)
-  }, [email])
-  const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
+  const emailValid = useMemo(() => isEmail(email.trim()), [email])
+  const waClean = whatsapp.replace(/\D/g, '')
+  const waValid = /^08\d{8,12}$/.test(waClean)
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
   const idChecked = validateState === 'found'
   // Tombol hanya disable kalau ID/turnstile/akun belum OK. Sisanya divalidasi saat klik.
@@ -364,7 +361,10 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
               type="tel"
               inputMode="tel"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
+              onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '')
+                    setWhatsapp(digits)
+                  }}
               placeholder="08xxxxxxxxxx"
               className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
