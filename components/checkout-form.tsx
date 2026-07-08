@@ -88,8 +88,9 @@ export function CheckoutForm({ game }: { game: Game }) {
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
-  const canSubmit = selectedDenom !== null && idValid && emailValid && waValid && selectedMethod !== null && (turnstileToken !== null || devBypass)
-  const canSubmitNoTurnstile = selectedDenom !== null && idValid && emailValid && waValid && selectedMethod !== null
+  const idChecked = validateState === 'found'
+  const canSubmit = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null && (turnstileToken !== null || devBypass)
+  const canSubmitNoTurnstile = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null
 
   // Simulate player ID lookup
   function handleValidate() {
@@ -487,9 +488,21 @@ export function CheckoutForm({ game }: { game: Game }) {
           )}
         </button>
         {touched && !canSubmitNoTurnstile && (
-          <p className="mt-2 text-center text-xs text-destructive">
-            Lengkapi semua data di atas untuk melanjutkan pembayaran.
-          </p>
+          <div className="mt-2 rounded-lg bg-destructive/10 p-3 text-center text-xs text-destructive">
+            {!selectedDenom
+              ? 'Pilih nominal terlebih dahulu (Step 1).'
+              : !idValid
+                ? `Isi ${game.idLabel}${game.needsZone ? ' dan Zone ID' : ''} dengan benar (Step 3).`
+                : !idChecked
+                  ? 'Cek Akun terlebih dahulu (Step 3). Klik tombol Cek Akun di samping input.'
+                  : !emailValid
+                    ? 'Masukkan email yang valid (Step 4).'
+                    : !waValid
+                      ? 'Masukkan nomor WhatsApp yang valid (Step 4).'
+                      : !selectedMethod
+                        ? 'Pilih metode pembayaran (Step 5).'
+                        : 'Lengkapi semua data di atas untuk melanjutkan pembayaran.'}
+          </div>
         )}
         {touched && canSubmitNoTurnstile && !canSubmit && (
           <p className="mt-2 text-center text-xs text-muted-foreground">
