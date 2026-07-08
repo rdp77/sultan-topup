@@ -220,9 +220,9 @@ export function CheckoutForm({ game }: { game: Game }) {
         <div className="mt-4 flex flex-col gap-3">
           {/* Player ID row */}
           <div className="flex flex-col gap-3">
-          {/* Player ID + Zone ID row */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-start">
-            <div>
+          {/* Player ID + Zone ID row — all aligned to bottom */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="flex-1">
               <label htmlFor="uid" className="mb-1.5 flex items-center text-sm text-muted-foreground">
                 {game.idLabel}
                 <InfoTooltip>
@@ -271,9 +271,8 @@ export function CheckoutForm({ game }: { game: Game }) {
               )}
             </div>
 
-            {/* Validate button — spacered to align with inputs */}
-            <div className="flex flex-col justify-end">
-              <span className="mb-1.5 hidden sm:block" aria-hidden="true">&nbsp;</span>
+            {/* Validate button — flex-end aligns bottom with inputs */}
+            <div className="shrink-0">
               <button
                 type="button"
                 onClick={handleValidate}
