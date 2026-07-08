@@ -35,13 +35,13 @@ export function BannerSlider() {
   }, [next])
 
   return (
-    <div className="relative mx-auto max-w-300 overflow-hidden rounded-xl md:rounded-2xl" role="region" aria-roledescription="carousel" aria-label="Promo banner">
+    <div className="relative mx-auto max-w-300 overflow-hidden rounded-xl md:rounded-2xl" aria-label="Promo banner">
       <div
         className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${i * 100}%)` }}
       >
         {slides.map((s, idx) => (
-          <div key={idx} className="relative aspect-[2.5/1] w-full shrink-0 md:aspect-[3/1]" aria-hidden={idx !== i}>
+          <div key={idx} className="relative aspect-2.5/1 w-full shrink-0 md:aspect-3/1" aria-hidden={idx !== i}>
             <img
               src={s.src}
               alt={idx === i ? s.alt : ''}

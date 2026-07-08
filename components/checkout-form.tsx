@@ -271,8 +271,9 @@ export function CheckoutForm({ game }: { game: Game }) {
               )}
             </div>
 
-            {/* Validate button — aligned to the right */}
-            <div className="flex items-end">
+            {/* Validate button — spacered to align with inputs */}
+            <div className="flex flex-col justify-end">
+              <span className="mb-1.5 hidden sm:block" aria-hidden="true">&nbsp;</span>
               <button
                 type="button"
                 onClick={handleValidate}
