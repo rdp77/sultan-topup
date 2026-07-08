@@ -16,7 +16,7 @@ import {
   type PaymentMethod,
 } from '@/lib/data'
 
-function SectionHeading({ step, title }: { step: number; title: string }) {
+function SectionHeading({ step, title }: Readonly<{ step: number; title: string }>) {
   return (
     <div className="flex items-center gap-3">
       <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
@@ -27,7 +27,7 @@ function SectionHeading({ step, title }: { step: number; title: string }) {
   )
 }
 
-function InfoTooltip({ children }: { children: React.ReactNode }) {
+function InfoTooltip({ children }: Readonly<{ children: React.ReactNode }>) {
   const ref = useRef<HTMLButtonElement>(null)
   const [show, setShow] = useState(false)
   return (
@@ -56,7 +56,7 @@ function InfoTooltip({ children }: { children: React.ReactNode }) {
 
 type ValidateState = 'idle' | 'loading' | 'found' | 'not-found' | 'error'
 
-export function CheckoutForm({ game }: { game: Game }) {
+export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
   const router = useRouter()
   const denoms = getDenominations(game)
 
