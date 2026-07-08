@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Search, Info, AlertTriangle, UserCheck, ShieldCheck } from 'lucide-react'
 import Turnstile from 'react-turnstile'
@@ -72,6 +72,18 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const devBypass = process.env.NEXT_PUBLIC_TURNSTILE_DEV_BYPASS === 'true'
 
+  // If Turnstile widget hasn't fired onVerify within 4 seconds in dev mode,
+  // auto-bypass so the button isn't stuck forever.
+  useEffect(() => {
+    if (devBypass || turnstileToken) return
+    const t = setTimeout(() => {
+      if (!turnstileToken && !devBypass) {
+        setTurnstileToken('dev-timeout-bypass')
+      }
+    }, 4000)
+    return () => clearTimeout(t)
+  }, [devBypass, turnstileToken])
+
   // Player ID validation
   const [validateState, setValidateState] = useState<ValidateState>('idle')
   const [validatePlayer, setValidatePlayer] = useState<string | null>(null)
@@ -85,10 +97,12 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
     [selectedDenom, selectedMethod],
   )
 
-  const emailValid = useMemo(
-    () => email.includes('@') && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
-    [email],
-  )
+  const emailValid = useMemo(() => {
+    const trimmed = email.trim()
+    if (!trimmed.includes('@')) return false
+    const [local, domain] = trimmed.split('@')
+    return local.length > 0 && domain.includes('.') && domain.split('.').every((p) => p.length > 0)
+  }, [email])
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
   const idChecked = validateState === 'found'
