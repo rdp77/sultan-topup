@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, Search, Info, AlertTriangle, UserCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PaymentLogo } from '@/components/payment-logo'
 import {
@@ -26,6 +26,35 @@ function SectionHeading({ step, title }: { step: number; title: string }) {
   )
 }
 
+function InfoTooltip({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLButtonElement>(null)
+  const [show, setShow] = useState(false)
+  return (
+    <span className="relative inline-flex items-center">
+      <button
+        type="button"
+        ref={ref}
+        onClick={() => setShow(!show)}
+        onBlur={() => setTimeout(() => setShow(false), 150)}
+        className="ml-1 inline-flex size-4 cursor-pointer items-center justify-center rounded-full border border-border bg-background text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+        aria-label="Cara mendapatkan ID"
+      >
+        <Info className="size-3" aria-hidden="true" />
+      </button>
+      {show && (
+        <span
+          role="tooltip"
+          className="absolute bottom-full left-1/2 z-50 mb-2 w-52 -translate-x-1/2 rounded-lg border border-border bg-card p-3 text-left text-xs leading-relaxed text-muted-foreground shadow-lg"
+        >
+          {children}
+        </span>
+      )}
+    </span>
+  )
+}
+
+type ValidateState = 'idle' | 'loading' | 'found' | 'not-found' | 'error'
+
 export function CheckoutForm({ game }: { game: Game }) {
   const router = useRouter()
   const denoms = getDenominations(game)
@@ -39,6 +68,10 @@ export function CheckoutForm({ game }: { game: Game }) {
   const [submitting, setSubmitting] = useState(false)
   const [touched, setTouched] = useState(false)
 
+  // Player ID validation
+  const [validateState, setValidateState] = useState<ValidateState>('idle')
+  const [validatePlayer, setValidatePlayer] = useState<string | null>(null)
+
   const fee = useMemo(
     () => (selectedDenom && selectedMethod ? calcFee(selectedMethod, selectedDenom.price) : 0),
     [selectedDenom, selectedMethod],
@@ -48,6 +81,32 @@ export function CheckoutForm({ game }: { game: Game }) {
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
   const canSubmit = selectedDenom !== null && idValid && emailValid && waValid && selectedMethod !== null
+
+  // Simulate player ID lookup
+  function handleValidate() {
+    const val = userId.trim()
+    if (!val || validateState === 'loading') return
+    setValidateState('loading')
+    setValidatePlayer(null)
+    setTimeout(() => {
+      const n = val.length
+      // Dummy logic: length % 3 === 0 → found, length % 3 === 1 → not-found, else → error
+      // User can test by typing: 3/6/9 chars = found | 4/7/10 chars = not-found | 5/8/11 chars = error
+      if (n < 3) {
+        setValidateState('error')
+        setValidatePlayer(null)
+      } else if (n % 3 === 0) {
+        setValidateState('found')
+        setValidatePlayer(`Player${val.slice(0, 3)}*** (Level ${27 + (n % 30)})`)
+      } else if (n % 3 === 1) {
+        setValidateState('not-found')
+        setValidatePlayer(null)
+      } else {
+        setValidateState('error')
+        setValidatePlayer(null)
+      }
+    }, 800)
+  }
 
   function handleSubmit() {
     setTouched(true)
@@ -60,10 +119,13 @@ export function CheckoutForm({ game }: { game: Game }) {
       fee: String(fee),
       method: selectedMethod!.name,
       uid: game.needsZone ? `${userId} (${zoneId})` : userId,
+      payment: selectedMethod!.id,
+      invoice: `INV-${Date.now().toString(36).toUpperCase()}`,
     })
+    // Go to payment instruction page first, then result
     setTimeout(() => {
-      router.push(`/hasil?${params.toString()}`)
-    }, 900)
+      router.push(`/bayar?${params.toString()}`)
+    }, 600)
   }
 
   return (
@@ -115,28 +177,79 @@ export function CheckoutForm({ game }: { game: Game }) {
       {/* 2. Data Akun */}
       <section className="rounded-xl bg-card p-4 md:p-6">
         <SectionHeading step={2} title="Masukkan Data Akun" />
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <div className="flex-1">
-            <label htmlFor="user-id" className="mb-1.5 block text-sm text-muted-foreground">
-              {game.idLabel}
-            </label>
-            <input
-              id="user-id"
-              type="text"
-              inputMode="numeric"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder={game.idPlaceholder}
-              className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
-            />
-            {touched && userId.trim().length < 3 && (
-              <p className="mt-1.5 text-xs text-destructive">{game.idLabel} minimal 3 karakter</p>
-            )}
-          </div>
-          {game.needsZone && (
+        <div className="mt-4 flex flex-col gap-3">
+          {/* Player ID row */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <div className="flex-1">
+              <label htmlFor="uid" className="mb-1.5 flex items-center text-sm text-muted-foreground">
+                {game.idLabel}
+                <InfoTooltip>
+                  Buka game lalu masuk ke halaman profil. {game.idLabel} biasanya tertera di pojok kiri atas layar atau di menu Pengaturan.
+                </InfoTooltip>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id="uid"
+                  type="text"
+                  inputMode="numeric"
+                  value={userId}
+                  onChange={(e) => {
+                    setUserId(e.target.value)
+                    setValidateState('idle')
+                    setValidatePlayer(null)
+                  }}
+                  placeholder={game.idPlaceholder}
+                  className="flex-1 rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                />
+                <button
+                  type="button"
+                  onClick={handleValidate}
+                  disabled={validateState === 'loading' || userId.trim().length < 3}
+                  className="press inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
+                >
+                  {validateState === 'loading' ? (
+                    <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Search className="size-3.5" aria-hidden="true" />
+                  )}
+                  Cek Akun
+                </button>
+              </div>
+
+              {/* Validation result messages */}
+              {validateState === 'found' && validatePlayer && (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-success">
+                  <UserCheck className="size-3.5" aria-hidden="true" />
+                  Akun ditemukan: {validatePlayer}
+                </p>
+              )}
+              {validateState === 'not-found' && (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-destructive">
+                  <AlertTriangle className="size-3.5" aria-hidden="true" />
+                  Akun tidak ditemukan. Periksa kembali {game.idLabel} kamu.
+                </p>
+              )}
+              {validateState === 'error' && (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-destructive">
+                  <AlertTriangle className="size-3.5" aria-hidden="true" />
+                  Gagal menghubungi server game. Coba lagi nanti.
+                </p>
+              )}
+
+              {touched && userId.trim().length < 3 && (
+                <p className="mt-1.5 text-xs text-destructive">{game.idLabel} minimal 3 karakter</p>
+              )}
+            </div>
+
+            {/* Zone ID always visible, disabled if not needed */}
             <div className="sm:w-36">
-              <label htmlFor="zone-id" className="mb-1.5 block text-sm text-muted-foreground">
-                Zone ID
+              <label htmlFor="zone-id" className="mb-1.5 flex items-center text-sm text-muted-foreground">
+                Server / Zone ID
+                <InfoTooltip>
+                  {game.needsZone
+                    ? 'Buka profil game lalu cari angka di samping nama karakter, biasanya dalam format (1234).'
+                    : 'Beberapa game seperti Mobile Legends memerlukan Zone ID. Jika gamenya tidak butuh, biarkan kosong.'}
+                </InfoTooltip>
               </label>
               <input
                 id="zone-id"
@@ -144,14 +257,15 @@ export function CheckoutForm({ game }: { game: Game }) {
                 inputMode="numeric"
                 value={zoneId}
                 onChange={(e) => setZoneId(e.target.value)}
-                placeholder="Contoh: 2001"
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                placeholder={game.needsZone ? 'Contoh: 2001' : 'Opsional'}
+                disabled={!game.needsZone}
+                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40"
               />
-              {touched && zoneId.trim().length < 1 && (
+              {game.needsZone && touched && zoneId.trim().length < 1 && (
                 <p className="mt-1.5 text-xs text-destructive">Zone ID wajib diisi</p>
               )}
             </div>
-          )}
+          </div>
         </div>
       </section>
 
@@ -217,7 +331,7 @@ export function CheckoutForm({ game }: { game: Game }) {
                       type="button"
                       onClick={() => setSelectedMethod(m)}
                       className={cn(
-                        'flex items-center justify-between gap-2 rounded-xl border px-3 py-3 text-left transition-all duration-200',
+                        'flex items-center justify-between gap-2 rounded-xl border px-3 py-3 text-left transition-colors duration-200',
                         selected
                           ? 'border-primary bg-primary/10'
                           : 'border-border bg-background hover:border-primary/50',
@@ -289,9 +403,7 @@ export function CheckoutForm({ game }: { game: Game }) {
           disabled={submitting}
           className={cn(
             'mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors duration-200',
-            canSubmit && !submitting
-              ? 'press hover:bg-primary/90'
-              : 'opacity-60',
+            canSubmit && !submitting ? 'press hover:bg-primary/90' : 'opacity-60',
           )}
         >
           {submitting ? (
@@ -300,7 +412,7 @@ export function CheckoutForm({ game }: { game: Game }) {
               Memproses...
             </>
           ) : (
-            'Bayar Sekarang'
+            'Lanjutkan Pembayaran'
           )}
         </button>
         {touched && !canSubmit && (
