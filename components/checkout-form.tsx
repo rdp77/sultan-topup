@@ -133,7 +133,7 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
 
   function handleSubmit() {
     setTouched(true)
-    if (!canClick || submitting) return
+    if (!canClick || submitting || !selectedDenom || !selectedMethod) return
     setSubmitting(true)
     const params = new URLSearchParams({
       game: game.name,
