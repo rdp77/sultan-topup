@@ -60,6 +60,7 @@ export function CheckoutForm({ game }: { game: Game }) {
   const denoms = getDenominations(game)
 
   const [selectedDenom, setSelectedDenom] = useState<Denomination | null>(null)
+  const [quantity, setQuantity] = useState(1)
   const [userId, setUserId] = useState('')
   const [zoneId, setZoneId] = useState('')
   const [email, setEmail] = useState('')
@@ -72,6 +73,10 @@ export function CheckoutForm({ game }: { game: Game }) {
   const [validateState, setValidateState] = useState<ValidateState>('idle')
   const [validatePlayer, setValidatePlayer] = useState<string | null>(null)
 
+  const subPrice = useMemo(
+    () => (selectedDenom ? selectedDenom.price * quantity : 0),
+    [selectedDenom, quantity],
+  )
   const fee = useMemo(
     () => (selectedDenom && selectedMethod ? calcFee(selectedMethod, selectedDenom.price) : 0),
     [selectedDenom, selectedMethod],
@@ -114,8 +119,8 @@ export function CheckoutForm({ game }: { game: Game }) {
     setSubmitting(true)
     const params = new URLSearchParams({
       game: game.name,
-      product: selectedDenom!.amount,
-      price: String(selectedDenom!.price),
+      product: `${selectedDenom!.amount} × ${quantity}`,
+      price: String(subPrice),
       fee: String(fee),
       method: selectedMethod!.name,
       uid: game.needsZone ? `${userId} (${zoneId})` : userId,
@@ -174,9 +179,38 @@ export function CheckoutForm({ game }: { game: Game }) {
         </div>
       </section>
 
-      {/* 2. Data Akun */}
+      {/* Jumlah */}
+      {selectedDenom && (
+        <section className="rounded-xl bg-card p-4 md:p-6">
+          <SectionHeading step={2} title="Jumlah Pesanan" />
+          <div className="mt-3 flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card"
+              aria-label="Kurangi jumlah"
+            >
+              -
+            </button>
+            <span className="w-12 text-center text-lg font-semibold tabular-nums">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+              className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card"
+              aria-label="Tambah jumlah"
+            >
+              +
+            </button>
+            <span className="ml-auto text-sm text-muted-foreground">
+              {selectedDenom.amount} × {quantity}
+            </span>
+          </div>
+        </section>
+      )}
+
+      {/* 3. Data Akun */}
       <section className="rounded-xl bg-card p-4 md:p-6">
-        <SectionHeading step={2} title="Masukkan Data Akun" />
+        <SectionHeading step={3} title="Masukkan Data Akun" />
         <div className="mt-4 flex flex-col gap-3">
           {/* Player ID row */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -271,7 +305,7 @@ export function CheckoutForm({ game }: { game: Game }) {
 
       {/* 3. Kontak */}
       <section className="rounded-xl bg-card p-4 md:p-6">
-        <SectionHeading step={3} title="Info Kontak" />
+        <SectionHeading step={4} title="Info Kontak" />
         <p className="mt-2 text-xs text-muted-foreground">
           Bukti pembelian dan status pesanan akan dikirim ke kontak ini.
         </p>
@@ -314,7 +348,7 @@ export function CheckoutForm({ game }: { game: Game }) {
 
       {/* 4. Metode Pembayaran */}
       <section className="rounded-xl bg-card p-4 md:p-6">
-        <SectionHeading step={4} title="Metode Pembayaran" />
+        <SectionHeading step={5} title="Metode Pembayaran" />
         <div className="mt-4 flex flex-col gap-5">
           {paymentGroups.map((group) => (
             <div key={group.group}>
@@ -383,7 +417,7 @@ export function CheckoutForm({ game }: { game: Game }) {
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Harga</dt>
-            <dd>{selectedDenom ? formatRupiah(selectedDenom.price) : '—'}</dd>
+            <dd>{selectedDenom ? formatRupiah(subPrice) : '—'}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Biaya Admin</dt>
@@ -392,7 +426,7 @@ export function CheckoutForm({ game }: { game: Game }) {
           <div className="flex justify-between border-t border-border pt-2.5 text-base font-semibold">
             <dt>Total</dt>
             <dd className="text-primary">
-              {selectedDenom ? formatRupiah(selectedDenom.price + fee) : '—'}
+              {selectedDenom ? formatRupiah(subPrice + fee) : '—'}
             </dd>
           </div>
         </dl>

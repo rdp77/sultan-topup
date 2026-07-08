@@ -39,33 +39,45 @@ function QrPlaceholder({ amount }: { amount: number }) {
   )
 }
 
-function VaNumber({ number }: { number: string }) {
+function CopyButton({ text, label = 'Salin' }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false)
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-background px-4 py-3.5">
+    <button
+      type="button"
+      onClick={() => {
+        if (copied) return
+        navigator.clipboard?.writeText(text)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }}
+      className="press inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card"
+    >
+      {copied ? (
+        <>
+          <Check className="size-3" aria-hidden="true" />
+          Tersalin
+        </>
+      ) : (
+        <>
+          <Copy className="size-3" aria-hidden="true" />
+          {label}
+        </>
+      )}
+    </button>
+  )
+}
+
+function VaNumber({ number, bank }: { number: string; bank: string }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-lg bg-background p-4 text-left">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs text-muted-foreground">Nomor Virtual Account</span>
+        <CopyButton text={number} label="Salin VA" />
+      </div>
       <span className="font-mono text-lg font-semibold tracking-wide text-foreground">{number}</span>
-      <button
-        type="button"
-        onClick={() => {
-          if (copied) return
-          navigator.clipboard?.writeText(number)
-          setCopied(true)
-          setTimeout(() => setCopied(false), 2000)
-        }}
-        className="press ml-auto flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card"
-      >
-        {copied ? (
-          <>
-            <Check className="size-3.5" aria-hidden="true" />
-            Tersalin
-          </>
-        ) : (
-          <>
-            <Copy className="size-3.5" aria-hidden="true" />
-            Salin
-          </>
-        )}
-      </button>
+      <p className="text-xs text-muted-foreground">
+        Penerima: <span className="font-medium text-foreground">Sultan Top Up ({bank.toUpperCase()})</span>
+      </p>
     </div>
   )
 }
@@ -155,7 +167,7 @@ export function BayarCard() {
               <PaymentLogo id={paymentId} className="size-6" />
               <span className="text-sm font-semibold">Virtual Account {paymentId.toUpperCase()}</span>
             </div>
-            <VaNumber number={dummyVa} />
+            <VaNumber number={dummyVa} bank={paymentId} />
             <div className="flex flex-col gap-2 rounded-lg bg-muted/30 p-3 text-left text-xs text-muted-foreground">
               <p><span className="font-semibold text-foreground">Cara bayar:</span> Buka aplikasi Mobile Banking atau ATM. Pilih menu Transfer &gt; Virtual Account. Masukkan nomor di atas, lalu konfirmasi jumlah.</p>
               <p className="text-xs text-muted-foreground/70">Biaya transfer ditanggung pembeli. Nomor VA hanya berlaku untuk 1 pesanan ini.</p>
@@ -197,9 +209,12 @@ export function BayarCard() {
         )}
       </div>
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        Invoice: <span className="font-mono">{invoice}</span>
-      </p>
+      <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+        <span>
+          Invoice: <span className="font-mono">{invoice}</span>
+        </span>
+        <CopyButton text={invoice} label="Salin" />
+      </div>
     </div>
   )
 }
