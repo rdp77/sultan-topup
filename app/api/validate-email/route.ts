@@ -24,7 +24,12 @@ export async function POST(req: Request) {
       }
       return NextResponse.json({ valid: true })
     } catch (dnsErr: unknown) {
-      const msg = dnsErr instanceof Error ? dnsErr.message : String(dnsErr)
+      let msg = 'Unknown DNS error'
+      if (dnsErr instanceof Error) {
+        msg = dnsErr.message
+      } else if (typeof dnsErr === 'string') {
+        msg = dnsErr
+      }
       // ENOTFOUND = domain doesn't exist at all
       // ENODATA = domain exists but no MX records
       return NextResponse.json({
