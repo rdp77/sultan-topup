@@ -179,104 +179,75 @@ export function CheckoutForm({ game }: { game: Game }) {
         </div>
       </section>
 
-      {/* Jumlah */}
-      {selectedDenom && (
-        <section className="rounded-xl bg-card p-4 md:p-6">
-          <SectionHeading step={2} title="Jumlah Pesanan" />
-          <div className="mt-3 flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card"
-              aria-label="Kurangi jumlah"
-            >
-              -
-            </button>
-            <span className="w-12 text-center text-lg font-semibold tabular-nums">{quantity}</span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-              className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card"
-              aria-label="Tambah jumlah"
-            >
-              +
-            </button>
+      {/* 2. Jumlah */}
+      <section className="rounded-xl bg-card p-4 md:p-6">
+        <SectionHeading step={2} title="Jumlah Pesanan" />
+        <div className="mt-3 flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            disabled={!selectedDenom}
+            className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-30"
+            aria-label="Kurangi jumlah"
+          >
+            -
+          </button>
+          <span className="w-12 text-center text-lg font-semibold tabular-nums">{quantity}</span>
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+            disabled={!selectedDenom}
+            className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-30"
+            aria-label="Tambah jumlah"
+          >
+            +
+          </button>
+          {selectedDenom ? (
             <span className="ml-auto text-sm text-muted-foreground">
-              {selectedDenom.amount} × {quantity}
+              {selectedDenom.amount} × {quantity} · {formatRupiah(subPrice)}
             </span>
-          </div>
-        </section>
-      )}
+          ) : (
+            <span className="ml-auto text-xs text-muted-foreground">
+              Pilih nominal di Step 1 terlebih dahulu
+            </span>
+          )}
+        </div>
+      </section>
 
       {/* 3. Data Akun */}
       <section className="rounded-xl bg-card p-4 md:p-6">
         <SectionHeading step={3} title="Masukkan Data Akun" />
         <div className="mt-4 flex flex-col gap-3">
           {/* Player ID row */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-            <div className="flex-1">
+          <div className="flex flex-col gap-3">
+          {/* Player ID + Zone ID row */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-start">
+            <div>
               <label htmlFor="uid" className="mb-1.5 flex items-center text-sm text-muted-foreground">
                 {game.idLabel}
                 <InfoTooltip>
                   Buka game lalu masuk ke halaman profil. {game.idLabel} biasanya tertera di pojok kiri atas layar atau di menu Pengaturan.
                 </InfoTooltip>
               </label>
-              <div className="flex gap-2">
-                <input
-                  id="uid"
-                  type="text"
-                  inputMode="numeric"
-                  value={userId}
-                  onChange={(e) => {
-                    setUserId(e.target.value)
-                    setValidateState('idle')
-                    setValidatePlayer(null)
-                  }}
-                  placeholder={game.idPlaceholder}
-                  className="flex-1 rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
-                />
-                <button
-                  type="button"
-                  onClick={handleValidate}
-                  disabled={validateState === 'loading' || userId.trim().length < 3}
-                  className="press inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
-                >
-                  {validateState === 'loading' ? (
-                    <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <Search className="size-3.5" aria-hidden="true" />
-                  )}
-                  Cek Akun
-                </button>
-              </div>
-
-              {/* Validation result messages */}
-              {validateState === 'found' && validatePlayer && (
-                <p className="mt-2 flex items-center gap-1.5 text-xs text-success">
-                  <UserCheck className="size-3.5" aria-hidden="true" />
-                  Akun ditemukan: {validatePlayer}
-                </p>
-              )}
-              {validateState === 'not-found' && (
-                <p className="mt-2 flex items-center gap-1.5 text-xs text-destructive">
-                  <AlertTriangle className="size-3.5" aria-hidden="true" />
-                  Akun tidak ditemukan. Periksa kembali {game.idLabel} kamu.
-                </p>
-              )}
-              {validateState === 'error' && (
-                <p className="mt-2 flex items-center gap-1.5 text-xs text-destructive">
-                  <AlertTriangle className="size-3.5" aria-hidden="true" />
-                  Gagal menghubungi server game. Coba lagi nanti.
-                </p>
-              )}
-
+              <input
+                id="uid"
+                type="text"
+                inputMode="numeric"
+                value={userId}
+                onChange={(e) => {
+                  setUserId(e.target.value)
+                  setValidateState('idle')
+                  setValidatePlayer(null)
+                }}
+                placeholder={game.idPlaceholder}
+                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+              />
               {touched && userId.trim().length < 3 && (
                 <p className="mt-1.5 text-xs text-destructive">{game.idLabel} minimal 3 karakter</p>
               )}
             </div>
 
-            {/* Zone ID always visible, disabled if not needed */}
-            <div className="sm:w-36">
+            <div className="w-full sm:w-36">
               <label htmlFor="zone-id" className="mb-1.5 flex items-center text-sm text-muted-foreground">
                 Server / Zone ID
                 <InfoTooltip>
@@ -299,7 +270,47 @@ export function CheckoutForm({ game }: { game: Game }) {
                 <p className="mt-1.5 text-xs text-destructive">Zone ID wajib diisi</p>
               )}
             </div>
+
+            {/* Validate button — aligned to the right */}
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={handleValidate}
+                disabled={validateState === 'loading' || userId.trim().length < 3}
+                className="press inline-flex h-10.5 shrink-0 items-center gap-1.5 rounded-lg border border-border px-4 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
+              >
+                {validateState === 'loading' ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Search className="size-3.5" aria-hidden="true" />
+                )}
+                Cek Akun
+              </button>
+            </div>
           </div>
+
+          {/* Validation result messages */}
+          <div className="-mt-1">
+            {validateState === 'found' && validatePlayer && (
+              <p className="flex items-center gap-1.5 text-xs text-success">
+                <UserCheck className="size-3.5" aria-hidden="true" />
+                Akun ditemukan: {validatePlayer}
+              </p>
+            )}
+            {validateState === 'not-found' && (
+              <p className="flex items-center gap-1.5 text-xs text-destructive">
+                <AlertTriangle className="size-3.5" aria-hidden="true" />
+                Akun tidak ditemukan. Periksa kembali {game.idLabel} kamu.
+              </p>
+            )}
+            {validateState === 'error' && (
+              <p className="flex items-center gap-1.5 text-xs text-destructive">
+                <AlertTriangle className="size-3.5" aria-hidden="true" />
+                Gagal menghubungi server game. Coba lagi nanti.
+              </p>
+            )}
+          </div>
+        </div>
         </div>
       </section>
 

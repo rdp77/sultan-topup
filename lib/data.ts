@@ -118,6 +118,14 @@ export const games: Game[] = [
     needsZone: false,
     popular: false,
   },
+  { slug: 'apex-legends', name: 'Apex Legends', publisher: 'Electronic Arts', image: '/games/valorant.png', currency: 'Apex Coins', idLabel: 'EA ID', idPlaceholder: 'Contoh: Player9876', needsZone: false, popular: false },
+  { slug: 'lol-wild-rift', name: 'LoL: Wild Rift', publisher: 'Riot Games', image: '/games/pubg-mobile.png', currency: 'Wild Cores', idLabel: 'Riot ID', idPlaceholder: 'Contoh: Summoner#5678', needsZone: false, popular: false },
+  { slug: 'clash-of-clans', name: 'Clash of Clans', publisher: 'Supercell', image: '/games/free-fire.png', currency: 'Gems', idLabel: 'Player Tag', idPlaceholder: 'Contoh: #ABC123DEF', needsZone: false, popular: false },
+  { slug: 'brawl-stars', name: 'Brawl Stars', publisher: 'Supercell', image: '/games/mobile-legends.png', currency: 'Gems', idLabel: 'Player Tag', idPlaceholder: 'Contoh: #9XYZ123AB', needsZone: false, popular: false },
+  { slug: 'fortnite', name: 'Fortnite', publisher: 'Epic Games', image: '/games/cod-mobile.png', currency: 'V-Bucks', idLabel: 'Epic ID', idPlaceholder: 'Contoh: PlayerXYZ', needsZone: false, popular: false },
+  { slug: 'pubg-new-state', name: 'PUBG: New State', publisher: 'Krafton', image: '/games/pubg-mobile.png', currency: 'NC', idLabel: 'Character ID', idPlaceholder: 'Contoh: 6789012345', needsZone: false, popular: false },
+  { slug: 'cookie-run', name: 'Cookie Run: Kingdom', publisher: 'Devsisters', image: '/games/honkai-star-rail.png', currency: 'Crystals', idLabel: 'DevPlay ID', idPlaceholder: 'Contoh: CR12345678', needsZone: false, popular: false },
+  { slug: 'stumble-guys', name: 'Stumble Guys', publisher: 'Scopely', image: '/games/roblox.png', currency: 'Gems', idLabel: 'Player Name', idPlaceholder: 'Contoh: PlayerTag#0001', needsZone: false, popular: false },
 ]
 
 export function getGame(slug: string): Game | undefined {

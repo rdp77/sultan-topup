@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { BannerSlider } from '@/components/banner-slider'
 import { GameSearch } from '@/components/game-search'
 
 export default function HomePage() {
@@ -11,7 +12,11 @@ export default function HomePage() {
 
       <main id="main" className="flex-1">
         {/* Hero */}
-        <section className="mx-auto max-w-300 px-4 pb-10 pt-16 md:px-6 md:pt-24">
+        <section className="mx-auto max-w-300 px-4 pt-6 md:px-6 md:pt-8">
+          <BannerSlider />
+        </section>
+
+        <section className="mx-auto max-w-300 px-4 pb-6 pt-6 md:px-6 md:pb-8 md:pt-8">
           <h1 className="lift-in mx-auto max-w-2xl text-balance text-center text-3xl font-bold leading-tight tracking-tight md:text-5xl">
             Top up game favoritmu dalam hitungan detik
           </h1>
