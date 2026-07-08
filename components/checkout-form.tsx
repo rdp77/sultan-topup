@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Search, Info, AlertTriangle, UserCheck, ShieldCheck } from 'lucide-react'
 import Turnstile from 'react-turnstile'
@@ -85,7 +85,37 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
     [selectedDenom, selectedMethod],
   )
 
-  const emailValid = useMemo(() => isEmail(email.trim()), [email])
+  const [emailChecking, setEmailChecking] = useState(false)
+  const [emailServerValid, setEmailServerValid] = useState<boolean | null>(null)
+
+  const emailFormatOk = useMemo(() => isEmail(email.trim()), [email])
+
+  // Debounced server-side MX check — fires 600ms after user stops typing
+  useEffect(() => {
+    if (!emailFormatOk) {
+      setEmailServerValid(null)
+      return
+    }
+    setEmailChecking(true)
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/validate-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.trim() }),
+        })
+        const data = await res.json()
+        setEmailServerValid(data.valid === true)
+      } catch {
+        setEmailServerValid(null)
+      } finally {
+        setEmailChecking(false)
+      }
+    }, 600)
+    return () => clearTimeout(t)
+  }, [email, emailFormatOk])
+
+  const emailValid = emailFormatOk && emailServerValid === true
   const waClean = whatsapp.replace(/\D/g, '')
   const waValid = /^08\d{8,12}$/.test(waClean)
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
@@ -340,16 +370,30 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
             <label htmlFor="email" className="mb-1.5 block text-sm text-muted-foreground">
               Email
             </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
-            />
-            {touched && !emailValid && (
-              <p className="mt-1.5 text-xs text-destructive">Masukkan email yang valid</p>
+            <div className="relative">
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="nama@email.com"
+                className="w-full rounded-md border border-input bg-background px-3 py-2.5 pr-10 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+              />
+              {emailFormatOk && emailChecking && (
+                <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" aria-hidden="true" />
+              )}
+              {emailFormatOk && emailServerValid === true && (
+                <Check className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-success" aria-hidden="true" />
+              )}
+              {emailFormatOk && emailServerValid === false && (
+                <AlertTriangle className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-destructive" aria-hidden="true" />
+              )}
+            </div>
+            {touched && email !== '' && !emailFormatOk && (
+              <p className="mt-1.5 text-xs text-destructive">Format email tidak valid</p>
+            )}
+            {touched && emailFormatOk && emailServerValid === false && (
+              <p className="mt-1.5 text-xs text-destructive">Domain email tidak ditemukan. Pastikan alamat email benar.</p>
             )}
           </div>
           <div className="flex-1">
