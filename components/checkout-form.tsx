@@ -93,8 +93,9 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
   const waValid = /^08\d{8,12}$/.test(whatsapp.replace(/[\s-]/g, ''))
   const idValid = userId.trim().length >= 3 && (!game.needsZone || zoneId.trim().length >= 1)
   const idChecked = validateState === 'found'
-  const canSubmit = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null && turnstileToken !== null
-  const canSubmitNoTurnstile = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null
+  // Tombol hanya disable kalau ID/turnstile/akun belum OK. Sisanya divalidasi saat klik.
+  const canClick = selectedDenom !== null && idValid && idChecked && turnstileToken !== null
+  const allValid = selectedDenom !== null && idValid && idChecked && emailValid && waValid && selectedMethod !== null && turnstileToken !== null
 
   function getSubmitError(): string {
     if (!selectedDenom) return 'Pilih nominal terlebih dahulu (Step 1).'
@@ -103,7 +104,8 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
     if (!emailValid) return 'Masukkan email yang valid (Step 4).'
     if (!waValid) return 'Masukkan nomor WhatsApp yang valid (Step 4).'
     if (!selectedMethod) return 'Pilih metode pembayaran (Step 5).'
-    return 'Lengkapi semua data di atas untuk melanjutkan pembayaran.'
+    if (!turnstileToken) return 'Selesaikan verifikasi keamanan di atas.'
+    return ''
   }
 
   // Simulate player ID lookup
@@ -131,7 +133,7 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
 
   function handleSubmit() {
     setTouched(true)
-    if (!canSubmit || submitting) return
+    if (!canClick || submitting) return
     setSubmitting(true)
     const params = new URLSearchParams({
       game: game.name,
@@ -480,10 +482,10 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={submitting || !canSubmit}
+          disabled={submitting || !canClick}
           className={cn(
             'mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors duration-200',
-            canSubmit && !submitting ? 'press hover:bg-primary/90' : 'opacity-60',
+            canClick && !submitting ? 'press hover:bg-primary/90' : 'opacity-60',
           )}
         >
           {submitting ? (
@@ -495,15 +497,10 @@ export function CheckoutForm({ game }: Readonly<{ game: Game }>) {
             'Lanjutkan Pembayaran'
           )}
         </button>
-        {touched && !canSubmitNoTurnstile && (
+        {touched && !allValid && (
           <div className="mt-2 rounded-lg bg-destructive/10 p-3 text-center text-xs text-destructive">
             {getSubmitError()}
           </div>
-        )}
-        {touched && canSubmitNoTurnstile && !canSubmit && (
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            Selesaikan verifikasi keamanan di atas.
-          </p>
         )}
       </section>
     </div>
