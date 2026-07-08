@@ -2,12 +2,14 @@ import Link from 'next/link'
 import { Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { AnnouncementBar } from '@/components/announcement-bar'
 import { BannerSlider } from '@/components/banner-slider'
 import { GameSearch } from '@/components/game-search'
 
 export default function HomePage() {
   return (
     <div className="flex min-h-svh flex-col">
+      <AnnouncementBar />
       <Navbar />
 
       <main id="main" className="flex-1">
