@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Megaphone } from 'lucide-react'
+import Link from 'next/link'
 
 type Announcement = {
   id: string
@@ -20,11 +21,11 @@ export function AnnouncementBar() {
   const [dismissed, setDismissed] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
-  useEffect(() => {
+ useEffect(() => {
     try {
       setDismissed(JSON.parse(localStorage.getItem('announcement-dismissed') ?? '[]'))
-    } catch {
-      /* empty */
+    } catch (err) {
+      console.warn('Gagal membaca announcement-dismissed dari localStorage:', err)
     }
     setHydrated(true)
   }, [])
@@ -36,39 +37,45 @@ export function AnnouncementBar() {
   function dismiss(id: string) {
     const next = [...dismissed, id]
     setDismissed(next)
-    localStorage.setItem('announcement-dismissed', JSON.stringify(next))
+    try {
+      localStorage.setItem('announcement-dismissed', JSON.stringify(next))
+    } catch (err) {
+      console.warn('Gagal menyimpan announcement-dismissed ke localStorage:', err)
+    }
   }
 
   return (
-    <>
+    <div className="sticky top-0 z-51 flex flex-col bg-background border-b border-border">
       {visible.map((a) => (
-        <div
-          key={a.id}
-          className="relative flex items-center justify-center gap-3 bg-primary/10 px-4 py-2.5 text-center text-sm"
-          role="alert"
-        >
-          <Megaphone className="size-4 shrink-0 text-primary" aria-hidden="true" />
-          <span className="text-foreground">
-            {a.text}
-            {a.href && (
-              <>
-                {' '}
-                <a href={a.href} className="underline underline-offset-2 transition-colors hover:text-primary">
-                  Lihat detail
-                </a>
-              </>
-            )}
-          </span>
-          <button
-            type="button"
-            onClick={() => dismiss(a.id)}
-            className="press ml-2 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-            aria-label="Tutup pengumuman"
+        <div key={a.id} className="relative sticky top-0 z-[51] bg-background">
+          <div className="absolute inset-0 bg-primary/10" aria-hidden="true" />
+          <div
+            className="relative flex items-center justify-center gap-3 px-4 py-2.5 text-center text-sm"
+            role="alert"
           >
-            <X className="size-4" aria-hidden="true" />
-          </button>
+            <Megaphone className="size-4 shrink-0 text-primary" aria-hidden="true" />
+            <span className="text-foreground">
+              {a.text}
+              {a.href && (
+                <>
+                  {' '}
+                  <a href={a.href} className="underline underline-offset-2 transition-colors hover:text-primary">
+                    Lihat detail
+                  </a>
+                </>
+              )}
+            </span>
+            <button
+              type="button"
+              onClick={() => dismiss(a.id)}
+              className="press ml-2 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              aria-label="Tutup pengumuman"
+            >
+              <X className="size-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       ))}
-    </>
+    </div>
   )
 }

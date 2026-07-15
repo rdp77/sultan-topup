@@ -17,7 +17,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
+    <header className="sticky top-[42px] z-50 border-b border-border bg-background/90 backdrop-blur">
       {/* Skip link — keyboard a11y */}
       <a
         href="#main"
