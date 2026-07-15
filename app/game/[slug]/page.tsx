@@ -1,8 +1,6 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ShieldCheck, Zap } from 'lucide-react'
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
 import { CheckoutForm } from '@/components/checkout-form'
 import { games, getGame } from '@/lib/data'
 
@@ -20,8 +18,7 @@ export default async function GamePage({
   if (!game) notFound()
 
   return (
-    <div className="flex min-h-svh flex-col">
-      <Navbar />
+    
 
       <main id="main" className="flex-1">
         {/* Banner */}
@@ -76,7 +73,6 @@ export default async function GamePage({
         </div>
       </main>
 
-      <Footer />
     </div>
   )
 }

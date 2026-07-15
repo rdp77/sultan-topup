@@ -1,12 +1,9 @@
 import Link from 'next/link'
 import { Home } from 'lucide-react'
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-svh flex-col">
-      <Navbar />
+    
       <main id="main" className="flex flex-1 items-center justify-center px-4 py-16 md:px-6">
         <div className="text-center">
           <p className="text-6xl font-bold tracking-tighter text-primary md:text-8xl">404</p>
@@ -25,7 +22,5 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-      <Footer />
-    </div>
   )
 }

@@ -1,6 +1,4 @@
 import { Suspense } from 'react'
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
 import { ResultCard } from '@/components/result-card'
 
 export const metadata = {
@@ -9,8 +7,7 @@ export const metadata = {
 
 export default function ResultPage() {
   return (
-    <div className="flex min-h-svh flex-col">
-      <Navbar />
+    
       <main id="main" className="flex-1">
         <div className="mx-auto max-w-lg px-4 py-12 md:px-6 md:py-16">
           <Suspense
@@ -26,7 +23,6 @@ export default function ResultPage() {
           </Suspense>
         </div>
       </main>
-      <Footer />
     </div>
   )
 }
