@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Zap } from 'lucide-react'
+import Image from 'next/image'
 
 export function Footer() {
   return (
@@ -7,10 +7,13 @@ export function Footer() {
       <div className="mx-auto flex max-w-300 flex-col gap-8 px-4 py-12 md:flex-row md:items-start md:justify-between md:px-6">
         <div className="max-w-xs">
           <div className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary">
-              <Zap className="size-4 text-primary-foreground" aria-hidden="true" />
-            </span>
-            <span className="text-lg font-bold tracking-tight">Sultan Top Up</span>
+            <Image
+              src="/logo.png"
+              alt="Sultan Top Up Logo"
+              width={32}
+              height={32}
+              className="h-8 w-auto"
+            />
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap,

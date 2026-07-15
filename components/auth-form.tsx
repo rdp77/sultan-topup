@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Loader2, Zap } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
   const router = useRouter()
@@ -20,9 +21,13 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
   return (
     <div className="mx-auto w-full max-w-sm">
       <div className="flex flex-col items-center text-center">
-        <span className="flex size-10 items-center justify-center rounded-lg bg-primary">
-          <Zap className="size-5 text-primary-foreground" aria-hidden="true" />
-        </span>
+        <Image
+          src="/logo.png"
+          alt="Sultan Top Up Logo"
+          width={32}
+          height={32}
+          className="h-8 w-auto"
+        />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">
           {isLogin ? 'Masuk ke Sultan Top Up' : 'Buat Akun Sultan Top Up'}
         </h1>

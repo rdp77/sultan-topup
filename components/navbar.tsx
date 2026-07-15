@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Zap, Menu, X } from 'lucide-react'
+import Image from 'next/image'
+import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -31,10 +32,14 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <span className="flex size-8 items-center justify-center rounded-md bg-primary">
-            <Zap className="size-4 text-primary-foreground" aria-hidden="true" />
-          </span>
-          <span className="text-lg font-bold tracking-tight">Sultan Top Up</span>
+          <Image
+            src="/logo.png"
+            alt="Sultan Top Up Logo"
+            width={32}
+            height={32}
+            className="h-8 w-auto"
+            priority
+          />
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
