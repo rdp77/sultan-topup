@@ -2,25 +2,27 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 
-const slides = [
+type Slide = {
+  src: string
+  alt: string
+  label?: string
+  sub?: string
+}
+
+const slides: Slide[] = [
   {
-    src: 'https://picsum.photos/seed/gaming-banner-1/1200/480',
+    src: '/banners/banner1.png',
     alt: 'Top up diamond game favoritmu',
-    label: 'Top Up Diamond',
-    sub: 'Harga termurah, proses instan',
   },
   {
-    src: 'https://picsum.photos/seed/gaming-banner-2/1200/480',
+    src: '/banners/banner2.png',
     alt: 'Pembayaran QRIS dan E-Wallet',
-    label: 'Bayar Pakai QRIS',
-    sub: 'GoPay, OVO, DANA, ShopeePay, dan VA',
   },
   {
-    src: 'https://picsum.photos/seed/gaming-banner-3/1200/480',
+    src: '/banners/banner3.png',
     alt: 'Event dan promo terbaru',
-    label: 'Promo Spesial Juli',
-    sub: 'Cashback sampai 20% setiap transaksi',
   },
 ]
 
@@ -45,21 +47,29 @@ export function BannerSlider() {
       >
         {slides.map((s, idx) => (
           <div
-            key={idx}
+            key={s.src}
             className="relative aspect-2.5/1 w-full shrink-0 md:aspect-3/1"
             aria-hidden={idx !== i}
           >
-            <img
+            <Image
               src={s.src}
               alt={idx === i ? s.alt : ''}
-              className="absolute inset-0 h-full w-full object-cover"
-              loading={idx === 0 ? 'eager' : 'lazy'}
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority={idx === 0}
             />
             <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 p-4 md:p-8">
-              <p className="text-lg font-bold text-foreground md:text-2xl">{s.label}</p>
-              <p className="mt-1 text-sm text-muted-foreground md:text-base">{s.sub}</p>
-            </div>
+            {(s.label || s.sub) && (
+              <div className="absolute bottom-0 left-0 p-4 md:p-8">
+                {s.label && (
+                  <p className="text-lg font-bold text-foreground md:text-2xl">{s.label}</p>
+                )}
+                {s.sub && (
+                  <p className="mt-1 text-sm text-muted-foreground md:text-base">{s.sub}</p>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -82,14 +92,16 @@ export function BannerSlider() {
       </button>
 
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist">
-        {slides.map((_, idx) => (
+        {slides.map((s, idx) => (
           <button
-            key={idx}
+            key={`${s.src}-${idx}`}
             type="button"
             onClick={() => setI(idx)}
             role="tab"
             aria-selected={idx === i}
-            className={`size-2 rounded-full transition-all duration-300 ${idx === i ? 'w-5 bg-primary' : 'bg-muted-foreground/40'}`}
+            className={`size-2 rounded-full transition-all duration-300 ${
+              idx === i ? 'w-5 bg-primary' : 'bg-muted-foreground/40'
+            }`}
             aria-label={`Slide ${idx + 1}`}
           />
         ))}
