@@ -49,9 +49,9 @@ export function AnnouncementBar() {
   }
 
   return (
-    <div className="sticky top-0 z-51 flex flex-col bg-background border-b border-border">
+    <div className="flex flex-col bg-background border-b border-border">
       {visible.map((a) => (
-        <div key={a.id} className="sticky top-0 z-51 bg-background">
+        <div key={a.id} className="relative bg-background">
           <div className="absolute inset-0 bg-primary/10" aria-hidden="true" />
           <div
             className="relative flex items-center justify-center gap-3 px-4 py-2.5 text-center text-sm"
