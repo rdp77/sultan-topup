@@ -17,11 +17,11 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-[42px] z-50 border-b border-border bg-background/90 backdrop-blur">
+    <header className="sticky top-10.5 z-50 border-b border-border bg-background/90 backdrop-blur">
       {/* Skip link — keyboard a11y */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[60] focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:text-primary-foreground"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-60 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:text-primary-foreground"
       >
         Lewati ke konten
       </a>
@@ -51,7 +51,7 @@ export function Navbar() {
                 {active && (
                   <span
                     aria-hidden="true"
-                    className="absolute -bottom-[1.45rem] left-0 right-0 h-0.5 rounded-full bg-primary"
+                    className="absolute bottom-[-1.45rem] left-0 right-0 h-0.5 rounded-full bg-primary"
                   />
                 )}
               </Link>

@@ -59,9 +59,9 @@ export function AnnouncementBar() {
               {a.href && (
                 <>
                   {' '}
-                  <a href={a.href} className="underline underline-offset-2 transition-colors hover:text-primary">
-                    Lihat detail
-                  </a>
+                 <Link href={a.href} className="underline underline-offset-2 transition-colors hover:text-primary">
+                  Lihat detail
+                </Link>
                 </>
               )}
             </span>
