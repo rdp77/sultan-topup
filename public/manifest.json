@@ -1,0 +1,29 @@
+{
+  "name": "Sultan Top Up",
+  "short_name": "SultanTopUp",
+  "description": "Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap, harga bersahabat.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "##6366F1",
+  "theme_color": "##6366F1",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": ["games", "entertainment", "utilities"],
+  "icons": [{
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
