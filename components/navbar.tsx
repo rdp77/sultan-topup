@@ -27,7 +27,10 @@ export function Navbar() {
       </a>
 
       <nav className="mx-auto flex h-16 max-w-300 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
           <span className="flex size-8 items-center justify-center rounded-md bg-primary">
             <Zap className="size-4 text-primary-foreground" aria-hidden="true" />
           </span>

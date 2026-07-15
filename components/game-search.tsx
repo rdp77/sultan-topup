@@ -70,9 +70,16 @@ export function GameSearch() {
 
       {/* Skeleton */}
       {loading && (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4" aria-busy="true" aria-label="Memuat game">
+        <div
+          className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+          aria-busy="true"
+          aria-label="Memuat game"
+        >
           {SKELETON_PLACEHOLDERS.map((item) => (
-            <div key={item.id} className="overflow-hidden rounded-xl border border-border/40 bg-card">
+            <div
+              key={item.id}
+              className="overflow-hidden rounded-xl border border-border/40 bg-card"
+            >
               <div className="aspect-3/4 w-full animate-pulse bg-muted" />
               <div className="flex flex-col gap-2 p-3">
                 <span className="h-4 w-3/4 animate-pulse rounded bg-muted" />

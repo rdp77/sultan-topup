@@ -10,7 +10,10 @@ function QrPlaceholder({ amount }: { amount: number }) {
   // Dummy QR code: a centred branded square. In production replace with a real QR
   // image generated server-side or via QRIS API.
   return (
-    <div className="mx-auto flex size-48 items-center justify-center rounded-xl border-2 border-border bg-white p-4" aria-label={`QRIS Rp ${amount.toLocaleString('id-ID')}`}>
+    <div
+      className="mx-auto flex size-48 items-center justify-center rounded-xl border-2 border-border bg-white p-4"
+      aria-label={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
+    >
       <svg viewBox="0 0 160 160" className="size-full" aria-hidden="true">
         {/* Dummy QR pattern — visual placeholder only */}
         <rect width="160" height="160" fill="white" />
@@ -19,7 +22,7 @@ function QrPlaceholder({ amount }: { amount: number }) {
             const x = 12 + c * 22
             const y = 12 + r * 22
             // Simple deterministic pattern
-            const fill = (r * 7 + c) % 3 === 0 ? '#6366f1' : ((r + c) % 4 === 0 ? '#6366f1' : 'white')
+            const fill = (r * 7 + c) % 3 === 0 ? '#6366f1' : (r + c) % 4 === 0 ? '#6366f1' : 'white'
             if (fill === 'white') return null
             return (
               <rect
@@ -74,9 +77,12 @@ function VaNumber({ number, bank }: { number: string; bank: string }) {
         <span className="text-xs text-muted-foreground">Nomor Virtual Account</span>
         <CopyButton text={number} label="Salin VA" />
       </div>
-      <span className="font-mono text-lg font-semibold tracking-wide text-foreground">{number}</span>
+      <span className="font-mono text-lg font-semibold tracking-wide text-foreground">
+        {number}
+      </span>
       <p className="text-xs text-muted-foreground">
-        Penerima: <span className="font-medium text-foreground">Sultan Top Up ({bank.toUpperCase()})</span>
+        Penerima:{' '}
+        <span className="font-medium text-foreground">Sultan Top Up ({bank.toUpperCase()})</span>
       </p>
     </div>
   )
@@ -144,7 +150,10 @@ export function BayarCard() {
     <div className="flex flex-col items-center text-center">
       {/* Payment method badge */}
       <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5">
-        <span className="flex size-6 items-center justify-center rounded bg-background text-muted-foreground" aria-hidden="true">
+        <span
+          className="flex size-6 items-center justify-center rounded bg-background text-muted-foreground"
+          aria-hidden="true"
+        >
           <PaymentLogo id={paymentId} />
         </span>
         <span className="text-sm font-medium">{methodName}</span>
@@ -165,12 +174,20 @@ export function BayarCard() {
           <div className="space-y-4">
             <div className="flex items-center gap-3 rounded-lg bg-background/50 px-4 py-2.5">
               <PaymentLogo id={paymentId} className="size-6" />
-              <span className="text-sm font-semibold">Virtual Account {paymentId.toUpperCase()}</span>
+              <span className="text-sm font-semibold">
+                Virtual Account {paymentId.toUpperCase()}
+              </span>
             </div>
             <VaNumber number={dummyVa} bank={paymentId} />
             <div className="flex flex-col gap-2 rounded-lg bg-muted/30 p-3 text-left text-xs text-muted-foreground">
-              <p><span className="font-semibold text-foreground">Cara bayar:</span> Buka aplikasi Mobile Banking atau ATM. Pilih menu Transfer &gt; Virtual Account. Masukkan nomor di atas, lalu konfirmasi jumlah.</p>
-              <p className="text-xs text-muted-foreground/70">Biaya transfer ditanggung pembeli. Nomor VA hanya berlaku untuk 1 pesanan ini.</p>
+              <p>
+                <span className="font-semibold text-foreground">Cara bayar:</span> Buka aplikasi
+                Mobile Banking atau ATM. Pilih menu Transfer &gt; Virtual Account. Masukkan nomor di
+                atas, lalu konfirmasi jumlah.
+              </p>
+              <p className="text-xs text-muted-foreground/70">
+                Biaya transfer ditanggung pembeli. Nomor VA hanya berlaku untuk 1 pesanan ini.
+              </p>
             </div>
           </div>
         )}

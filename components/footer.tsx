@@ -13,81 +13,102 @@ export function Footer() {
             <span className="text-lg font-bold tracking-tight">Sultan Top Up</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap, harga bersahabat.
+            Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap,
+            harga bersahabat.
           </p>
         </div>
 
-        <div className="flex gap-16">
-           </div>
-            <div>
-            <h3 className="text-sm font-semibold">Sosial Media</h3>
-            <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
-                  Instagram
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
-                  Tiktok
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="transition-colors duration-200 hover:text-foreground">
-                  Threads
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
-                  YouTube
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
-                  Facebook
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold">Menu</h3>
-            <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/" className="transition-colors duration-200 hover:text-foreground">
-                  Beranda
-                </Link>
-              </li>
-              <li>
-                <Link href="/lacak" className="transition-colors duration-200 hover:text-foreground">
-                  Lacak Pesanan
-                </Link>
-              </li>
-              <li>
-                <Link href="/leaderboard" className="transition-colors duration-200 hover:text-foreground">
-                  Leaderboard
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold">Akun</h3>
-            <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
-                  Masuk
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="transition-colors duration-200 hover:text-foreground">
-                  Daftar
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="transition-colors duration-200 hover:text-foreground">
-                  Dashboard
-                </Link>
-              </li>
-            </ul>
+        <div className="flex gap-16"></div>
+        <div>
+          <h3 className="text-sm font-semibold">Sosial Media</h3>
+          <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+            <li>
+              <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
+                Instagram
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/register"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Tiktok
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Threads
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/register"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                YouTube
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/register"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Facebook
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold">Menu</h3>
+          <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+            <li>
+              <Link href="/" className="transition-colors duration-200 hover:text-foreground">
+                Beranda
+              </Link>
+            </li>
+            <li>
+              <Link href="/lacak" className="transition-colors duration-200 hover:text-foreground">
+                Lacak Pesanan
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/leaderboard"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Leaderboard
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold">Akun</h3>
+          <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+            <li>
+              <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
+                Masuk
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/register"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Daftar
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Dashboard
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
       <div className="border-t border-border py-4">

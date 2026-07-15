@@ -14,14 +14,18 @@ type Announcement = {
 // Each client remembers which IDs they've dismissed in localStorage so the same
 // announcement only disappears after the user explicitly closes it.
 const announcements: Announcement[] = [
-  { id: 'promo-juli-2026', text: 'Promo Juli! Cashback 20% untuk semua transaksi QRIS.', href: '/lacak' },
+  {
+    id: 'promo-juli-2026',
+    text: 'Promo Juli! Cashback 20% untuk semua transaksi QRIS.',
+    href: '/lacak',
+  },
 ]
 
 export function AnnouncementBar() {
   const [dismissed, setDismissed] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
- useEffect(() => {
+  useEffect(() => {
     try {
       setDismissed(JSON.parse(localStorage.getItem('announcement-dismissed') ?? '[]'))
     } catch (err) {
@@ -59,9 +63,12 @@ export function AnnouncementBar() {
               {a.href && (
                 <>
                   {' '}
-                 <Link href={a.href} className="underline underline-offset-2 transition-colors hover:text-primary">
-                  Lihat detail
-                </Link>
+                  <Link
+                    href={a.href}
+                    className="underline underline-offset-2 transition-colors hover:text-primary"
+                  >
+                    Lihat detail
+                  </Link>
                 </>
               )}
             </span>

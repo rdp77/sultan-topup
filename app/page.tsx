@@ -15,7 +15,8 @@ export default function HomePage() {
           Top up game favoritmu dalam hitungan detik
         </h1>
         <p className="lift-in lift-in-2 mx-auto mt-4 max-w-xl text-pretty text-center text-sm leading-relaxed text-muted-foreground md:text-base">
-          Proses otomatis 24 jam, harga bersahabat, dan pembayaran lengkap. Tanpa login, tanpa ribet.
+          Proses otomatis 24 jam, harga bersahabat, dan pembayaran lengkap. Tanpa login, tanpa
+          ribet.
         </p>
         <div className="lift-in lift-in-3 mt-8 flex justify-center">
           <Link
@@ -46,7 +47,9 @@ export default function HomePage() {
       <section id="games" className="mx-auto max-w-300 px-4 pb-20 pt-4 md:px-6">
         <div className="reveal">
           <h2 className="text-xl font-bold tracking-tight md:text-2xl">Pilih Game</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Cari dan klik game untuk mulai top up</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Cari dan klik game untuk mulai top up
+          </p>
         </div>
         <div className="reveal mt-5">
           <GameSearch />

@@ -17,9 +17,7 @@ export function OrderLookup() {
     setLoading(true)
     setResult(null)
     setTimeout(() => {
-      const found = mockOrders.find(
-        (o) => o.invoice.toLowerCase() === invoice.trim().toLowerCase(),
-      )
+      const found = mockOrders.find((o) => o.invoice.toLowerCase() === invoice.trim().toLowerCase())
       setResult(found ?? 'not-found')
       setLoading(false)
     }, 800)

@@ -34,7 +34,9 @@ export async function POST(req: Request) {
       // ENODATA = domain exists but no MX records
       return NextResponse.json({
         valid: false,
-        reason: msg.includes('ENOTFOUND') ? `Domain ${domain} not found` : `No mail server for ${domain}`,
+        reason: msg.includes('ENOTFOUND')
+          ? `Domain ${domain} not found`
+          : `No mail server for ${domain}`,
       })
     }
   } catch {

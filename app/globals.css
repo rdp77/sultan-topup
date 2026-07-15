@@ -64,8 +64,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(60% 50% at 50% 0%, rgba(99, 102, 241, 0.08), transparent 70%);
+    background-image: radial-gradient(60% 50% at 50% 0%, rgba(99, 102, 241, 0.08), transparent 70%);
     font-variant-numeric: tabular-nums;
   }
   html {
@@ -77,7 +76,9 @@
     scroll-margin-top: 5rem;
   }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
@@ -93,19 +94,37 @@
       animation-range: entry 0% cover 22%;
     }
     @keyframes reveal-in {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     /* On-load lift — above-the-fold content (hero) animates once on mount. */
     .lift-in {
       animation: lift-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
-    .lift-in-2 { animation-delay: 0.08s; }
-    .lift-in-3 { animation-delay: 0.16s; }
-    .lift-in-4 { animation-delay: 0.24s; }
+    .lift-in-2 {
+      animation-delay: 0.08s;
+    }
+    .lift-in-3 {
+      animation-delay: 0.16s;
+    }
+    .lift-in-4 {
+      animation-delay: 0.24s;
+    }
     @keyframes lift-in {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 }

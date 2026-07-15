@@ -3,7 +3,16 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, Clock3, TimerOff, RotateCcw, Search, Copy, Check } from 'lucide-react'
+import {
+  CheckCircle2,
+  XCircle,
+  Clock3,
+  TimerOff,
+  RotateCcw,
+  Search,
+  Copy,
+  Check,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatRupiah, type OrderStatus } from '@/lib/data'
 
@@ -48,7 +57,7 @@ export function ResultCard() {
   const fee = Number(params.get('fee') ?? 886)
   const method = params.get('method') ?? 'QRIS'
   const uid = params.get('uid') ?? '12345678 (2001)'
-const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false)
   const invoice = params.get('invoice') ?? 'INV-20260702-8F3K'
 
   // Simulate payment confirmation: processing -> success after a short delay
@@ -84,26 +93,26 @@ const [copied, setCopied] = useState(false)
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Invoice</dt>
             <dd className="flex items-center gap-2 font-mono text-xs">
-                {invoice}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (copied) return
-                    navigator.clipboard?.writeText(invoice)
-                    setCopied(true)
-                    setTimeout(() => setCopied(false), 2000)
-                  }}
-                  className="press inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground transition-colors hover:text-foreground hover:bg-card"
-                  aria-label="Salin invoice"
-                >
-                  {copied ? (
-                    <Check className="size-3" aria-hidden="true" />
-                  ) : (
-                    <Copy className="size-3" aria-hidden="true" />
-                  )}
-                  {copied ? 'Tersalin' : 'Salin'}
-                </button>
-              </dd>
+              {invoice}
+              <button
+                type="button"
+                onClick={() => {
+                  if (copied) return
+                  navigator.clipboard?.writeText(invoice)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                }}
+                className="press inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground transition-colors hover:text-foreground hover:bg-card"
+                aria-label="Salin invoice"
+              >
+                {copied ? (
+                  <Check className="size-3" aria-hidden="true" />
+                ) : (
+                  <Copy className="size-3" aria-hidden="true" />
+                )}
+                {copied ? 'Tersalin' : 'Salin'}
+              </button>
+            </dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Game</dt>

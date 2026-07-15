@@ -35,13 +35,20 @@ export function BannerSlider() {
   }, [next])
 
   return (
-    <div className="relative mx-auto max-w-300 overflow-hidden rounded-xl md:rounded-2xl" aria-label="Promo banner">
+    <div
+      className="relative mx-auto max-w-300 overflow-hidden rounded-xl md:rounded-2xl"
+      aria-label="Promo banner"
+    >
       <div
         className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${i * 100}%)` }}
       >
         {slides.map((s, idx) => (
-          <div key={idx} className="relative aspect-2.5/1 w-full shrink-0 md:aspect-3/1" aria-hidden={idx !== i}>
+          <div
+            key={idx}
+            className="relative aspect-2.5/1 w-full shrink-0 md:aspect-3/1"
+            aria-hidden={idx !== i}
+          >
             <img
               src={s.src}
               alt={idx === i ? s.alt : ''}
@@ -57,16 +64,34 @@ export function BannerSlider() {
         ))}
       </div>
 
-      <button type="button" onClick={prev} className="press absolute left-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-background/60 text-foreground backdrop-blur transition hover:bg-background/90" aria-label="Slide sebelumnya">
+      <button
+        type="button"
+        onClick={prev}
+        className="press absolute left-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-background/60 text-foreground backdrop-blur transition hover:bg-background/90"
+        aria-label="Slide sebelumnya"
+      >
         <ChevronLeft className="size-5" aria-hidden="true" />
       </button>
-      <button type="button" onClick={next} className="press absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-background/60 text-foreground backdrop-blur transition hover:bg-background/90" aria-label="Slide berikutnya">
+      <button
+        type="button"
+        onClick={next}
+        className="press absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-background/60 text-foreground backdrop-blur transition hover:bg-background/90"
+        aria-label="Slide berikutnya"
+      >
         <ChevronRight className="size-5" aria-hidden="true" />
       </button>
 
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist">
         {slides.map((_, idx) => (
-          <button key={idx} type="button" onClick={() => setI(idx)} role="tab" aria-selected={idx === i} className={`size-2 rounded-full transition-all duration-300 ${idx === i ? 'w-5 bg-primary' : 'bg-muted-foreground/40'}`} aria-label={`Slide ${idx + 1}`} />
+          <button
+            key={idx}
+            type="button"
+            onClick={() => setI(idx)}
+            role="tab"
+            aria-selected={idx === i}
+            className={`size-2 rounded-full transition-all duration-300 ${idx === i ? 'w-5 bg-primary' : 'bg-muted-foreground/40'}`}
+            aria-label={`Slide ${idx + 1}`}
+          />
         ))}
       </div>
     </div>
