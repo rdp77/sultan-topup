@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Game } from '@/lib/data'
 
-export function GameCard({ game }: { game: Game }) {
+export function GameCard({ game }: Readonly<{ game: Game }>) {
   return (
     <Link
       href={`/game/${game.slug}`}
