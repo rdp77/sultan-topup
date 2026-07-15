@@ -8,7 +8,7 @@ export function GameCard({ game }: { game: Game }) {
       href={`/game/${game.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition-colors duration-200 hover:border-primary/40"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-background">
+      <div className="relative aspect-3/4 w-full overflow-hidden bg-background">
         <Image
           src={game.image || '/placeholder.svg'}
           alt={game.name}
