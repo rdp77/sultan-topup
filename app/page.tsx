@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
 import { BannerSlider } from '@/components/banner-slider'
 import { GameService } from '@/services/game.service'
-import { GameSearch } from '@/components/game-search'
+import { Games } from '@/components/games'
 
 export default async function HomePage() {
   const { data: games, meta } = await GameService.list(1)
@@ -54,7 +54,7 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="reveal mt-5">
-          <GameSearch initialGames={games} initialMeta={meta} />
+          <Games initialGames={games} initialMeta={meta} />
         </div>
       </section>
 

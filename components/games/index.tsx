@@ -10,7 +10,7 @@ import type { Game } from '@/types/games'
 import type { PaginationMeta } from '@/types/pagination'
 import { NoGamesAvailable } from './no-games-available'
 
-interface GameSearchProps {
+interface Games {
   initialGames: Game[]
   initialMeta: PaginationMeta
 }
@@ -23,7 +23,7 @@ function getListState(totalLoaded: number, filteredLength: number): ListState {
   return 'has-results'
 }
 
-export function GameSearch({ initialGames, initialMeta }: Readonly<GameSearchProps>) {
+export function Games({ initialGames, initialMeta }: Readonly<Games>) {
   const { query, setQuery, filtered, totalLoaded, hasMore, remaining, isPending, loadMore } =
     useGameList({ initialGames, initialMeta })
 
