@@ -2,12 +2,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ShieldCheck, Zap } from 'lucide-react'
 import { CheckoutForm } from '@/components/checkout-form'
-import { games, getGame } from '@/lib/data'
 import { GameService } from '@/services/game.service'
-
-export function generateStaticParams() {
-  return games.map((g) => ({ slug: g.slug }))
-}
 
 export default async function GamePage({
   params,
