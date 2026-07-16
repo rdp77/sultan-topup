@@ -5,7 +5,6 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    // remotePatterns: ['api.sultan-topup.com', 'placehold.co'],
   },
 }
 
