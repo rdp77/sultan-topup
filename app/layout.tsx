@@ -19,6 +19,17 @@ export const metadata: Metadata = {
     'top up game, top up diamond, top up uc, top up voucher, top up mobile legends, top up free fire, top up pubg mobile, top up valorant, top up codm, top up genshin impact, top up mlbb, top up ff, top up pubgm, top up valorant points, top up cod points, top up genshin impact primogems',
   ],
   authors: [{ name: 'Sultan Top Up', url: 'https://sultantopup.com' }],
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+  },
+  alternates: {
+    canonical: 'https://sultantopup.com',
+    languages: {
+      'id-ID': 'https://sultantopup.com',
+    },
+  },
   creator: 'Sultan Top Up',
   publisher: 'Sultan Top Up',
   openGraph: {
@@ -44,8 +55,9 @@ export const metadata: Metadata = {
       'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
     images: ['https://sultantopup.com/og-image.png'],
   },
-  other: {
-    'google-site-verification': 'lbpTP4D_FiTv4dkhdzcauw-Fc_CrULWQa0TThtSiH1Q',
+  verification: {
+    google: 'LIovFvCv7ZsFCgRA_RCpxPfs5TqUAaipyj7jCt5P_so',
+    me: 'https://sultantopup.com',
   },
 }
 
