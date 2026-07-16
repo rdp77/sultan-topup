@@ -1,6 +1,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
 
+function generateSocialMediaLinks() {
+  return [
+    { name: 'Instagram', url: 'https://instagram.com/sultantopupofficial' },
+    { name: 'Tiktok', url: 'https://tiktok.com/@sultantopupofficial' },
+    { name: 'Threads', url: 'https://threads.net/@sultantopupofficial' },
+    { name: 'YouTube', url: 'https://youtube.com/@sultantopupofficial' },
+    { name: 'Facebook', url: 'https://facebook.com/sultantopupofficial' },
+  ]
+}
+
 export function Footer() {
   return (
     <footer className="border-t border-border">
@@ -21,47 +31,21 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="flex gap-16"></div>
         <div>
           <h3 className="text-sm font-semibold">Sosial Media</h3>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
-            <li>
-              <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
-                Instagram
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/register"
-                className="transition-colors duration-200 hover:text-foreground"
-              >
-                Tiktok
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/dashboard"
-                className="transition-colors duration-200 hover:text-foreground"
-              >
-                Threads
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/register"
-                className="transition-colors duration-200 hover:text-foreground"
-              >
-                YouTube
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/register"
-                className="transition-colors duration-200 hover:text-foreground"
-              >
-                Facebook
-              </Link>
-            </li>
+            {generateSocialMediaLinks().map((social) => (
+              <li key={social.name}>
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors duration-200 hover:text-foreground"
+                >
+                  {social.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
         <div>

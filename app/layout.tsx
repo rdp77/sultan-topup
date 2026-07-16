@@ -76,6 +76,9 @@ const jsonLdOrganization = {
   sameAs: [
     'https://instagram.com/sultantopupofficial',
     'https://tiktok.com/@sultantopupofficial',
+    'https://threads.net/@sultantopupofficial',
+    'https://youtube.com/@sultantopupofficial',
+    'https://facebook.com/sultantopupofficial',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
