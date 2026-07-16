@@ -3,35 +3,66 @@
 import { useEffect, useMemo, useState } from 'react'
 import isEmail from 'validator/lib/isEmail'
 
-export function useEmailValidation(email: string) {
-  const [checking, setChecking] = useState(false)
-  const [serverValid, setServerValid] = useState<boolean | null>(null)
-
-  const formatOk = useMemo(() => isEmail(email.trim()), [email])
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value)
 
   useEffect(() => {
-    if (!formatOk) {
-      setServerValid(null)
-      return
-    }
-    setChecking(true)
-    const t = setTimeout(async () => {
+    const t = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(t)
+  }, [value, delay])
+
+  return debounced
+}
+
+interface EmailCheckResult {
+  email: string
+  valid: boolean | null
+}
+
+export function useEmailValidation(email: string) {
+  const [result, setResult] = useState<EmailCheckResult | null>(null)
+  const [fetchingRaw, setFetchingRaw] = useState(false)
+
+  const trimmed = email.trim()
+  const formatOk = useMemo(() => isEmail(trimmed), [trimmed])
+  const debouncedEmail = useDebouncedValue(trimmed, 600)
+
+  const isPending = formatOk && trimmed !== debouncedEmail
+
+  useEffect(() => {
+    if (!formatOk || trimmed !== debouncedEmail) return
+
+    let cancelled = false
+
+    ;(async () => {
+      setFetchingRaw(true)
       try {
         const res = await fetch('/api/validate-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email.trim() }),
+          body: JSON.stringify({ email: debouncedEmail }),
         })
         const data = await res.json()
-        setServerValid(data.valid === true)
+        if (!cancelled) setResult({ email: debouncedEmail, valid: data.valid === true })
       } catch {
-        setServerValid(null)
+        if (!cancelled) setResult({ email: debouncedEmail, valid: null })
       } finally {
-        setChecking(false)
+        if (!cancelled) setFetchingRaw(false)
       }
-    }, 600)
-    return () => clearTimeout(t)
-  }, [email, formatOk])
+    })()
 
-  return { formatOk, checking, serverValid, isValid: formatOk && serverValid === true }
+    return () => {
+      cancelled = true
+      setFetchingRaw(false)
+    }
+  }, [formatOk, trimmed, debouncedEmail])
+
+  const serverValid = formatOk && result?.email === trimmed ? result.valid : null
+
+  return {
+    formatOk,
+    checking: formatOk && (isPending || fetchingRaw),
+    serverValid,
+    isValid: formatOk && serverValid === true,
+  }
 }
