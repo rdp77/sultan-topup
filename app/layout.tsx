@@ -4,6 +4,7 @@ import { AnnouncementBar } from '@/components/announcement-bar'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import './globals.css'
+import { FloatingWhatsApp } from '@/components/floating-whatsapp'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({
@@ -129,6 +130,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
+        <FloatingWhatsApp />
         <div className="flex min-h-svh flex-col">
           <div className="sticky top-0 z-50">
             <AnnouncementBar />
