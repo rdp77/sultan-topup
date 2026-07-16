@@ -66,6 +66,40 @@ export const viewport: Viewport = {
   themeColor: '#040819',
 }
 
+const jsonLdOrganization = {
+  '@type': 'Organization',
+  '@id': 'https://sultantopup.com',
+  name: 'Sultan Top Up',
+  url: 'https://sultantopup.com',
+  logo: 'https://sultantopup.com/logo.png',
+  description: 'Jasa top up game cepat dan aman',
+  sameAs: [
+    'https://instagram.com/sultantopupofficial',
+    'https://tiktok.com/@sultantopupofficial',
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    url: 'https://sultantopup.com',
+    email: 'support@sultantopup.com',
+    telephone: '+62 851-1135-5504',
+  },
+}
+
+const jsonLdWebSite = {
+  '@type': 'WebSite',
+  '@id': 'https://sultantopup.com/#website',
+  name: 'Sultan Top Up',
+  url: 'https://sultantopup.com',
+  description: 'Jasa top up game cepat dan aman',
+  publisher: { '@id': 'https://sultantopup.com' },
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [jsonLdOrganization, jsonLdWebSite],
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -73,6 +107,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${geistSans.variable} ${geistMono.variable} bg-background`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replaceAll('<', String.raw`\u003c`),
+          }}
+        />
+      </head>
       <body className="font-sans antialiased">
         <div className="flex min-h-svh flex-col">
           <div className="sticky top-0 z-50">
