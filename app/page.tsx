@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
 import { BannerSlider } from '@/components/banner-slider'
+import { GameService } from '@/services/game.service'
 import { GameSearch } from '@/components/game-search'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { data: games, meta } = await GameService.list(1)
   return (
     <main id="main" className="flex-1">
       <section className="mx-auto max-w-300 px-4 pt-6 md:px-6 md:pt-8">
@@ -52,7 +54,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="reveal mt-5">
-          <GameSearch />
+          <GameSearch initialGames={games} initialMeta={meta} />
         </div>
       </section>
 

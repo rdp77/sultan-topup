@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import type { Game } from '@/lib/data'
+import { Game } from '@/types/games'
 
 export function GameCard({ game }: Readonly<{ game: Game }>) {
   return (
