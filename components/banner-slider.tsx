@@ -5,7 +5,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 
 type Slide = {
-  src: string
+  srcDesktop: string
+  srcMobile: string
   alt: string
   label?: string
   sub?: string
@@ -13,15 +14,18 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    src: '/banners/banner1.png',
+    srcDesktop: '/banners/banner1.png',
+    srcMobile: '/banners/banner1.png',
     alt: 'Top up diamond game favoritmu',
   },
   {
-    src: '/banners/banner2.png',
+    srcDesktop: '/banners/banner2.png',
+    srcMobile: '/banners/banner2.png',
     alt: 'Pembayaran QRIS dan E-Wallet',
   },
   {
-    src: '/banners/banner3.png',
+    srcDesktop: '/banners/banner3.png',
+    srcMobile: '/banners/banner3.png',
     alt: 'Event dan promo terbaru',
   },
 ]
@@ -47,16 +51,26 @@ export function BannerSlider() {
       >
         {slides.map((s, idx) => (
           <div
-            key={s.src}
-            className="relative aspect-2.5/1 w-full shrink-0 md:aspect-3/1"
+            key={s.srcDesktop}
+            className="relative aspect-4/3 w-full shrink-0 sm:aspect-2.5/1 md:aspect-3/1"
             aria-hidden={idx !== i}
           >
+            {/* Mobile: gambar & crop terpisah, tampil < 640px */}
             <Image
-              src={s.src}
+              src={s.srcMobile}
               alt={idx === i ? s.alt : ''}
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-cover sm:hidden"
+              priority={idx === 0}
+            />
+            {/* Desktop/tablet: gambar wide, tampil >= 640px */}
+            <Image
+              src={s.srcDesktop}
+              alt={idx === i ? s.alt : ''}
+              fill
+              sizes="100vw"
+              className="hidden object-cover sm:block"
               priority={idx === 0}
             />
             <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
@@ -94,7 +108,7 @@ export function BannerSlider() {
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist">
         {slides.map((s, idx) => (
           <button
-            key={`${s.src}-${idx}`}
+            key={`${s.srcDesktop}-${idx}`}
             type="button"
             onClick={() => setI(idx)}
             role="tab"
