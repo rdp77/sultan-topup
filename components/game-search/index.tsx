@@ -8,23 +8,34 @@ import { LoadMoreButton } from './load-more-button'
 import { ResultCount } from './result-count'
 import type { Game } from '@/types/games'
 import type { PaginationMeta } from '@/types/pagination'
+import { NoGamesAvailable } from './no-games-available'
 
 interface GameSearchProps {
   initialGames: Game[]
   initialMeta: PaginationMeta
 }
 
+type ListState = 'no-games' | 'no-results' | 'has-results'
+
+function getListState(totalLoaded: number, filteredLength: number): ListState {
+  if (totalLoaded === 0) return 'no-games'
+  if (filteredLength === 0) return 'no-results'
+  return 'has-results'
+}
+
 export function GameSearch({ initialGames, initialMeta }: Readonly<GameSearchProps>) {
   const { query, setQuery, filtered, totalLoaded, hasMore, remaining, isPending, loadMore } =
     useGameList({ initialGames, initialMeta })
+
+  const listState = getListState(totalLoaded, filtered.length)
 
   return (
     <div>
       <SearchField value={query} onChange={setQuery} />
 
-      {filtered.length === 0 ? (
-        <EmptyState query={query} />
-      ) : (
+      {listState === 'no-games' && <NoGamesAvailable />}
+      {listState === 'no-results' && <EmptyState query={query} />}
+      {listState === 'has-results' && (
         <>
           <GameGrid games={filtered} />
           <ResultCount count={filtered.length} totalLoaded={totalLoaded} query={query} />
