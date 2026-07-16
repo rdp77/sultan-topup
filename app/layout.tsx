@@ -44,9 +44,8 @@ export const metadata: Metadata = {
       'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
     images: ['https://sultantopup.com/og-image.png'],
   },
-  manifest: '/manifest.json',
   other: {
-    'google-site-verification': 'google-site-verification=your-google-site-verification-code',
+    'google-site-verification': 'lbpTP4D_FiTv4dkhdzcauw-Fc_CrULWQa0TThtSiH1Q',
   },
 }
 
