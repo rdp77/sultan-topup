@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    domains: ['api.sultan-topup.com', 'placehold.co'],
   },
 }
 

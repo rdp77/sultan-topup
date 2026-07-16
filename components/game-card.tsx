@@ -10,7 +10,7 @@ export function GameCard({ game }: Readonly<{ game: Game }>) {
     >
       <div className="relative aspect-3/4 w-full overflow-hidden bg-background">
         <Image
-          src={game.image || '/placeholder.svg'}
+          src={game.cover || process.env.NEXT_PUBLIC_PLACEHOLDER_IMAGE || ''}
           alt={game.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

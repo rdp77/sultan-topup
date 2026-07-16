@@ -20,7 +20,7 @@ export default async function GamePage({
 
   const placeholder = {
     id: 0,
-    cover: '/games/mobile-legends.png',
+    cover: process.env.NEXT_PUBLIC_PLACEHOLDER_IMAGE || '',
     name: 'Game not found',
     slug: 'not-found',
     publisher: 'Unknown',
