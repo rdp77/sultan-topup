@@ -43,6 +43,7 @@ export const metadata: Metadata = {
         url: 'https://sultantopup.com/og-image.png',
         width: 1200,
         height: 630,
+        alt: 'Sultan Top Up — Top Up Game Cepat & Aman',
       },
     ],
     locale: 'id_ID',
@@ -50,10 +51,19 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@sultantopupofficial',
+    creator: '@sultantopupofficial',
     title: 'Sultan Top Up — Top Up Game Cepat & Aman',
     description:
       'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
-    images: ['https://sultantopup.com/og-image.png'],
+    images: [
+      {
+        url: 'https://sultantopup.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Sultan Top Up — Top Up Game Cepat & Aman',
+      },
+    ],
   },
   verification: {
     google: 'LIovFvCv7ZsFCgRA_RCpxPfs5TqUAaipyj7jCt5P_so',
