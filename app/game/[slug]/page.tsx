@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ShieldCheck, Zap } from 'lucide-react'
 import { CheckoutForm } from '@/components/checkout-form'
 import { games, getGame } from '@/lib/data'
+import { GameService } from '@/services/game.service'
 
 export function generateStaticParams() {
   return games.map((g) => ({ slug: g.slug }))
@@ -14,15 +15,26 @@ export default async function GamePage({
   params: Promise<{ slug: string }>
 }>) {
   const { slug } = await params
-  const game = getGame(slug)
+  const { data: game } = await GameService.detail(slug).catch(() => ({ data: null }))
   if (!game) notFound()
+
+  const placeholder = {
+    id: 0,
+    cover: '/games/mobile-legends.png',
+    name: 'Game not found',
+    slug: 'not-found',
+    publisher: 'Unknown',
+    products: [],
+    created_at: '',
+    updated_at: '',
+  }
 
   return (
     <main id="main" className="flex-1">
       {/* Banner */}
       <div className="relative h-40 w-full overflow-hidden md:h-56">
         <Image
-          src={game.image || '/placeholder.svg'}
+          src={game.cover || placeholder.cover}
           alt=""
           fill
           priority
@@ -39,7 +51,7 @@ export default async function GamePage({
         <div className="-mt-12 rounded-2xl border border-border bg-background/90 p-4 backdrop-blur supports-backdrop-filter:bg-background/70 md:-mt-16 md:flex md:items-end md:gap-5 md:p-5">
           <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-border shadow-[0_8px_24px_-6px_rgba(99,102,241,0.25)] md:size-24">
             <Image
-              src={game.image || '/placeholder.svg'}
+              src={game.cover || placeholder.cover}
               alt={game.name}
               fill
               sizes="96px"
