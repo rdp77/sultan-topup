@@ -73,16 +73,18 @@ export function BannerSlider() {
               className="hidden object-cover sm:block"
               priority={idx === 0}
             />
-            <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
             {(s.label || s.sub) && (
-              <div className="absolute bottom-0 left-0 p-4 md:p-8">
-                {s.label && (
-                  <p className="text-lg font-bold text-foreground md:text-2xl">{s.label}</p>
-                )}
-                {s.sub && (
-                  <p className="mt-1 text-sm text-muted-foreground md:text-base">{s.sub}</p>
-                )}
-              </div>
+              <>
+                <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 p-4 md:p-8">
+                  {s.label && (
+                    <p className="text-lg font-bold text-foreground md:text-2xl">{s.label}</p>
+                  )}
+                  {s.sub && (
+                    <p className="mt-1 text-sm text-muted-foreground md:text-base">{s.sub}</p>
+                  )}
+                </div>
+              </>
             )}
           </div>
         ))}
