@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ShieldCheck, Zap } from 'lucide-react'
-import { CheckoutForm } from '@/components/checkout-form'
+// import { CheckoutForm } from '@/components/checkout-form'
 import { GameService } from '@/services/game.service'
+import { CheckoutForm } from '@/components/checkout-form'
 
 export default async function GamePage({
   params,
