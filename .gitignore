@@ -41,3 +41,5 @@ next-env.d.ts
 ### Vercel ###
 
 # End of https://www.toptal.com/developers/gitignore/api/nextjs,vercel
+# Sentry Config File
+.env.sentry-build-plugin
