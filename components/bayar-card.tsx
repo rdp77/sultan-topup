@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Copy, Check, Clock, Loader2 } from 'lucide-react'
+import posthog from 'posthog-js'
 import { PaymentLogo } from '@/components/payment-logo'
 import { formatRupiah } from '@/lib/data'
 
@@ -42,7 +43,15 @@ function QrPlaceholder({ amount }: { amount: number }) {
   )
 }
 
-function CopyButton({ text, label = 'Salin' }: { text: string; label?: string }) {
+function CopyButton({
+  text,
+  label = 'Salin',
+  onCopy,
+}: {
+  text: string
+  label?: string
+  onCopy?: () => void
+}) {
   const [copied, setCopied] = useState(false)
   return (
     <button
@@ -51,6 +60,7 @@ function CopyButton({ text, label = 'Salin' }: { text: string; label?: string })
         if (copied) return
         navigator.clipboard?.writeText(text)
         setCopied(true)
+        onCopy?.()
         setTimeout(() => setCopied(false), 2000)
       }}
       className="press inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card"
@@ -75,7 +85,11 @@ function VaNumber({ number, bank }: { number: string; bank: string }) {
     <div className="flex flex-col gap-2 rounded-lg bg-background p-4 text-left">
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs text-muted-foreground">Nomor Virtual Account</span>
-        <CopyButton text={number} label="Salin VA" />
+        <CopyButton
+          text={number}
+          label="Salin VA"
+          onCopy={() => posthog.capture('va_number_copied', { bank })}
+        />
       </div>
       <span className="font-mono text-lg font-semibold tracking-wide text-foreground">
         {number}
@@ -133,6 +147,22 @@ export function BayarCard() {
   const dummyVa = isVA
     ? `${paymentId === 'bca' ? '7521' : paymentId === 'bni' ? '9882' : paymentId === 'bri' ? '1500' : '8866'}-${Date.now().toString().slice(-8)}`
     : ''
+
+  // Capture payment page view on mount
+  useEffect(() => {
+    posthog.capture('payment_page_viewed', {
+      game,
+      product,
+      price,
+      fee,
+      total: price + fee,
+      payment_method_id: paymentId,
+      payment_method_name: methodName,
+      invoice_id: invoice,
+      payment_type: isQRIS ? 'qris' : isVA ? 'va' : 'other',
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Simulate auto-redirect to result after 8s
   useEffect(() => {
@@ -230,7 +260,13 @@ export function BayarCard() {
         <span>
           Invoice: <span className="font-mono">{invoice}</span>
         </span>
-        <CopyButton text={invoice} label="Salin" />
+        <CopyButton
+          text={invoice}
+          label="Salin"
+          onCopy={() =>
+            posthog.capture('invoice_copied', { invoice_id: invoice, source: 'payment_page' })
+          }
+        />
       </div>
     </div>
   )

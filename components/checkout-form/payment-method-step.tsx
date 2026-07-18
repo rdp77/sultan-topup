@@ -1,4 +1,7 @@
+'use client'
+
 import { Check } from 'lucide-react'
+import posthog from 'posthog-js'
 import { cn } from '@/lib/utils'
 import { PaymentLogo } from '@/components/payment-logo'
 import { calcFee, formatRupiah, paymentGroups, type PaymentMethod } from '@/lib/data'
@@ -35,7 +38,15 @@ export function PaymentMethodStep({
                   <button
                     key={m.id}
                     type="button"
-                    onClick={() => onSelect(m)}
+                    onClick={() => {
+                      onSelect(m)
+                      posthog.capture('payment_method_selected', {
+                        method_id: m.id,
+                        method_name: m.name,
+                        method_group: group.group,
+                        fee: selectedDenom ? calcFee(m, selectedDenom.price) : null,
+                      })
+                    }}
                     className={cn(
                       'flex items-center justify-between gap-2 rounded-xl border px-3 py-3 text-left transition-colors duration-200',
                       isSelected

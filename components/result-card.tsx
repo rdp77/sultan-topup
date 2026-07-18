@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   CheckCircle2,
   XCircle,
@@ -13,6 +13,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react'
+import posthog from 'posthog-js'
 import { cn } from '@/lib/utils'
 import { formatRupiah, type OrderStatus } from '@/lib/data'
 
@@ -49,6 +50,7 @@ const statusConfig: Record<
 export function ResultCard() {
   const params = useSearchParams()
   const [status, setStatus] = useState<OrderStatus>('processing')
+  const capturedRef = useRef(false)
 
   const statusParam = params.get('status') as OrderStatus | null
   const game = params.get('game') ?? 'Mobile Legends'
@@ -69,6 +71,23 @@ export function ResultCard() {
     const t = setTimeout(() => setStatus('success'), 2500)
     return () => clearTimeout(t)
   }, [statusParam])
+
+  // Capture order result viewed once the final status is known
+  useEffect(() => {
+    if (capturedRef.current || status === 'processing') return
+    capturedRef.current = true
+    posthog.capture('order_result_viewed', {
+      order_status: status,
+      game,
+      product,
+      price,
+      fee,
+      total: price + fee,
+      payment_method: method,
+      invoice_id: invoice,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status])
 
   const config = statusConfig[status]
   const Icon = config.icon

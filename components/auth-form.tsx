@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import posthog from 'posthog-js'
 
 export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
   const router = useRouter()
@@ -15,6 +16,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
     e.preventDefault()
     if (loading) return
     setLoading(true)
+    posthog.capture(isLogin ? 'user_logged_in' : 'user_registered')
     setTimeout(() => router.push('/dashboard'), 900)
   }
 

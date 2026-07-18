@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import posthog from 'posthog-js'
 import { calcFee, type PaymentMethod } from '@/lib/data'
 import { getGameFormConfig } from '@/lib/game-form-config'
 import type { DenominationView } from '@/lib/product-utils'
@@ -75,6 +76,20 @@ export function useCheckoutForm({ gameName, gameSlug }: UseCheckoutFormParams) {
     setTouched(true)
     if (!canClick || submitting || !selectedDenom || !selectedMethod) return
     setSubmitting(true)
+    const invoiceId = `INV-${Date.now().toString(36).toUpperCase()}`
+    posthog.capture('checkout_submitted', {
+      game_name: gameName,
+      game_slug: gameSlug,
+      product_amount: selectedDenom.amount,
+      product_price: selectedDenom.price,
+      quantity,
+      sub_price: subPrice,
+      fee,
+      total: subPrice + fee,
+      payment_method_id: selectedMethod.id,
+      payment_method_name: selectedMethod.name,
+      invoice_id: invoiceId,
+    })
     const params = new URLSearchParams({
       game: gameName,
       product: `${selectedDenom.amount} × ${quantity}`,
@@ -83,7 +98,7 @@ export function useCheckoutForm({ gameName, gameSlug }: UseCheckoutFormParams) {
       method: selectedMethod.name,
       uid: formConfig.needsZone ? `${userId} (${zoneId})` : userId,
       payment: selectedMethod.id,
-      invoice: `INV-${Date.now().toString(36).toUpperCase()}`,
+      invoice: invoiceId,
     })
     setTimeout(() => router.push(`/bayar?${params.toString()}`), 600)
   }

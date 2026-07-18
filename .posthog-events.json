@@ -1,0 +1,57 @@
+[
+  {
+    "event_name": "game_page_viewed",
+    "event_description": "User views a game's top-up page, marking the start of the purchase funnel.",
+    "file": "app/game/[slug]/page.tsx"
+  },
+  {
+    "event_name": "product_selected",
+    "event_description": "User selects a denomination (e.g., 514 Diamonds) in the checkout form.",
+    "file": "components/checkout-form/product-step.tsx"
+  },
+  {
+    "event_name": "payment_method_selected",
+    "event_description": "User selects a payment method (QRIS, virtual account, e-wallet) during checkout.",
+    "file": "components/checkout-form/payment-method-step.tsx"
+  },
+  {
+    "event_name": "checkout_submitted",
+    "event_description": "User clicks 'Lanjutkan Pembayaran' and checkout form is submitted successfully.",
+    "file": "hooks/use-checkout-form.ts"
+  },
+  {
+    "event_name": "payment_page_viewed",
+    "event_description": "User lands on the payment page and sees payment instructions (QRIS or VA).",
+    "file": "components/bayar-card.tsx"
+  },
+  {
+    "event_name": "va_number_copied",
+    "event_description": "User copies the virtual account number, indicating active payment intent.",
+    "file": "components/bayar-card.tsx"
+  },
+  {
+    "event_name": "invoice_copied",
+    "event_description": "User copies the invoice number from the payment or result page.",
+    "file": "components/bayar-card.tsx"
+  },
+  {
+    "event_name": "order_result_viewed",
+    "event_description": "User views the order result page showing success, processing, failed, or expired status.",
+    "file": "components/result-card.tsx"
+  },
+  {
+    "event_name": "user_registered",
+    "event_description": "User submits the registration form to create a new account.",
+    "file": "components/auth-form.tsx"
+  },
+  {
+    "event_name": "user_logged_in",
+    "event_description": "User submits the login form to sign in to their account.",
+    "file": "components/auth-form.tsx"
+  },
+  {
+    "event_name": "order_lookup_performed",
+    "event_description": "User submits the order tracking form to check an order's status.",
+    "file": "components/order-lookup.tsx"
+  }
+]

@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "posthog-js": "^1.257.0",
+    "posthog-node": "^4.12.0",
     "@next/third-parties": "^16.2.10",
     "@sentry/nextjs": "^10.66.0",
     "class-variance-authority": "^0.7.1",
@@ -28,6 +30,7 @@
     "validator": "^13.15.35"
   },
   "devDependencies": {
+    "@posthog/wizard": "^2.45.0",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",

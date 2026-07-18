@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Loader2, Search, SearchX } from 'lucide-react'
+import posthog from 'posthog-js'
 import { OrderStatusBadge } from '@/components/order-status-badge'
 import { formatRupiah, mockOrders, type Order } from '@/lib/data'
 
@@ -18,6 +19,10 @@ export function OrderLookup() {
     setResult(null)
     setTimeout(() => {
       const found = mockOrders.find((o) => o.invoice.toLowerCase() === invoice.trim().toLowerCase())
+      posthog.capture('order_lookup_performed', {
+        found: !!found,
+        order_status: found?.status ?? null,
+      })
       setResult(found ?? 'not-found')
       setLoading(false)
     }, 800)

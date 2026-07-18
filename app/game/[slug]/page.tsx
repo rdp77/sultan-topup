@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ShieldCheck, Zap } from 'lucide-react'
-// import { CheckoutForm } from '@/components/checkout-form'
 import { GameService } from '@/services/game.service'
 import { CheckoutForm } from '@/components/checkout-form'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 export default async function GamePage({
   params,
@@ -13,6 +13,19 @@ export default async function GamePage({
   const { slug } = await params
   const { data: game } = await GameService.detail(slug).catch(() => ({ data: null }))
   if (!game) notFound()
+
+  const posthog = getPostHogClient()
+  posthog.capture({
+    distinctId: 'anonymous',
+    event: 'game_page_viewed',
+    properties: {
+      game_slug: slug,
+      game_name: game.name,
+      game_publisher: game.publisher,
+      product_count: game.products.length,
+    },
+  })
+  await posthog.flush()
 
   const placeholder = {
     id: 0,

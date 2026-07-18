@@ -1,6 +1,7 @@
 'use client'
 
 import { Check } from 'lucide-react'
+import posthog from 'posthog-js'
 import { cn } from '@/lib/utils'
 import { formatRupiah } from '@/lib/data'
 import { SectionHeading } from './section-heading'
@@ -29,7 +30,15 @@ export function ProductStep({
             <button
               key={d.id}
               type="button"
-              onClick={() => onSelect(d)}
+              onClick={() => {
+                onSelect(d)
+                posthog.capture('product_selected', {
+                  product_id: d.id,
+                  product_amount: d.amount,
+                  product_price: d.price,
+                  product_badge: d.badge ?? null,
+                })
+              }}
               className={cn(
                 'relative flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-colors duration-200',
                 isSelected
