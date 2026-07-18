@@ -5,6 +5,7 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import './globals.css'
 import { FloatingWhatsApp } from '@/components/floating-whatsapp'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({
@@ -140,6 +141,7 @@ export default function RootLayout({
           <Footer />
         </div>
       </body>
+      <GoogleAnalytics gaId="G-EDHJ84L47B" />
     </html>
   )
 }
