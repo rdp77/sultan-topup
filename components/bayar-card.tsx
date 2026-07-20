@@ -149,7 +149,9 @@ function PaymentTimer({ initialSeconds = PAYMENT_TIMEOUT_SECONDS }) {
   return (
     <div className="flex items-center gap-3 text-xs">
       <Clock className="size-3.5 text-warning" aria-hidden="true" />
-      <span className="tabular-nums">{minutes}:{String(seconds).padStart(2, '0')}</span>
+      <span className="tabular-nums">
+        {minutes}:{String(seconds).padStart(2, '0')}
+      </span>
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
         <div
           className="h-full rounded-full bg-warning transition-all duration-1000 ease-linear"
@@ -172,10 +174,7 @@ function generateFallbackVaNumber(bankId: string): string {
   return `${prefix}-${suffix}`
 }
 
-function getVaNumberFromPaymentData(
-  paymentData: CheckoutResult | null,
-  paymentId: string,
-): string {
+function getVaNumberFromPaymentData(paymentData: CheckoutResult | null, paymentId: string): string {
   if (!paymentData) {
     return generateFallbackVaNumber(paymentId)
   }
@@ -227,15 +226,9 @@ export function BayarCard() {
 
   const qrAmount = paymentData?.total ?? total
 
-  const isQris = useMemo(
-    () => isPaymentQris(paymentData, paymentType),
-    [paymentData, paymentType],
-  )
+  const isQris = useMemo(() => isPaymentQris(paymentData, paymentType), [paymentData, paymentType])
 
-  const isVa = useMemo(
-    () => isPaymentVa(paymentData, paymentId),
-    [paymentData, paymentId],
-  )
+  const isVa = useMemo(() => isPaymentVa(paymentData, paymentId), [paymentData, paymentId])
 
   const vaNumber = useMemo(
     () => getVaNumberFromPaymentData(paymentData, paymentId),
@@ -318,18 +311,31 @@ export function BayarCard() {
 
       {/* Payment display */}
       <div className="mt-6 w-full rounded-xl bg-card p-6">
-        {isQris && <QrPlaceholder amount={qrAmount} qrCode={paymentData?.paymentData.type === 'qris' ? (paymentData.paymentData as QRISPaymentData).qrCode : undefined} />}
+        {isQris && (
+          <QrPlaceholder
+            amount={qrAmount}
+            qrCode={
+              paymentData?.paymentData.type === 'qris'
+                ? (paymentData.paymentData as QRISPaymentData).qrCode
+                : undefined
+            }
+          />
+        )}
 
         {isVa && (
           <div className="space-y-4">
             <div className="flex items-center gap-3 rounded-lg bg-background/50 px-4 py-2.5">
               <PaymentLogo id={paymentId} className="size-6" />
-              <span className="text-sm font-semibold">Virtual Account {paymentId.toUpperCase()}</span>
+              <span className="text-sm font-semibold">
+                Virtual Account {paymentId.toUpperCase()}
+              </span>
             </div>
             <VaNumberDisplay number={vaNumber} bank={paymentId} />
             <div className="flex flex-col gap-2 rounded-lg bg-muted/30 p-3 text-left text-xs text-muted-foreground">
               <p>
-                <span className="font-semibold text-foreground">Cara bayar:</span> Buka aplikasi Mobile Banking atau ATM. Pilih menu Transfer &gt; Virtual Account. Masukkan nomor di atas, lalu konfirmasi jumlah.
+                <span className="font-semibold text-foreground">Cara bayar:</span> Buka aplikasi
+                Mobile Banking atau ATM. Pilih menu Transfer &gt; Virtual Account. Masukkan nomor di
+                atas, lalu konfirmasi jumlah.
               </p>
               <p>Biaya transfer ditanggung pembeli. Nomor VA hanya berlaku untuk 1 pesanan ini.</p>
             </div>
@@ -380,11 +386,15 @@ export function BayarCard() {
 
       {/* Invoice */}
       <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-        <span>Invoice: <span className="font-mono">{invoice}</span></span>
+        <span>
+          Invoice: <span className="font-mono">{invoice}</span>
+        </span>
         <CopyButton
           text={invoice}
           label="Salin"
-          onCopy={() => posthog.capture('invoice_copied', { invoice_id: invoice, source: 'payment_page' })}
+          onCopy={() =>
+            posthog.capture('invoice_copied', { invoice_id: invoice, source: 'payment_page' })
+          }
         />
       </div>
     </div>
