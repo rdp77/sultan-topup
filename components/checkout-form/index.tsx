@@ -78,6 +78,8 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         onTurnstileExpireOrError={() => form.setTurnstileToken(null)}
         turnstileToken={form.turnstileToken}
         onSubmit={form.handleSubmit}
+        checkoutLoading={form.checkoutLoading}
+        checkoutError={form.checkoutError}
       />
     </div>
   )

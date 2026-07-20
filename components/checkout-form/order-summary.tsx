@@ -20,6 +20,8 @@ interface OrderSummaryProps {
   onTurnstileExpireOrError: () => void
   turnstileToken: string | null
   onSubmit: () => void
+  checkoutLoading?: boolean
+  checkoutError?: string | null
 }
 
 export function OrderSummary({
@@ -36,6 +38,8 @@ export function OrderSummary({
   onTurnstileExpireOrError,
   turnstileToken,
   onSubmit,
+  checkoutLoading = false,
+  checkoutError = null,
 }: Readonly<OrderSummaryProps>) {
   return (
     <section className="rounded-xl bg-card p-4 md:p-6">
@@ -81,13 +85,13 @@ export function OrderSummary({
       <button
         type="button"
         onClick={onSubmit}
-        disabled={submitting || !canClick}
+        disabled={submitting || checkoutLoading || !canClick}
         className={cn(
           'mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors duration-200',
-          canClick && !submitting ? 'press hover:bg-primary/90' : 'opacity-60',
+          canClick && !submitting && !checkoutLoading ? 'press hover:bg-primary/90' : 'opacity-60',
         )}
       >
-        {submitting ? (
+        {submitting || checkoutLoading ? (
           <>
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
             Memproses...
@@ -96,9 +100,14 @@ export function OrderSummary({
           'Lanjutkan Pembayaran'
         )}
       </button>
-      {touched && !allValid && (
+      {touched && !allValid && !checkoutLoading && (
         <div className="mt-2 rounded-lg bg-destructive/10 p-3 text-center text-xs text-destructive">
           {submitError}
+        </div>
+      )}
+      {checkoutError && (
+        <div className="mt-2 rounded-lg bg-destructive/10 p-3 text-center text-xs text-destructive">
+          {checkoutError}
         </div>
       )}
     </section>
