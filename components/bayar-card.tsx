@@ -6,23 +6,35 @@ import { Copy, Check, Clock, Loader2 } from 'lucide-react'
 import posthog from 'posthog-js'
 import { PaymentLogo } from '@/components/payment-logo'
 import { formatRupiah } from '@/lib/data'
+import { CheckoutService } from '@/services/checkout.service'
+import type { CheckoutResult, QRISPaymentData, VAPaymentData } from '@/types/checkout'
 
-function QrPlaceholder({ amount }: { amount: number }) {
-  // Dummy QR code: a centred branded square. In production replace with a real QR
-  // image generated server-side or via QRIS API.
+function QrPlaceholder({ amount, qrCode }: { amount: number; qrCode?: string }) {
+  // If real QR code available, display it
+  if (qrCode) {
+    return (
+      <div className="mx-auto flex size-48 items-center justify-center overflow-hidden rounded-xl border-2 border-border bg-white p-4">
+        <img
+          src={qrCode}
+          alt={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
+          className="size-full object-contain"
+        />
+      </div>
+    )
+  }
+
+  // Dummy QR code placeholder
   return (
     <div
       className="mx-auto flex size-48 items-center justify-center rounded-xl border-2 border-border bg-white p-4"
       aria-label={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
     >
       <svg viewBox="0 0 160 160" className="size-full" aria-hidden="true">
-        {/* Dummy QR pattern — visual placeholder only */}
         <rect width="160" height="160" fill="white" />
         {Array.from({ length: 7 }).map((_, r) =>
           Array.from({ length: 7 }).map((_, c) => {
             const x = 12 + c * 22
             const y = 12 + r * 22
-            // Simple deterministic pattern
             const fill = (r * 7 + c) % 3 === 0 ? '#6366f1' : (r + c) % 4 === 0 ? '#6366f1' : 'white'
             if (fill === 'white') return null
             return (
@@ -103,7 +115,7 @@ function VaNumber({ number, bank }: { number: string; bank: string }) {
 }
 
 function TimerBar() {
-  const [left, setLeft] = useState(600) // 10 min countdown
+  const [left, setLeft] = useState(600)
   useEffect(() => {
     const i = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000)
     return () => clearInterval(i)
@@ -131,6 +143,8 @@ export function BayarCard() {
   const router = useRouter()
   const params = useSearchParams()
   const [simulating, setSimulating] = useState(false)
+  const [paymentData, setPaymentData] = useState<CheckoutResult | null>(null)
+  const [loadingPaymentData, setLoadingPaymentData] = useState(false)
 
   const game = params.get('game') ?? 'Mobile Legends'
   const product = params.get('product') ?? '514 Diamonds'
@@ -142,11 +156,52 @@ export function BayarCard() {
   const uid = params.get('uid') ?? '12345678'
   const total = price + fee
 
-  const isQRIS = paymentId === 'qris'
-  const isVA = ['bca', 'bni', 'bri', 'mandiri'].includes(paymentId)
-  const dummyVa = isVA
-    ? `${paymentId === 'bca' ? '7521' : paymentId === 'bni' ? '9882' : paymentId === 'bri' ? '1500' : '8866'}-${Date.now().toString().slice(-8)}`
+  // Determine payment type from API data or URL params
+  const paymentType = params.get('paymentType') ?? paymentData?.paymentType ?? 'qris'
+  const isQRIS = paymentType === 'qris' || paymentData?.paymentData.type === 'qris'
+  const isVA = ['bca', 'bni', 'bri', 'mandiri'].includes(paymentId) || paymentData?.paymentData.type === 'va'
+
+  // Get VA number from API or generate fallback
+  const vaNumber = isVA
+    ? paymentData?.paymentData.type === 'va'
+      ? (paymentData.paymentData as VAPaymentData).vaNumber
+      : `${paymentId === 'bca' ? '7521' : paymentId === 'bni' ? '9882' : paymentId === 'bri' ? '1500' : '8866'}-${Date.now().toString().slice(-8)}`
     : ''
+
+  // Get QR amount from API or use URL params
+  const qrAmount = paymentData?.total ?? total
+
+  // Fetch payment data from sessionStorage or API
+  useEffect(() => {
+    const orderId = params.get('orderId')
+    if (!orderId) return
+
+    setLoadingPaymentData(true)
+
+    // Try sessionStorage first (instant)
+    const stored = sessionStorage.getItem(`checkout:result:${orderId}`)
+    if (stored) {
+      try {
+        setPaymentData(JSON.parse(stored))
+      } catch {
+        // Invalid JSON, fetch from API
+      }
+    }
+
+    // Always try to fetch fresh data from API
+    CheckoutService.getStatus(orderId)
+      .then((response) => {
+        if (response.success && response.data) {
+          setPaymentData(response.data)
+          // Update sessionStorage for future use
+          sessionStorage.setItem(`checkout:result:${orderId}`, JSON.stringify(response.data))
+        }
+      })
+      .catch(() => {
+        // Silently fail, use sessionStorage or URL params fallback
+      })
+      .finally(() => setLoadingPaymentData(false))
+  }, [])
 
   // Capture payment page view on mount
   useEffect(() => {
@@ -198,7 +253,16 @@ export function BayarCard() {
 
       <div className="mt-6 w-full rounded-xl bg-card p-6">
         {/* QR or VA display */}
-        {isQRIS && <QrPlaceholder amount={total} />}
+        {isQRIS && (
+          <QrPlaceholder
+            amount={qrAmount}
+            qrCode={
+              paymentData?.paymentData.type === 'qris'
+                ? (paymentData.paymentData as QRISPaymentData).qrCode
+                : undefined
+            }
+          />
+        )}
 
         {isVA && (
           <div className="space-y-4">
@@ -208,7 +272,7 @@ export function BayarCard() {
                 Virtual Account {paymentId.toUpperCase()}
               </span>
             </div>
-            <VaNumber number={dummyVa} bank={paymentId} />
+            <VaNumber number={vaNumber} bank={paymentId} />
             <div className="flex flex-col gap-2 rounded-lg bg-muted/30 p-3 text-left text-xs text-muted-foreground">
               <p>
                 <span className="font-semibold text-foreground">Cara bayar:</span> Buka aplikasi
@@ -255,6 +319,14 @@ export function BayarCard() {
           <Loader2 className="mx-auto mt-2 size-5 animate-spin text-primary" aria-hidden="true" />
         )}
       </div>
+
+      {/* Loading indicator for payment data */}
+      {loadingPaymentData && (
+        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+          <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+          Memuat data pembayaran...
+        </div>
+      )}
 
       <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <span>
