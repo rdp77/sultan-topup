@@ -6,15 +6,18 @@ import posthog from 'posthog-js'
 import { calcFee, type PaymentMethod } from '@/lib/data'
 import { getGameFormConfig } from '@/lib/game-form-config'
 import type { DenominationView } from '@/lib/product-utils'
+import { CheckoutService } from '@/services/checkout.service'
+import type { CheckoutResult } from '@/types/checkout'
 import { usePlayerIdValidation } from './use-player-id-validation'
 import { useEmailValidation } from './use-email-validation'
 
 interface UseCheckoutFormParams {
+  gameId: number
   gameName: string
   gameSlug: string
 }
 
-export function useCheckoutForm({ gameName, gameSlug }: UseCheckoutFormParams) {
+export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormParams) {
   const router = useRouter()
   const formConfig = getGameFormConfig(gameSlug)
 
@@ -28,6 +31,8 @@ export function useCheckoutForm({ gameName, gameSlug }: UseCheckoutFormParams) {
   const [submitting, setSubmitting] = useState(false)
   const [touched, setTouched] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   const playerId = usePlayerIdValidation()
   const emailValidation = useEmailValidation(email)
@@ -75,32 +80,92 @@ export function useCheckoutForm({ gameName, gameSlug }: UseCheckoutFormParams) {
   function handleSubmit() {
     setTouched(true)
     if (!canClick || submitting || !selectedDenom || !selectedMethod) return
+
+    // Check for pending submission to prevent duplicate
+    const pendingKey = sessionStorage.getItem('checkout:pending:key')
+    if (pendingKey) {
+      setCheckoutError('Pesanan masih diproses. Tunggu sebentar atau cek status pesanan.')
+      return
+    }
+
     setSubmitting(true)
-    const invoiceId = `INV-${Date.now().toString(36).toUpperCase()}`
-    posthog.capture('checkout_submitted', {
-      game_name: gameName,
-      game_slug: gameSlug,
-      product_amount: selectedDenom.amount,
-      product_price: selectedDenom.price,
+    setCheckoutLoading(true)
+    setCheckoutError(null)
+
+    // Generate idempotency key
+    const idempotencyKey = crypto.randomUUID()
+
+    // Store pending key with timestamp
+    sessionStorage.setItem('checkout:pending:key', idempotencyKey)
+    sessionStorage.setItem(`checkout:pending:${idempotencyKey}`, Date.now().toString())
+
+    // Build request
+    const request = {
+      userId: userId.trim(),
+      zoneId: zoneId.trim(),
+      gameId,
+      productId: selectedDenom.id,
+      sku: selectedDenom.sku,
       quantity,
-      sub_price: subPrice,
-      fee,
-      total: subPrice + fee,
-      payment_method_id: selectedMethod.id,
-      payment_method_name: selectedMethod.name,
-      invoice_id: invoiceId,
-    })
-    const params = new URLSearchParams({
-      game: gameName,
-      product: `${selectedDenom.amount} × ${quantity}`,
-      price: String(subPrice),
-      fee: String(fee),
-      method: selectedMethod.name,
-      uid: formConfig.needsZone ? `${userId} (${zoneId})` : userId,
-      payment: selectedMethod.id,
-      invoice: invoiceId,
-    })
-    setTimeout(() => router.push(`/bayar?${params.toString()}`), 600)
+      email: email.trim(),
+      whatsapp: waClean,
+      paymentMethod: selectedMethod.id,
+    }
+
+    CheckoutService.create(request, idempotencyKey)
+      .then((response) => {
+        if (response.success && response.data) {
+          // Store result for /bayar page
+          const result = response.data as CheckoutResult
+          sessionStorage.setItem(`checkout:result:${result.orderId}`, JSON.stringify(result))
+
+          // Track event
+          posthog.capture('checkout_submitted', {
+            game_name: gameName,
+            game_slug: gameSlug,
+            product_amount: selectedDenom.amount,
+            product_price: selectedDenom.price,
+            quantity,
+            sub_price: subPrice,
+            fee,
+            total: subPrice + fee,
+            payment_method_id: selectedMethod.id,
+            payment_method_name: selectedMethod.name,
+            invoice_id: result.invoice,
+            order_id: result.orderId,
+          })
+
+          // Clear pending state
+          sessionStorage.removeItem('checkout:pending:key')
+
+          // Redirect to /bayar with order data
+          const params = new URLSearchParams({
+            orderId: result.orderId,
+            invoice: result.invoice,
+            game: gameName,
+            product: `${selectedDenom.amount} × ${quantity}`,
+            price: String(result.amount),
+            fee: String(result.fee),
+            method: selectedMethod.name,
+            uid: formConfig.needsZone ? `${userId} (${zoneId})` : userId,
+            payment: selectedMethod.id,
+            paymentType: result.paymentType,
+          })
+          router.push(`/bayar?${params.toString()}`)
+        } else {
+          setCheckoutError(response.error ?? 'Terjadi kesalahan. Coba lagi.')
+          setSubmitting(false)
+          setCheckoutLoading(false)
+          sessionStorage.removeItem('checkout:pending:key')
+        }
+      })
+      .catch((error) => {
+        console.error('Checkout error:', error)
+        setCheckoutError('Gagal menghubungi server. Coba lagi.')
+        setSubmitting(false)
+        setCheckoutLoading(false)
+        sessionStorage.removeItem('checkout:pending:key')
+      })
   }
 
   return {
@@ -133,5 +198,8 @@ export function useCheckoutForm({ gameName, gameSlug }: UseCheckoutFormParams) {
     allValid,
     getSubmitError,
     handleSubmit,
+    checkoutLoading,
+    checkoutError,
+    setCheckoutError,
   }
 }

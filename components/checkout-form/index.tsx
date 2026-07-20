@@ -14,7 +14,7 @@ import type { GameDetail } from '@/types/games'
 
 export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
   const denominations = useMemo(() => toDenominations(game.products), [game.products])
-  const form = useCheckoutForm({ gameName: game.name, gameSlug: game.slug })
+  const form = useCheckoutForm({ gameId: game.id, gameName: game.name, gameSlug: game.slug })
 
   if (denominations.length === 0) {
     return <NoProductsAvailable />
