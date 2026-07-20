@@ -2,6 +2,7 @@ import type { GameProduct } from '@/types/game-products'
 
 export interface DenominationView {
   id: number
+  sku: string
   amount: string
   price: number
   badge: 'popular' | 'best_value' | null
@@ -22,6 +23,7 @@ export function toDenominations(products: GameProduct[]): DenominationView[] {
 
       return {
         id: p.id,
+        sku: String(p.id),
         amount: p.name,
         price: Math.round(Number.parseFloat(p.sell_price)),
         badge,

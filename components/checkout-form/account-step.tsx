@@ -9,6 +9,8 @@ import type { GameFormConfig } from '@/lib/game-form-config'
 interface AccountStepProps {
   step: number
   formConfig: GameFormConfig
+  gameId: number
+  productSku: string
   userId: string
   onUserIdChange: (value: string) => void
   zoneId: string
@@ -20,6 +22,8 @@ interface AccountStepProps {
 export function AccountStep({
   step,
   formConfig,
+  gameId,
+  productSku,
   userId,
   onUserIdChange,
   zoneId,
@@ -86,7 +90,7 @@ export function AccountStep({
           <div className="shrink-0">
             <button
               type="button"
-              onClick={() => playerId.validate(userId)}
+              onClick={() => playerId.validate({ userId, zoneId, gameId, sku: productSku })}
               disabled={playerId.state === 'loading' || userId.trim().length < 3}
               className="press inline-flex h-10.5 shrink-0 items-center gap-1.5 rounded-lg border border-border px-4 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
             >

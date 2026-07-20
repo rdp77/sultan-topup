@@ -25,6 +25,9 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
       <AccountStep
         step={1}
         formConfig={form.formConfig}
+        gameId={game.id}
+        productSku={form.selectedDenom?.sku ?? ''}
+        // productSku={''}
         userId={form.userId}
         onUserIdChange={form.handleUserIdChange}
         zoneId={form.zoneId}
