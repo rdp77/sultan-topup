@@ -10,6 +10,7 @@ import { CheckoutService } from '@/services/checkout.service'
 import type { CheckoutResult } from '@/types/checkout'
 import { usePlayerIdValidation } from './use-player-id-validation'
 import { useEmailValidation } from './use-email-validation'
+import { usePaymentMethods } from './use-payment-methods'
 
 interface UseCheckoutFormParams {
   gameId: number
@@ -36,6 +37,12 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
 
   const playerId = usePlayerIdValidation()
   const emailValidation = useEmailValidation(email)
+  const {
+    paymentGroups,
+    isLoading: paymentMethodsLoading,
+    error: paymentMethodsError,
+    retry: retryPaymentMethods,
+  } = usePaymentMethods(gameId)
 
   function handleUserIdChange(value: string) {
     setUserId(value)
@@ -201,5 +208,9 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     checkoutLoading,
     checkoutError,
     setCheckoutError,
+    paymentGroups,
+    paymentMethodsLoading,
+    paymentMethodsError,
+    retryPaymentMethods,
   }
 }

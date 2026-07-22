@@ -41,7 +41,17 @@ function maskPrice(n: number): string {
   return `Rp ${Number(masked.slice(0, -9) || '0').toLocaleString('id-ID')}${masked.slice(-9)}`
 }
 
-const HEADERS = ['Invoice', 'Status', 'Game', 'Produk', 'User ID', 'No. HP', 'Metode', 'Tanggal', 'Total']
+const HEADERS = [
+  'Invoice',
+  'Status',
+  'Game',
+  'Produk',
+  'User ID',
+  'No. HP',
+  'Metode',
+  'Tanggal',
+  'Total',
+]
 
 export function TransactionTable() {
   const all = useRef<Order[]>(buildDataset())
@@ -157,4 +167,3 @@ export function TransactionTable() {
     </div>
   )
 }
-

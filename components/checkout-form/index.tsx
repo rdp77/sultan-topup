@@ -63,6 +63,10 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         selected={form.selectedMethod}
         onSelect={form.setSelectedMethod}
         selectedDenom={form.selectedDenom}
+        paymentGroups={form.paymentGroups}
+        isLoading={form.paymentMethodsLoading}
+        error={form.paymentMethodsError}
+        onRetry={form.retryPaymentMethods}
       />
       <OrderSummary
         selectedDenom={form.selectedDenom}

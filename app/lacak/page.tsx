@@ -24,9 +24,7 @@ export default function LookupPage() {
 
         <div className="mt-12 border-t border-border pt-10">
           <h2 className="text-lg font-bold tracking-tight">Semua Transaksi</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Riwayat lengkap pesanan top up.
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Riwayat lengkap pesanan top up.</p>
           <TransactionTable />
         </div>
       </div>
