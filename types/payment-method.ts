@@ -1,20 +1,23 @@
-// Response wrapper from GET /payment-methods
-export interface PaymentMethodListResponse {
-  data: PaymentMethodData[]
+// Response from GET /payment-methods — array of groups, already grouped by API
+export type PaymentMethodListResponse = ApiPaymentMethodGroup[]
+
+export interface ApiPaymentMethodGroup {
+  group_id: number
+  group_name: string
+  payment_methods: ApiPaymentMethodItem[]
 }
 
-// Individual payment method from API
-export interface PaymentMethodData {
-  id: string
+export interface ApiPaymentMethodItem {
+  id: number
+  payment_gateway: string
+  code: string
   name: string
+  type: 'va' | 'ewallet' | 'qris' | 'retail'
   fee_type: 'flat' | 'percent'
-  fee: number
-  group: string
-  is_active: boolean
-}
-
-// Grouped payment methods for UI rendering
-export interface PaymentMethodGroup {
-  group: string
-  methods: PaymentMethodData[]
+  fee_value: string // "1000.00"
+  min_amount: string | null
+  max_amount: string | null
+  priority: number
+  created_at: string
+  updated_at: string
 }
