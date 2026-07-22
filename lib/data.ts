@@ -287,6 +287,7 @@ export type Order = {
   total: number
   method: string
   userId: string
+  phone: string
   status: OrderStatus
   date: string
 }
@@ -301,6 +302,7 @@ export const mockOrders: Order[] = [
     total: 127386,
     method: 'QRIS',
     userId: '12345678 (2001)',
+    phone: '081234567890',
     status: 'success',
     date: '2 Juli 2026, 14:32',
   },
@@ -313,6 +315,7 @@ export const mockOrders: Order[] = [
     total: 80000,
     method: 'GoPay',
     userId: '987654321',
+    phone: '085712345678',
     status: 'success',
     date: '28 Juni 2026, 09:15',
   },
@@ -325,6 +328,7 @@ export const mockOrders: Order[] = [
     total: 159000,
     method: 'BCA Virtual Account',
     userId: '5123456789',
+    phone: '081398765432',
     status: 'processing',
     date: '20 Juni 2026, 21:47',
   },
@@ -337,6 +341,7 @@ export const mockOrders: Order[] = [
     total: 307135,
     method: 'QRIS',
     userId: '800123456',
+    phone: '087856789012',
     status: 'expired',
     date: '15 Juni 2026, 11:03',
   },

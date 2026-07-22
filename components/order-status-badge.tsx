@@ -5,7 +5,7 @@ const config: Record<OrderStatus, { label: string; className: string }> = {
   success: { label: 'Berhasil', className: 'bg-success/15 text-success' },
   processing: { label: 'Diproses', className: 'bg-warning/15 text-warning' },
   failed: { label: 'Gagal', className: 'bg-destructive/15 text-destructive' },
-  expired: { label: 'Kedaluwarsa', className: 'bg-muted text-muted-foreground' },
+  expired: { label: 'Kedaluwarsa', className: 'bg-muted-foreground/15 text-muted-foreground border border-border/60' },
 }
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
