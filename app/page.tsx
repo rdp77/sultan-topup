@@ -3,9 +3,34 @@ import { Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
 import { BannerSlider } from '@/components/banner-slider'
 import { GameService } from '@/services/game.service'
 import { Games } from '@/components/games'
+import type { Game } from '@/types/games'
+import type { PaginationMeta } from '@/types/pagination'
+
+export const dynamic = 'force-dynamic'
+
+const FALLBACK_META: PaginationMeta = {
+  current_page: 1,
+  from: null,
+  last_page: 1,
+  links: [],
+  path: '',
+  per_page: 12,
+  to: null,
+  total: 0,
+}
 
 export default async function HomePage() {
-  const { data: games, meta } = await GameService.list(1)
+  let games: Game[] = []
+  let meta: PaginationMeta = FALLBACK_META
+
+  try {
+    const res = await GameService.list(1)
+    games = res.data
+    meta = res.meta
+  } catch {
+    // API unreachable during build — render static shell, no crash
+  }
+
   return (
     <main id="main" className="flex-1">
       <section className="mx-auto max-w-300 px-4 pt-6 md:px-6 md:pt-8">
