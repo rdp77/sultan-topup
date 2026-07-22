@@ -1,0 +1,57 @@
+# Sultan Top Up
+
+## Tentang Kami
+Sultan Top Up adalah platform top up game tercepat dan terpercaya di Indonesia. Kami menyediakan layanan isi ulang diamond, UC, voucher, dan mata uang game lainnya secara otomatis 24 jam tanpa henti. Cukup pilih game, masukkan ID, bayar — top up langsung masuk.
+
+## Nilai Jual Utama
+- **Proses Instan** — Top up masuk dalam hitungan detik setelah pembayaran dikonfirmasi.
+- **Harga Bersahabat** — Harga kompetitif dengan biaya admin transparan, tanpa biaya tersembunyi.
+- **Pembayaran Lengkap** — QRIS, GoPay, OVO, DANA, ShopeePay, BCA, BNI, BRI, Mandiri Virtual Account.
+- **24 Jam Nonstop** — Layanan tersedia kapan saja, termasuk akhir pekan dan hari libur.
+- **Tanpa Ribet** — Tidak perlu login untuk top up. Cukup isi data game dan bayar.
+- **Keamanan Terjamin** — Transaksi dilindungi enkripsi, data pelanggan aman.
+
+## Game yang Tersedia
+- Mobile Legends (Moonton) — Diamond
+- Free Fire (Garena) — Diamond
+- PUBG Mobile (Tencent) — UC
+- Valorant (Riot Games) — Points
+- Genshin Impact (HoYoverse) — Genesis Crystals
+- Honkai: Star Rail (HoYoverse) — Oneiric Shards
+- Call of Duty Mobile (Activision) — CP
+- Roblox (Roblox Corp.) — Robux
+- Apex Legends (Electronic Arts) — Apex Coins
+- LoL: Wild Rift (Riot Games) — Wild Cores
+
+## Metode Pembayaran
+- **QRIS** — Scan QR, bayar dari aplikasi bank atau e-wallet favorit.
+- **E-Wallet** — GoPay, OVO, DANA, ShopeePay. Biaya admin flat rendah.
+- **Virtual Account** — BCA, BNI, BRI, Mandiri. Transfer langsung dari ATM atau mobile banking.
+
+## Cara Top Up
+1. Pilih game yang ingin di-top up.
+2. Pilih nominal (tersedia berbagai pilihan, dari kecil hingga besar).
+3. Isi User ID / Player ID game Anda (dan Zone ID jika diperlukan).
+4. Cek akun — verifikasi ID Anda valid dan aktif.
+5. Pilih metode pembayaran dan selesaikan pembayaran.
+6. Top up otomatis masuk ke akun game Anda!
+
+## Halaman Penting
+- **Beranda** (`/`) — Daftar lengkap game yang tersedia. Pilih dan langsung top up.
+- **Lacak Pesanan** (`/lacak`) — Cek status transaksi dengan nomor invoice.
+- **Leaderboard** (`/leaderboard`) — Peringkat top spender bulanan.
+- **Kebijakan Privasi** (`/legal/privacy-policy`) — Bagaimana kami menjaga data Anda.
+- **Syarat & Ketentuan** (`/legal/terms-and-conditions`) — Aturan penggunaan layanan.
+- **Pengembalian Dana** (`/legal/refund-policy`) — Prosedur refund jika transaksi gagal.
+
+## Target Audiens
+Gamer Indonesia usia 13-35 tahun yang membutuhkan top up game dengan cepat, aman, dan harga terjangkau — tanpa harus login atau melalui proses yang berbelit.
+
+## Brand Voice
+Ramah, cepat, profesional, dan terpercaya. Bahasa Indonesia santai tapi sopan. Fokus pada kemudahan dan kecepatan transaksi.
+
+## Kontak
+- **Email:** support@sultantopup.com
+- **WhatsApp:** +62 851-1135-5504
+- **Instagram:** @sultantopupofficial
+- **TikTok:** @sultantopupofficial
