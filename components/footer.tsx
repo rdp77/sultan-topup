@@ -72,27 +72,30 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="text-sm font-semibold">Akun</h3>
+          <h3 className="text-sm font-semibold">Legal</h3>
           <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
             <li>
-              <Link href="/login" className="transition-colors duration-200 hover:text-foreground">
-                Masuk
+              <Link
+                href="/legal/privacy-policy"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Kebijakan Privasi
               </Link>
             </li>
             <li>
               <Link
-                href="/register"
+                href="/legal/terms-and-conditions"
                 className="transition-colors duration-200 hover:text-foreground"
               >
-                Daftar
+                Syarat & Ketentuan
               </Link>
             </li>
             <li>
               <Link
-                href="/dashboard"
+                href="/legal/refund-policy"
                 className="transition-colors duration-200 hover:text-foreground"
               >
-                Dashboard
+                Pengembalian Dana
               </Link>
             </li>
           </ul>
