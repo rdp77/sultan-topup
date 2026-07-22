@@ -1,6 +1,6 @@
 allowBuilds:
   '@google/genai': true
-  '@sentry/cli': set this to true or false
+  '@sentry/cli': true
   core-js: true
   koffi: true
   protobufjs: true
