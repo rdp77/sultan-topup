@@ -8,6 +8,9 @@ import { cn } from '@/lib/utils'
 type LogoProps = { className?: string }
 
 export function PaymentLogo({ id, className }: { id: string; className?: string }) {
+  // API sends full code like "bca-virtual-account_midtrans" — extract prefix for logo lookup
+  const logoKey = id.includes('-') || id.includes('_') ? extractLogoKey(id) : id
+
   const map: Record<string, (p: LogoProps) => React.ReactElement | null> = {
     qris: QrisLogo,
     gopay: GoPayLogo,
@@ -18,10 +21,16 @@ export function PaymentLogo({ id, className }: { id: string; className?: string 
     bni: BniLogo,
     bri: BriLogo,
     mandiri: MandiriLogo,
+    alfamart: AlfamartLogo,
   }
-  const C = map[id]
+  const C = map[logoKey]
   if (!C) return null
   return <C className={className} />
+}
+
+/** "bca-virtual-account_midtrans" -> "bca" */
+function extractLogoKey(code: string): string {
+  return code.split(/[-_]/)[0]
 }
 
 function QrisLogo({ className }: LogoProps) {
@@ -138,6 +147,20 @@ function MandiriLogo({ className }: LogoProps) {
       fill="currentColor"
     >
       <path d="M3 6h4l2 6 2-6h4l2 6 2-6h2v12h-2v-7l-2 5h-2l-2-5v7H3V6zm12 2-2 5h4l-2-5z" />
+    </svg>
+  )
+}
+
+function AlfamartLogo({ className }: LogoProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn('size-5', className)}
+      aria-hidden="true"
+      fill="currentColor"
+    >
+      <rect x="4" y="6" width="16" height="12" rx="2" />
+      <path d="M8 10h3v4H8zM13 10h3v4h-3z" fill="var(--color-background, #040819)" />
     </svg>
   )
 }

@@ -45,7 +45,14 @@ export default async function LegalPage({ params }: PageProps) {
       <div className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
         {/* Meta bar */}
         <div className="mb-8 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-          <span>Terakhir diperbarui: {new Date(config.lastUpdated).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          <span>
+            Terakhir diperbarui:{' '}
+            {new Date(config.lastUpdated).toLocaleDateString('id-ID', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </span>
         </div>
 
         {/* Content card */}

@@ -37,7 +37,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: `https://sultantopup.com/game/${slug}`,
       siteName: 'Sultan Top Up',
-      images: [{ url: 'https://sultantopup.com/og-image.png', width: 1200, height: 630, alt: title }],
+      images: [
+        { url: 'https://sultantopup.com/og-image.png', width: 1200, height: 630, alt: title },
+      ],
       locale: 'id_ID',
       type: 'website',
     },

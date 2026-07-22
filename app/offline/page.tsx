@@ -13,9 +13,7 @@ export default function OfflinePage() {
     <main id="main" className="flex flex-1 items-center justify-center px-4 py-16 md:px-6">
       <div className="text-center">
         <WifiOff className="mx-auto size-16 text-muted-foreground" aria-hidden="true" />
-        <h1 className="mt-6 text-xl font-bold tracking-tight md:text-2xl">
-          Anda Sedang Offline
-        </h1>
+        <h1 className="mt-6 text-xl font-bold tracking-tight md:text-2xl">Anda Sedang Offline</h1>
         <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
           Tidak ada koneksi internet. Silakan periksa jaringan Anda dan coba lagi.
         </p>

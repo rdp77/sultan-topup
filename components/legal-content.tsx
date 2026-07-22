@@ -14,7 +14,8 @@ export const legalPages: Record<string, LegalConfig> = {
   'privacy-policy': {
     slug: 'privacy-policy',
     title: 'Kebijakan Privasi',
-    description: 'Kebijakan Privasi Sultan Top Up — bagaimana kami mengumpulkan, menggunakan, dan melindungi data Anda.',
+    description:
+      'Kebijakan Privasi Sultan Top Up — bagaimana kami mengumpulkan, menggunakan, dan melindungi data Anda.',
     lastUpdated: '2026-07-20',
   },
   'terms-and-conditions': {
@@ -26,7 +27,8 @@ export const legalPages: Record<string, LegalConfig> = {
   'refund-policy': {
     slug: 'refund-policy',
     title: 'Kebijakan Pengembalian Dana',
-    description: 'Kebijakan Pengembalian Dana Sultan Top Up — kapan dan bagaimana refund dapat diajukan.',
+    description:
+      'Kebijakan Pengembalian Dana Sultan Top Up — kapan dan bagaimana refund dapat diajukan.',
     lastUpdated: '2026-07-20',
   },
 }
@@ -64,9 +66,21 @@ function parseMarkdown(md: string): MDNode[] {
     const h2 = /^## (.+)$/.exec(line)
     const h1 = /^# (.+)$/.exec(line)
 
-    if (h3) { nodes.push({ type: 'h3', text: h3[1] }); i++; continue }
-    if (h2) { nodes.push({ type: 'h2', text: h2[1] }); i++; continue }
-    if (h1) { nodes.push({ type: 'h1', text: h1[1] }); i++; continue }
+    if (h3) {
+      nodes.push({ type: 'h3', text: h3[1] })
+      i++
+      continue
+    }
+    if (h2) {
+      nodes.push({ type: 'h2', text: h2[1] })
+      i++
+      continue
+    }
+    if (h1) {
+      nodes.push({ type: 'h1', text: h1[1] })
+      i++
+      continue
+    }
 
     // Unordered list
     if (/^- /.test(line)) {
@@ -122,7 +136,11 @@ function parseInline(text: string): InlineNode[] {
 
     const linkMatch = /\[([^\]]+)\]\(([^)]+)\)/.exec(remaining)
     if (linkMatch && linkMatch.index === 0) {
-      nodes.push({ type: 'link', url: linkMatch[2], children: [{ type: 'text', value: linkMatch[1] }] })
+      nodes.push({
+        type: 'link',
+        url: linkMatch[2],
+        children: [{ type: 'text', value: linkMatch[1] }],
+      })
       remaining = remaining.slice(linkMatch[0].length)
       continue
     }
