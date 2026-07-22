@@ -3,6 +3,23 @@ import { TransactionTable } from '@/components/transaction-table'
 
 export const metadata = {
   title: 'Lacak Pesanan — Sultan Top Up',
+  description: 'Lacak status pesanan top up game Anda. Masukkan nomor invoice dan kontak yang Anda gunakan saat checkout.',
+  alternates: { canonical: 'https://sultantopup.com/lacak' },
+  openGraph: {
+    title: 'Lacak Pesanan — Sultan Top Up',
+    description: 'Lacak status pesanan top up game Anda. Masukkan nomor invoice dan kontak.',
+    url: 'https://sultantopup.com/lacak',
+    siteName: 'Sultan Top Up',
+    images: [{ url: 'https://sultantopup.com/og-image.png', width: 1200, height: 630, alt: 'Lacak Pesanan Sultan Top Up' }],
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Lacak Pesanan — Sultan Top Up',
+    description: 'Lacak status pesanan top up game Anda.',
+    images: ['https://sultantopup.com/og-image.png'],
+  },
 }
 
 export default function LookupPage() {

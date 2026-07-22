@@ -1,22 +1,23 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { Home } from 'lucide-react'
+import { Home, WifiOff } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Halaman Tidak Ditemukan — Sultan Top Up',
+  title: 'Offline — Sultan Top Up',
+  description: 'Anda sedang offline. Silakan periksa koneksi internet Anda dan coba lagi.',
   robots: { index: false, follow: false },
 }
 
-export default function NotFound() {
+export default function OfflinePage() {
   return (
     <main id="main" className="flex flex-1 items-center justify-center px-4 py-16 md:px-6">
       <div className="text-center">
-        <p className="text-6xl font-bold tracking-tighter text-primary md:text-8xl">404</p>
-        <h1 className="mt-4 text-xl font-bold tracking-tight md:text-2xl">
-          Halaman tidak ditemukan
+        <WifiOff className="mx-auto size-16 text-muted-foreground" aria-hidden="true" />
+        <h1 className="mt-6 text-xl font-bold tracking-tight md:text-2xl">
+          Anda Sedang Offline
         </h1>
         <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-          Mungkin halaman sudah dipindahkan atau kamu salah ketik URL. Yuk balik ke beranda.
+          Tidak ada koneksi internet. Silakan periksa jaringan Anda dan coba lagi.
         </p>
         <Link
           href="/"

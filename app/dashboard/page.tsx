@@ -4,6 +4,24 @@ import { OrderList } from '@/components/order-list'
 
 export const metadata = {
   title: 'Dashboard — Sultan Top Up',
+  description: 'Dashboard akun Sultan Top Up. Lihat riwayat transaksi, status pesanan, dan kelola akun Anda.',
+  alternates: { canonical: 'https://sultantopup.com/dashboard' },
+  robots: { index: false, follow: false },
+  openGraph: {
+    title: 'Dashboard — Sultan Top Up',
+    description: 'Dashboard akun Sultan Top Up.',
+    url: 'https://sultantopup.com/dashboard',
+    siteName: 'Sultan Top Up',
+    images: [{ url: 'https://sultantopup.com/og-image.png', width: 1200, height: 630, alt: 'Dashboard Sultan Top Up' }],
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Dashboard — Sultan Top Up',
+    description: 'Dashboard akun Sultan Top Up.',
+    images: ['https://sultantopup.com/og-image.png'],
+  },
 }
 
 export default function DashboardPage() {

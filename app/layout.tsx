@@ -129,6 +129,11 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd).replaceAll('<', String.raw`\u003c`),
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`,
+          }}
+        />
       </head>
       <body className="font-sans antialiased">
         <FloatingWhatsApp />

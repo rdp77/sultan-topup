@@ -4,6 +4,23 @@ import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'Leaderboard — Sultan Top Up',
+  description: 'Leaderboard Top Spender Sultan Top Up. Lihat peringkat pembeli terbanyak bulan ini dan terus top up untuk naik peringkat.',
+  alternates: { canonical: 'https://sultantopup.com/leaderboard' },
+  openGraph: {
+    title: 'Leaderboard Top Spender — Sultan Top Up',
+    description: 'Peringkat pembeli terbanyak bulan ini. Terus top up untuk naik peringkat.',
+    url: 'https://sultantopup.com/leaderboard',
+    siteName: 'Sultan Top Up',
+    images: [{ url: 'https://sultantopup.com/og-image.png', width: 1200, height: 630, alt: 'Leaderboard Sultan Top Up' }],
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Leaderboard Top Spender — Sultan Top Up',
+    description: 'Peringkat pembeli terbanyak bulan ini.',
+    images: ['https://sultantopup.com/og-image.png'],
+  },
 }
 
 const topStyles = [

@@ -1,15 +1,56 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { ShieldCheck, Zap } from 'lucide-react'
 import { GameService } from '@/services/game.service'
 import { CheckoutForm } from '@/components/checkout-form'
 import { getPostHogClient } from '@/lib/posthog-server'
 
-export default async function GamePage({
-  params,
-}: Readonly<{
+interface PageProps {
   params: Promise<{ slug: string }>
-}>) {
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { data: game } = await GameService.detail(slug).catch(() => ({ data: null }))
+
+  if (!game) {
+    return { title: 'Game Tidak Ditemukan — Sultan Top Up' }
+  }
+
+  const title = `Top Up ${game.name} — Cepat, Murah, Aman | Sultan Top Up`
+  const description = `Top up ${game.name} murah, cepat, dan aman. ${game.publisher}. Pembayaran QRIS, E-Wallet, Virtual Account. Proses otomatis 24 jam.`
+
+  return {
+    title,
+    description,
+    keywords: [
+      `top up ${game.name.toLowerCase()}`,
+      `top up ${game.publisher.toLowerCase()}`,
+      `beli diamond ${game.name.toLowerCase()}`,
+      `top up game murah`,
+      `top up ${game.slug}`,
+    ],
+    alternates: { canonical: `https://sultantopup.com/game/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `https://sultantopup.com/game/${slug}`,
+      siteName: 'Sultan Top Up',
+      images: [{ url: 'https://sultantopup.com/og-image.png', width: 1200, height: 630, alt: title }],
+      locale: 'id_ID',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://sultantopup.com/og-image.png'],
+    },
+  }
+}
+
+export default async function GamePage({ params }: PageProps) {
   const { slug } = await params
   const { data: game } = await GameService.detail(slug).catch(() => ({ data: null }))
   if (!game) notFound()
