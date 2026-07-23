@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { applyContactTemplate } from '@/lib/contact'
 
 const LEGAL_DIR = join(process.cwd(), 'content', 'legal')
 
@@ -83,9 +84,9 @@ function parseMarkdown(md: string): MDNode[] {
     }
 
     // Unordered list
-    if (/^- /.test(line)) {
+    if (line.startsWith('- ')) {
       const items: InlineNode[][] = []
-      while (i < lines.length && /^- /.test(lines[i])) {
+      while (i < lines.length && lines[i].startsWith('- ')) {
         items.push(parseInline(lines[i].slice(2)))
         i++
       }
@@ -128,14 +129,14 @@ function parseInline(text: string): InlineNode[] {
 
   while (remaining.length > 0) {
     const boldMatch = /\*\*(.+?)\*\*/.exec(remaining)
-    if (boldMatch && boldMatch.index === 0) {
+    if (boldMatch?.index === 0) {
       nodes.push({ type: 'bold', children: [{ type: 'text', value: boldMatch[1] }] })
       remaining = remaining.slice(boldMatch[0].length)
       continue
     }
 
     const linkMatch = /\[([^\]]+)\]\(([^)]+)\)/.exec(remaining)
-    if (linkMatch && linkMatch.index === 0) {
+    if (linkMatch?.index === 0) {
       nodes.push({
         type: 'link',
         url: linkMatch[2],
@@ -192,7 +193,7 @@ function renderInline(nodes: InlineNode[]): React.ReactNode {
 /*  LegalContent Component                                                    */
 /* -------------------------------------------------------------------------- */
 
-export function LegalContent({ slug }: { slug: string }) {
+export function LegalContent({ slug }: Readonly<{ slug: string }>) {
   const config = legalPages[slug]
 
   if (!config) {
@@ -206,7 +207,8 @@ export function LegalContent({ slug }: { slug: string }) {
   let md: MDNode[]
   try {
     const raw = readLegalMarkdown(slug)
-    md = parseMarkdown(raw)
+    const processed = applyContactTemplate(raw)
+    md = parseMarkdown(processed)
   } catch {
     return (
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
