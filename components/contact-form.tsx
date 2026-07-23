@@ -113,6 +113,14 @@ export function ContactForm() {
       setAlertMessage('Mengirim pesan...')
 
       const formData = new FormData(e.currentTarget)
+
+      // Guard: access_key must be set in env during build
+      if (!WEB3FORMS_ACCESS_KEY) {
+        setStatus('error')
+        setAlertMessage('Konfigurasi form belum lengkap. Hubungi admin.')
+        return
+      }
+
       formData.append('access_key', WEB3FORMS_ACCESS_KEY)
       formData.append('from_name', 'Sultan Top Up Website')
       formData.append('h-captcha-response', hcaptchaToken)
