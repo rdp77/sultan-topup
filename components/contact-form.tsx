@@ -31,7 +31,7 @@ function getAlertClasses(status: AlertStatus): string {
   return 'border-border bg-card text-muted-foreground'
 }
 
-function StatusAlert({ status, message }: { status: AlertStatus; message: string }) {
+function StatusAlert({ status, message }: Readonly<{ status: AlertStatus; message: string }>) {
   const alertClasses = getAlertClasses(status)
 
   let icon: React.ReactNode = null
