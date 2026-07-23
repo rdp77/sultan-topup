@@ -18,55 +18,107 @@ const subjectOptions = [
   { value: 'Lainnya', label: 'Lainnya' },
 ]
 
+type AlertStatus = 'idle' | 'pending' | 'success' | 'error'
+
+function getAlertClasses(status: AlertStatus): string {
+  if (status === 'success') {
+    return 'border-success/30 bg-success/5 text-success'
+  }
+  if (status === 'error') {
+    return 'border-destructive/30 bg-destructive/5 text-destructive'
+  }
+  return 'border-border bg-card text-muted-foreground'
+}
+
+function StatusAlert({ status, message }: { status: AlertStatus; message: string }) {
+  const alertClasses = getAlertClasses(status)
+
+  let icon: React.ReactNode = null
+  if (status === 'success') {
+    icon = <CheckCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+  } else if (status === 'error') {
+    icon = <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+  }
+
+  return (
+    <div
+      role="alert"
+      className={`flex items-start gap-2.5 rounded-lg border p-3.5 text-sm ${alertClasses}`}
+    >
+      {icon}
+      <span>{message}</span>
+    </div>
+  )
+}
+
 export function ContactForm() {
-  const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
-  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState<AlertStatus>('idle')
+  const [alertMessage, setAlertMessage] = useState('')
   const [touched, setTouched] = useState(false)
+
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
-  const [hcaptchaToken, setHcaptchaToken] = useState<string>('')
+  const [subject, setSubject] = useState('')
+  const [body, setBody] = useState('')
+  const [hcaptchaToken, setHcaptchaToken] = useState('')
 
   const emailValidation = useEmailValidation(email)
 
   const waClean = whatsapp.replace(/\D/g, '')
   const waValid = waClean === '' || waRegex.test(waClean)
 
+  const nameError = touched && name.trim().length < 2 ? 'Nama minimal 2 karakter' : null
+  const subjectError = touched && !subject ? 'Pilih subjek pesan' : null
+  const bodyError = touched && body.trim().length < 10 ? 'Pesan minimal 10 karakter' : null
+
   const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
+    async (e: React.SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
       e.preventDefault()
       setTouched(true)
 
-      const form = e.currentTarget
-
+      if (name.trim().length < 2) {
+        setStatus('error')
+        setAlertMessage('Nama minimal 2 karakter.')
+        return
+      }
       if (!emailValidation.isValid) {
         setStatus('error')
-        setMessage('Masukkan email yang valid.')
+        setAlertMessage('Masukkan email yang valid.')
         return
       }
-
       if (waClean && !waRegex.test(waClean)) {
         setStatus('error')
-        setMessage('Masukkan nomor WhatsApp yang valid (08xx).')
+        setAlertMessage('Masukkan nomor WhatsApp yang valid (08xx).')
         return
       }
-
+      if (!subject) {
+        setStatus('error')
+        setAlertMessage('Pilih subjek pesan.')
+        return
+      }
+      if (body.trim().length < 10) {
+        setStatus('error')
+        setAlertMessage('Pesan minimal 10 karakter.')
+        return
+      }
       if (!hcaptchaToken) {
         setStatus('error')
-        setMessage('Selesaikan verifikasi keamanan di atas.')
+        setAlertMessage('Selesaikan verifikasi keamanan.')
         return
       }
 
       setStatus('pending')
-      setMessage('Mengirim pesan...')
+      setAlertMessage('Mengirim pesan...')
 
-      const formData = new FormData(form)
+      const formData = new FormData(e.currentTarget)
       formData.append('access_key', WEB3FORMS_ACCESS_KEY)
       formData.append('from_name', 'Sultan Top Up Website')
       formData.append('h-captcha-response', hcaptchaToken)
 
-      // Wrap subject with prefix for email clarity
-      const subjectValue = formData.get('subject')?.toString() ?? 'Pesan Baru'
-      formData.set('subject', `[Kontak] ${subjectValue}`)
+      // Build subject manually to avoid duplicate/array issue
+      formData.delete('category')
+      formData.set('subject', `[Kontak] ${subject}`)
 
       if (waClean) {
         formData.set('phone', waClean)
@@ -82,24 +134,26 @@ export function ContactForm() {
 
         if (data.success) {
           setStatus('success')
-          setMessage(
+          setAlertMessage(
             data.message || 'Pesan berhasil dikirim! Tim kami akan membalas dalam 1x24 jam.',
           )
-          form.reset()
+          setName('')
           setEmail('')
           setWhatsapp('')
+          setSubject('')
+          setBody('')
           setHcaptchaToken('')
           setTouched(false)
         } else {
           setStatus('error')
-          setMessage(data.message || 'Gagal mengirim pesan. Silakan coba lagi.')
+          setAlertMessage(data.message || 'Gagal mengirim pesan. Silakan coba lagi.')
         }
       } catch {
         setStatus('error')
-        setMessage('Terjadi kesalahan jaringan. Silakan coba lagi nanti.')
+        setAlertMessage('Terjadi kesalahan jaringan. Silakan coba lagi nanti.')
       }
     },
-    [emailValidation.isValid, waClean, hcaptchaToken],
+    [name, emailValidation.isValid, waClean, subject, body, hcaptchaToken],
   )
 
   const labelClasses = 'text-sm text-muted-foreground'
@@ -120,11 +174,14 @@ export function ContactForm() {
           type="text"
           required
           minLength={2}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Nama kamu"
           className={inputClasses}
           disabled={isPending}
           autoComplete="name"
         />
+        {nameError && <p className="mt-1.5 text-xs text-destructive">{nameError}</p>}
       </div>
 
       {/* Email + WhatsApp row */}
@@ -198,16 +255,17 @@ export function ContactForm() {
         </div>
       </div>
 
-      {/* Subject dropdown */}
+      {/* Subject - uses name="category" to avoid FormData array collision */}
       <div>
-        <label htmlFor="subject" className={labelClasses}>
+        <label htmlFor="category" className={labelClasses}>
           Subjek <span className="text-destructive">*</span>
         </label>
         <select
-          id="subject"
-          name="subject"
+          id="category"
+          name="category"
           required
-          defaultValue=""
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
           className={inputClasses}
           disabled={isPending}
         >
@@ -217,6 +275,7 @@ export function ContactForm() {
             </option>
           ))}
         </select>
+        {subjectError && <p className="mt-1.5 text-xs text-destructive">{subjectError}</p>}
       </div>
 
       {/* Message */}
@@ -230,13 +289,16 @@ export function ContactForm() {
           required
           minLength={10}
           rows={5}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
           placeholder="Tulis pesan kamu di sini..."
           className={`${inputClasses} resize-y min-h-30`}
           disabled={isPending}
         />
+        {bodyError && <p className="mt-1.5 text-xs text-destructive">{bodyError}</p>}
       </div>
 
-      {/* hCaptcha */}
+      {/* hCaptcha - React library for proper SPA lifecycle */}
       <div className="flex justify-center">
         <HCaptcha
           sitekey={HCAPTCHA_SITEKEY}
@@ -267,26 +329,7 @@ export function ContactForm() {
         )}
       </button>
 
-      {/* Status message */}
-      {message && (
-        <div
-          role="alert"
-          className={`flex items-start gap-2.5 rounded-lg border p-3.5 text-sm ${
-            status === 'success'
-              ? 'border-success/30 bg-success/5 text-success'
-              : status === 'error'
-                ? 'border-destructive/30 bg-destructive/5 text-destructive'
-                : 'border-border bg-card text-muted-foreground'
-          }`}
-        >
-          {status === 'success' ? (
-            <CheckCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          ) : status === 'error' ? (
-            <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          ) : null}
-          <span>{message}</span>
-        </div>
-      )}
+      {alertMessage && <StatusAlert status={status} message={alertMessage} />}
     </form>
   )
 }
