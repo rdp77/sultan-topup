@@ -2,75 +2,71 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import isEmail from 'validator/lib/isEmail'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
-const HCAPTCHA_SITE_KEY =
-  process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ?? '10000000-ffff-ffff-ffff-000000000001'
+const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? ''
 
-declare global {
-  interface Window {
-    hcaptcha?: {
-      render: (el: string, opts: Record<string, unknown>) => string
-      reset: (id: string) => void
-      getResponse: (id: string) => string
-      remove: (id: string) => void
-    }
-  }
+const waRegex = /^08\d{8,12}$/
+
+function validateWhatsApp(raw: string): boolean {
+  const clean = raw.replace(/\D/g, '')
+  return waRegex.test(clean)
 }
 
 export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null)
-  const hcaptchaRef = useRef<HTMLDivElement>(null)
-  const hcaptchaId = useRef<string>('')
   const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
+  const [touched, setTouched] = useState(false)
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
 
-  // Load hCaptcha script and render widget
+  const emailValid = email === '' || isEmail(email.trim())
+  const phoneValid = phone === '' || validateWhatsApp(phone)
+
+  // Load web3forms client script (handles hCaptcha automatically)
   useEffect(() => {
-    const existingScript = document.querySelector('script[src*="hcaptcha"]')
-
-    const renderWidget = () => {
-      if (!hcaptchaRef.current || !window.hcaptcha) return
-      hcaptchaId.current = window.hcaptcha.render('hcaptcha-container', {
-        sitekey: HCAPTCHA_SITE_KEY,
-        theme: 'dark',
-        size: 'normal',
-      })
-    }
-
-    if (window.hcaptcha) {
-      renderWidget()
-      return
-    }
-
-    if (!existingScript) {
-      const script = document.createElement('script')
-      script.src = 'https://js.hcaptcha.com/1/api.js'
-      script.async = true
-      script.defer = true
-      script.onload = renderWidget
-      document.head.appendChild(script)
-    } else {
-      ;(existingScript as HTMLScriptElement).addEventListener('load', renderWidget)
-    }
+    if (document.querySelector('script[src*="web3forms.com/client"]')) return
+    const script = document.createElement('script')
+    script.src = 'https://web3forms.com/client/script.js'
+    script.async = true
+    script.defer = true
+    document.head.appendChild(script)
   }, [])
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setTouched(true)
+
+    const form = e.currentTarget
+    const formEmail = form.email?.value?.trim() ?? ''
+    const formPhone = form.phone?.value?.trim() ?? ''
+
+    if (!isEmail(formEmail)) {
+      setStatus('error')
+      setMessage('Masukkan email yang valid.')
+      return
+    }
+
+    const phoneClean = formPhone.replace(/\D/g, '')
+    if (phoneClean && !waRegex.test(phoneClean)) {
+      setStatus('error')
+      setMessage('Masukkan nomor WhatsApp yang valid (08xx).')
+      return
+    }
+
     setStatus('pending')
     setMessage('Mengirim pesan...')
 
-    const form = e.currentTarget
     const formData = new FormData(form)
-    formData.append('access_key', process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? '')
+    formData.append('access_key', WEB3FORMS_ACCESS_KEY)
     formData.append('subject', `[Kontak] ${formData.get('subject')?.toString() ?? 'Pesan Baru'}`)
     formData.append('from_name', 'Sultan Top Up Website')
 
-    // Append hCaptcha token
-    if (hcaptchaId.current && window.hcaptcha) {
-      const token = window.hcaptcha.getResponse(hcaptchaId.current)
-      if (token) {
-        formData.append('h-captcha-response', token)
-      }
+    // If phone was provided, append it as a separate field for the email notification
+    if (phoneClean) {
+      formData.set('phone', phoneClean)
     }
 
     try {
@@ -85,10 +81,9 @@ export function ContactForm() {
         setStatus('success')
         setMessage(data.message || 'Pesan berhasil dikirim! Tim kami akan membalas dalam 1x24 jam.')
         form.reset()
-        // Reset hCaptcha
-        if (hcaptchaId.current && window.hcaptcha) {
-          window.hcaptcha.reset(hcaptchaId.current)
-        }
+        setEmail('')
+        setPhone('')
+        setTouched(false)
       } else {
         setStatus('error')
         setMessage(data.message || 'Gagal mengirim pesan. Silakan coba lagi.')
@@ -124,21 +119,50 @@ export function ContactForm() {
         />
       </div>
 
-      {/* Email */}
-      <div>
-        <label htmlFor="email" className={labelClasses}>
-          Email <span className="text-destructive">*</span>
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          placeholder="email@contoh.com"
-          className={inputClasses}
-          disabled={isPending}
-          autoComplete="email"
-        />
+      {/* Email + Phone row */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="email" className={labelClasses}>
+            Email <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nama@email.com"
+            className={inputClasses}
+            disabled={isPending}
+            autoComplete="email"
+          />
+          {touched && email !== '' && !emailValid && (
+            <p className="mt-1.5 text-xs text-destructive">Format email tidak valid</p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="phone" className={labelClasses}>
+            Nomor WhatsApp
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+            placeholder="08xxxxxxxxxx"
+            className={inputClasses}
+            disabled={isPending}
+            autoComplete="tel"
+          />
+          {touched && phone !== '' && !phoneValid && (
+            <p className="mt-1.5 text-xs text-destructive">
+              Masukkan nomor WhatsApp yang valid (08xx)
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Subject */}
@@ -175,9 +199,9 @@ export function ContactForm() {
         />
       </div>
 
-      {/* hCaptcha */}
+      {/* hCaptcha - web3forms zero-config */}
       <div className="flex justify-center">
-        <div ref={hcaptchaRef} id="hcaptcha-container" />
+        <div className="h-captcha" data-captcha="true" />
       </div>
 
       {/* Submit */}
