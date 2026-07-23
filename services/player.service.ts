@@ -14,7 +14,7 @@ export const PlayerService = {
       sku: request.sku,
     }
 
-    return apiFetch<PlayerValidationResponse>('/player/validate', {
+    return apiFetch<PlayerValidationResponse>('/validate-account', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
