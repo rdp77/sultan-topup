@@ -14,4 +14,4 @@ Tidak wajib. Kamu bisa top up tanpa login. Namun, membuat akun akan memudahkan k
 
 ## Bagaimana cara menghubungi customer service?
 
-Kamu bisa menghubungi kami melalui WhatsApp di +62 851-1135-5504, email support@sultantopup.com, atau melalui halaman Kontak di website ini. Tim kami siap membantu 24 jam.
+Kamu bisa menghubungi kami melalui WhatsApp di +62 851-1135-5504, email <support@sultantopup.com>, atau melalui halaman Kontak di website ini. Tim kami siap membantu 24 jam.

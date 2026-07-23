@@ -14,4 +14,4 @@ Kami menjaga kerahasiaan data kamu sesuai dengan Kebijakan Privasi kami. Data ak
 
 ## Bagaimana cara menghapus akun saya?
 
-Hubungi customer service kami melalui email support@sultantopup.com dengan subject "Permintaan Hapus Akun". Kami akan memproses permintaan kamu dalam 1x24 jam.
+Hubungi customer service kami melalui email <support@sultantopup.com> dengan subject "Permintaan Hapus Akun". Kami akan memproses permintaan kamu dalam 1x24 jam.
