@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function LegalPage({ params }: PageProps) {
+export default async function LegalPage({ params }: Readonly<PageProps>) {
   const { slug } = await params
   const config = legalPages[slug]
 
