@@ -69,6 +69,19 @@ export function Footer() {
                 Leaderboard
               </Link>
             </li>
+            <li>
+              <Link href="/faq" className="transition-colors duration-200 hover:text-foreground">
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact"
+                className="transition-colors duration-200 hover:text-foreground"
+              >
+                Kontak
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

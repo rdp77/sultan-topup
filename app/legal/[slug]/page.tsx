@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { LegalContent, legalPages } from '@/components/legal-content'
 
 interface PageProps {
@@ -29,15 +30,7 @@ export default async function LegalPage({ params }: Readonly<PageProps>) {
   const config = legalPages[slug]
 
   if (!config) {
-    return (
-      <main id="main" className="flex-1">
-        <div className="mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-20">
-          <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
-            <p className="text-sm text-destructive">Halaman tidak ditemukan.</p>
-          </div>
-        </div>
-      </main>
-    )
+    notFound()
   }
 
   return (
