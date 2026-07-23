@@ -25,7 +25,7 @@ Pengembalian dana **tidak** dapat diberikan dalam kondisi berikut:
 
 Untuk mengajukan pengembalian dana:
 
-1. **Hubungi kami** melalui email di **support@sultantopup.com** atau WhatsApp di **+62 851-1135-5504** dalam waktu 24 jam setelah transaksi.
+1. **Hubungi kami** melalui email di **{{CONTACT_EMAIL}}** atau WhatsApp di **{{CONTACT_WHATSAPP}}** dalam waktu 24 jam setelah transaksi.
 2. **Sertakan informasi berikut:**
    - Nomor Invoice atau Order ID
    - Nama game dan nominal top up
@@ -51,5 +51,5 @@ Anda tidak dapat membatalkan transaksi yang sudah berhasil dikirimkan. Jika terj
 
 Jika Anda memiliki pertanyaan tentang Kebijakan Pengembalian Dana ini, silakan hubungi kami:
 
-- **Email:** support@sultantopup.com
-- **WhatsApp:** +62 851-1135-5504
+- **Email:** {{CONTACT_EMAIL}}
+- **WhatsApp:** [{{CONTACT_WHATSAPP}}]({{CONTACT_WHATSAPP_LINK}})

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { applyContactTemplate } from '@/lib/contact'
 
 const FAQ_DIR = join(process.cwd(), 'content', 'faq')
 
@@ -32,8 +33,9 @@ function readFaqMarkdown(slug: string): string {
 
 export function parseFaqMarkdown(slug: string): FaqContextData {
   const raw = readFaqMarkdown(slug)
+  const processed = applyContactTemplate(raw)
   const config = faqConfigs.find((c) => c.slug === slug)!
-  const lines = raw.split('\n')
+  const lines = processed.split('\n')
   const items: FaqItem[] = []
 
   let currentQuestion = ''
@@ -41,7 +43,7 @@ export function parseFaqMarkdown(slug: string): FaqContextData {
 
   for (const line of lines) {
     // Context title (# heading) - skip, we already have it from config
-    if (/^# /.test(line)) continue
+    if (line.startsWith("# ")) continue
 
     // Question (## heading)
     const h2 = /^## (.+)$/.exec(line)

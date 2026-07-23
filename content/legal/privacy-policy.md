@@ -44,7 +44,7 @@ Anda memiliki hak untuk:
 - Meminta penghapusan data Anda.
 - Menarik persetujuan untuk komunikasi pemasaran.
 
-Untuk menggunakan hak-hak ini, hubungi kami di **support@sultantopup.com**.
+Untuk menggunakan hak-hak ini, hubungi kami di **{{CONTACT_EMAIL}}**.
 
 ## Perubahan Kebijakan
 
@@ -54,5 +54,5 @@ Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu. Perubahan akan
 
 Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami:
 
-- **Email:** support@sultantopup.com
-- **WhatsApp:** +62 851-1135-5504
+- **Email:** {{CONTACT_EMAIL}}
+- **WhatsApp:** [{{CONTACT_WHATSAPP}}]({{CONTACT_WHATSAPP_LINK}})

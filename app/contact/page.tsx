@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Phone, Mail, Clock } from 'lucide-react'
 import { ContactForm } from '@/components/contact-form'
+import { contactConfig } from '@/lib/contact'
 
 export const metadata: Metadata = {
   title: 'Kontak - Sultan Top Up',
@@ -19,6 +20,8 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
+  const { email, whatsapp, whatsappLink } = contactConfig
+
   return (
     <main id="main" className="flex-1">
       <div className="mx-auto max-w-2xl px-4 py-12 md:px-6 md:py-16">
@@ -32,27 +35,33 @@ export default function ContactPage() {
 
         {/* Contact info - inline strip, not 3 equal cards */}
         <ul className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-          <li className="flex items-center gap-2">
-            <Phone className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-            <a
-              href="https://wa.me/628511355504"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-foreground"
-            >
-              +62 851-1135-5504
-            </a>
-          </li>
+          {/* WhatsApp */}
+          {whatsapp && whatsappLink && (
+            <li className="flex items-center gap-2">
+              <Phone className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-foreground"
+              >
+                {whatsapp}
+              </a>
+            </li>
+          )}
           <li aria-hidden="true" className="h-3.5 w-px bg-border" />
-          <li className="flex items-center gap-2">
-            <Mail className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-            <a
-              href="mailto:support@sultantopup.com"
-              className="transition-colors hover:text-foreground"
-            >
-              support@sultantopup.com
-            </a>
-          </li>
+          {/* Email */}
+          {email && (
+            <li className="flex items-center gap-2">
+              <Mail className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+              <a
+                href={`mailto:${email}`}
+                className="transition-colors hover:text-foreground"
+              >
+                {email}
+              </a>
+            </li>
+          )}
           <li aria-hidden="true" className="h-3.5 w-px bg-border" />
           <li className="flex items-center gap-2">
             <Clock className="size-3.5 shrink-0 text-primary" aria-hidden="true" />

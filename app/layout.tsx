@@ -6,6 +6,7 @@ import { Footer } from '@/components/footer'
 import './globals.css'
 import { FloatingWhatsApp } from '@/components/floating-whatsapp'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { contactConfig } from '@/lib/contact'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({
@@ -96,8 +97,8 @@ const jsonLdOrganization = {
     '@type': 'ContactPoint',
     contactType: 'customer service',
     url: 'https://sultantopup.com',
-    email: 'support@sultantopup.com',
-    telephone: '+62 851-1135-5504',
+    email: contactConfig.email,
+    telephone: contactConfig.whatsapp,
   },
 }
 
@@ -136,7 +137,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <FloatingWhatsApp />
+        <FloatingWhatsApp href={contactConfig.whatsappLink} />
         <div className="flex min-h-svh flex-col">
           <div className="sticky top-0 z-50">
             <AnnouncementBar />

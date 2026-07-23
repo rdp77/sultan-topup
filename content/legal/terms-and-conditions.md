@@ -53,5 +53,5 @@ Syarat & Ketentuan ini diatur oleh hukum Republik Indonesia. Setiap perselisihan
 
 Jika Anda memiliki pertanyaan tentang Syarat & Ketentuan ini, silakan hubungi kami:
 
-- **Email:** support@sultantopup.com
-- **WhatsApp:** +62 851-1135-5504
+- **Email:** {{CONTACT_EMAIL}}
+- **WhatsApp:** [{{CONTACT_WHATSAPP}}]({{CONTACT_WHATSAPP_LINK}})
