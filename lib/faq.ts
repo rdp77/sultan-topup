@@ -43,7 +43,7 @@ export function parseFaqMarkdown(slug: string): FaqContextData {
 
   for (const line of lines) {
     // Context title (# heading) - skip, we already have it from config
-    if (line.startsWith("# ")) continue
+    if (line.startsWith('# ')) continue
 
     // Question (## heading)
     const h2 = /^## (.+)$/.exec(line)

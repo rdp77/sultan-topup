@@ -54,10 +54,7 @@ export default function ContactPage() {
           {email && (
             <li className="flex items-center gap-2">
               <Mail className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-              <a
-                href={`mailto:${email}`}
-                className="transition-colors hover:text-foreground"
-              >
+              <a href={`mailto:${email}`} className="transition-colors hover:text-foreground">
                 {email}
               </a>
             </li>

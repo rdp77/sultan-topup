@@ -10,8 +10,7 @@ export const contactConfig = {
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'support@sultantopup.com',
   whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP ?? '+62 851-1135-5504',
   whatsappLink:
-    process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_LINK ??
-    'https://wa.me/message/MOTSNSGBUVNTJ1',
+    process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_LINK ?? 'https://wa.me/message/MOTSNSGBUVNTJ1',
 } as const
 
 /**
