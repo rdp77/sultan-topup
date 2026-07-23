@@ -6,7 +6,8 @@ import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { useEmailValidation } from '@/hooks/use-email-validation'
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? ''
-const HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2'
+const HCAPTCHA_SITEKEY =
+  process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY ?? '50b2fe65-b00b-4b9e-ad62-3ba471098be2'
 
 const waRegex = /^08\d{8,12}$/
 
