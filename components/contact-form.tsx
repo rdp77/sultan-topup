@@ -6,8 +6,7 @@ import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { useEmailValidation } from '@/hooks/use-email-validation'
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? ''
-const HCAPTCHA_SITEKEY =
-  process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY ?? '50b2fe65-b00b-4b9e-ad62-3ba471098be2'
+const HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2'
 
 const waRegex = /^08\d{8,12}$/
 
@@ -123,7 +122,6 @@ export function ContactForm() {
 
       formData.append('access_key', WEB3FORMS_ACCESS_KEY)
       formData.append('from_name', 'Sultan Top Up Website')
-      formData.append('h-captcha-response', hcaptchaToken)
 
       // Build subject manually to avoid duplicate/array issue
       formData.delete('category')
@@ -132,6 +130,8 @@ export function ContactForm() {
       if (waClean) {
         formData.set('phone', waClean)
       }
+
+      formData.set('h-captcha-response', hcaptchaToken)
 
       try {
         const response = await fetch('https://api.web3forms.com/submit', {
@@ -307,7 +307,7 @@ export function ContactForm() {
         {bodyError && <p className="mt-1.5 text-xs text-destructive">{bodyError}</p>}
       </div>
 
-      {/* hCaptcha - React library for proper SPA lifecycle */}
+      {/* hCaptcha */}
       <div className="flex justify-center">
         <HCaptcha
           sitekey={HCAPTCHA_SITEKEY}
