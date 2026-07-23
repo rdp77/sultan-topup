@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { FaqView } from '@/components/faq-view'
 import { faqConfigs, parseFaqMarkdown, type FaqContextData } from '@/lib/faq'
 
@@ -37,12 +38,12 @@ export default function FaqPage() {
         </h1>
         <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
           Pilih kategori di samping untuk melihat jawaban. Kalau belum ketemu, hubungi kami via{' '}
-          <a
+          <Link
             href="/contact"
             className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
           >
             halaman Kontak
-          </a>
+          </Link>
           .
         </p>
 
