@@ -5,7 +5,7 @@ import { Loader2, Search, SearchX } from 'lucide-react'
 import posthog from 'posthog-js'
 import { OrderStatusBadge } from '@/components/order-status-badge'
 import { formatRupiah, type Order, type OrderStatus } from '@/lib/data'
-import { OrderService } from '@/services/order.service'
+import { OrderService } from '@/services'
 import type { OrderApiItem } from '@/types/order'
 
 const STATUS_MAP: Record<string, OrderStatus> = {

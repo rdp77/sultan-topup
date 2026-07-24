@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { PaymentMethodService } from '@/services/payment-method.service'
+import { PaymentMethodService } from '@/services'
 import { type PaymentMethod, type PaymentGroup } from '@/lib/data'
 
 interface UsePaymentMethodsResult {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PlayerService, PlayerValidationCache } from '@/services/player.service'
+import { PlayerService, PlayerValidationCache } from '@/services'
 import type { PlayerValidationData } from '@/types/player-validation'
 
 type ValidateState = 'idle' | 'loading' | 'found' | 'not-found' | 'error'

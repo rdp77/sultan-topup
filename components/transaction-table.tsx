@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { PackageOpen } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/order-status-badge'
 import { formatRupiah, type Order, type OrderStatus } from '@/lib/data'
-import { OrderService } from '@/services/order.service'
+import { OrderService } from '@/services'
 import type { OrderApiItem } from '@/types/order'
 
 const MAX_ROWS = 15

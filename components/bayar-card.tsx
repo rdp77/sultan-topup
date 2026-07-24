@@ -7,7 +7,7 @@ import { Copy, Check, Clock, Loader2 } from 'lucide-react'
 import posthog from 'posthog-js'
 import { PaymentLogo } from '@/components/payment-logo'
 import { formatRupiah } from '@/lib/data'
-import { CheckoutService } from '@/services/checkout.service'
+import { CheckoutService } from '@/services'
 import type { CheckoutResult, QRISPaymentData, VAPaymentData } from '@/types/checkout'
 
 // --- Helper constants ---

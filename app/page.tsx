@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Zap, ShieldCheck, Clock, ArrowRight } from 'lucide-react'
 import { BannerSlider } from '@/components/banner-slider'
-import { GameService } from '@/services/game.service'
+import { GameService } from '@/services'
 import { Games } from '@/components/games'
 import type { Game } from '@/types/games'
 import type { PaginationMeta } from '@/types/pagination'

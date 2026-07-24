@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ShieldCheck, Zap } from 'lucide-react'
-import { GameService } from '@/services/game.service'
+import { GameService } from '@/services'
 import { CheckoutForm } from '@/components/checkout-form'
 import { getPostHogClient } from '@/lib/posthog-server'
 

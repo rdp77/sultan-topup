@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { GameService } from '@/services/game.service'
+import { GameService } from '@/services'
 import { legalPages } from '@/components/legal-content'
 
 const BASE_URL = 'https://sultantopup.com'
