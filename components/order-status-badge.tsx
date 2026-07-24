@@ -13,6 +13,7 @@ const config: Record<OrderStatus, { label: string; className: string }> = {
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   const c = config[status]
+  if (!c) return null
   return (
     <span className={cn('rounded-md px-2 py-1 text-xs font-medium', c.className)}>{c.label}</span>
   )

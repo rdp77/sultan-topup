@@ -4,7 +4,31 @@ import { useState } from 'react'
 import { Loader2, Search, SearchX } from 'lucide-react'
 import posthog from 'posthog-js'
 import { OrderStatusBadge } from '@/components/order-status-badge'
-import { formatRupiah, mockOrders, type Order } from '@/lib/data'
+import { formatRupiah, type Order, type OrderStatus } from '@/lib/data'
+import { OrderService } from '@/services/order.service'
+import type { OrderApiItem } from '@/types/order'
+
+const STATUS_MAP: Record<string, OrderStatus> = {
+  completed: 'success',
+  failed: 'failed',
+  pending: 'processing',
+}
+
+function toOrder(item: OrderApiItem): Order {
+  return {
+    invoice: item.invoice_number,
+    game: item.game,
+    product: item.product,
+    price: item.total_price,
+    fee: 0,
+    total: item.total_price,
+    method: item.payment_method,
+    userId: item.email,
+    phone: item.phone,
+    status: STATUS_MAP[item.status] ?? 'failed',
+    date: item.created_at,
+  }
+}
 
 export function OrderLookup() {
   const [invoice, setInvoice] = useState('')
@@ -12,20 +36,25 @@ export function OrderLookup() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<Order | null | 'not-found'>(null)
 
-  function handleSearch(e: React.FormEvent) {
+  async function handleSearch(e: React.FormEvent) {
     e.preventDefault()
     if (!invoice.trim() || !contact.trim() || loading) return
     setLoading(true)
     setResult(null)
-    setTimeout(() => {
-      const found = mockOrders.find((o) => o.invoice.toLowerCase() === invoice.trim().toLowerCase())
+
+    try {
+      const res = await OrderService.lookup(invoice.trim(), contact.trim())
+      const found = res.data ?? null
       posthog.capture('order_lookup_performed', {
         found: !!found,
         order_status: found?.status ?? null,
       })
-      setResult(found ?? 'not-found')
+      setResult(found ? toOrder(found) : 'not-found')
+    } catch {
+      setResult('not-found')
+    } finally {
       setLoading(false)
-    }, 800)
+    }
   }
 
   return (

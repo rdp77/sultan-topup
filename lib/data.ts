@@ -273,7 +273,7 @@ export function calcFee(method: PaymentMethod, price: number): number {
 }
 
 export function formatRupiah(n: number): string {
-  return `Rp ${n.toLocaleString('id-ID')}`
+  return `Rp ${(n ?? 0).toLocaleString('id-ID')}`
 }
 
 export type OrderStatus = 'success' | 'failed' | 'processing' | 'expired'

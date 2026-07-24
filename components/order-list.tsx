@@ -1,73 +1,67 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Plus, PackageOpen } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/order-status-badge'
-import { formatRupiah, mockOrders, type Order } from '@/lib/data'
+import { formatRupiah, type Order, type OrderStatus } from '@/lib/data'
+import { OrderService } from '@/services/order.service'
+import type { OrderApiItem } from '@/types/order'
 
 const PAGE_SIZE = 6
 
-// Simulated extended dataset so pagination has something to page through. In a
-// real app this would be a fetch keyed on page/cursor.
-function buildDataset(): Order[] {
-  if (mockOrders.length === 0) return []
-  const out: Order[] = []
-  for (let i = 0; i < 5; i++) {
-    out.push(...mockOrders.map((o, idx) => ({ ...o, invoice: `${o.invoice}-${i}${idx}` })))
+const STATUS_MAP: Record<string, OrderStatus> = {
+  completed: 'success',
+  failed: 'failed',
+  pending: 'processing',
+}
+
+function toOrder(item: OrderApiItem): Order {
+  return {
+    invoice: item.invoice_number,
+    game: item.game,
+    product: item.product,
+    price: item.total_price,
+    fee: 0,
+    total: item.total_price,
+    method: item.payment_method,
+    userId: item.email,
+    phone: item.phone,
+    status: STATUS_MAP[item.status] ?? 'failed',
+    date: item.created_at,
   }
-  return out
 }
 
 export function OrderList() {
-  const all = useRef<Order[]>(buildDataset())
+  const [allOrders, setAllOrders] = useState<Order[]>([])
   const [visible, setVisible] = useState<Order[]>([])
   const [count, setCount] = useState(PAGE_SIZE)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
 
-  // Initial load with a tiny delay to show the skeleton state.
   useEffect(() => {
-    const t = setTimeout(() => setVisible(all.current.slice(0, PAGE_SIZE)), 450)
-    return () => clearTimeout(t)
+    OrderService.list()
+      .then((res) => {
+        const mapped = res.data.map(toOrder)
+        setAllOrders(mapped)
+        setVisible(mapped.slice(0, PAGE_SIZE))
+      })
+      .finally(() => setLoading(false))
   }, [])
 
-  // Simulate fetching the next page when count grows.
-  useEffect(() => {
-    if (count === PAGE_SIZE) return // already covered by initial load
-    setLoading(true)
-    const t = setTimeout(() => {
-      setVisible(all.current.slice(0, count))
-      setLoading(false)
-    }, 500)
-    return () => clearTimeout(t)
-  }, [count])
-
-  const hasMore = count < all.current.length
-  const isEmpty = all.current.length === 0
-
-  if (isEmpty) {
-    return (
-      <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-card/40 px-6 py-12 text-center">
-        <span className="flex size-12 items-center justify-center rounded-full bg-card text-muted-foreground">
-          <PackageOpen className="size-6" aria-hidden="true" />
-        </span>
-        <p className="text-sm font-medium">Belum ada transaksi</p>
-        <p className="max-w-xs text-xs text-muted-foreground">
-          Pesanan top up kamu akan muncul di sini setelah checkout selesai.
-        </p>
-        <Link
-          href="/"
-          className="press mt-1 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
-        >
-          <Plus className="size-4" aria-hidden="true" />
-          Top Up Sekarang
-        </Link>
-      </div>
-    )
+  function handleLoadMore() {
+    setLoadingMore(true)
+    const next = count + PAGE_SIZE
+    // simulate network delay for smooth UX
+    setTimeout(() => {
+      setVisible(allOrders.slice(0, next))
+      setCount(next)
+      setLoadingMore(false)
+    }, 400)
   }
 
-  // Skeleton state while the initial slice is still loading.
-  if (visible.length === 0) {
+  // Skeleton state while loading first page
+  if (loading) {
     return (
       <ul className="mt-8 flex flex-col gap-3" aria-busy="true" aria-label="Memuat transaksi">
         {Array.from({ length: 3 }).map((_, i) => (
@@ -90,12 +84,33 @@ export function OrderList() {
     )
   }
 
+  if (visible.length === 0) {
+    return (
+      <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-card/40 px-6 py-12 text-center">
+        <span className="flex size-12 items-center justify-center rounded-full bg-card text-muted-foreground">
+          <PackageOpen className="size-6" aria-hidden="true" />
+        </span>
+        <p className="text-sm font-medium">Belum ada transaksi</p>
+        <p className="max-w-xs text-xs text-muted-foreground">
+          Pesanan top up kamu akan muncul di sini setelah checkout selesai.
+        </p>
+        <Link
+          href="/"
+          className="press mt-1 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
+        >
+          <Plus className="size-4" aria-hidden="true" />
+          Top Up Sekarang
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <>
       <ul className="reveal mt-8 flex flex-col gap-3">
-        {visible.map((order) => (
+        {visible.map((order, i) => (
           <li
-            key={order.invoice}
+            key={order.invoice || i}
             className="rounded-xl bg-card p-4 transition-colors duration-200 hover:bg-accent"
           >
             <div className="flex items-center justify-between gap-4">
@@ -118,15 +133,15 @@ export function OrderList() {
         ))}
       </ul>
 
-      {hasMore && (
+      {count < allOrders.length && (
         <div className="mt-5 flex justify-center">
           <button
             type="button"
-            disabled={loading}
-            onClick={() => setCount((c) => c + PAGE_SIZE)}
+            disabled={loadingMore}
+            onClick={handleLoadMore}
             className="press inline-flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-60"
           >
-            {loading ? (
+            {loadingMore ? (
               <>
                 <Loader2 className="size-4 animate-spin" aria-hidden="true" />
                 Memuat...
