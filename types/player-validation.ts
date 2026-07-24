@@ -1,8 +1,7 @@
 export interface PlayerValidationRequest {
-  userId: string
+  gameSlug: string
+  playerId: string
   zoneId: string
-  gameId: number
-  sku: string
 }
 
 export interface PlayerValidationResponse {
@@ -11,7 +10,7 @@ export interface PlayerValidationResponse {
 }
 
 export interface PlayerValidationData {
-  userId: string
+  playerId: string
   zoneId: string
   playerName: string
   level: number | null

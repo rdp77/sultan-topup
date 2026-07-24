@@ -1,6 +1,6 @@
 // Request body for POST /checkout
 export interface CheckoutRequest {
-  userId: string
+  playerId: string
   zoneId: string
   gameId: number
   productId: number

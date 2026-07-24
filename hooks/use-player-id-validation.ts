@@ -7,10 +7,9 @@ import type { PlayerValidationData } from '@/types/player-validation'
 type ValidateState = 'idle' | 'loading' | 'found' | 'not-found' | 'error'
 
 interface ValidateParams {
-  userId: string
+  playerId: string
   zoneId: string
-  gameId: number
-  sku: string
+  gameSlug: string
 }
 
 interface PlayerInfo {
@@ -23,23 +22,24 @@ export function usePlayerIdValidation() {
   const [state, setState] = useState<ValidateState>('idle')
   const [player, setPlayer] = useState<string | null>(null)
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   function reset() {
     setState('idle')
     setPlayer(null)
     setPlayerInfo(null)
+    setErrorMessage(null)
   }
 
   async function validate(params: ValidateParams) {
-    const userId = params.userId.trim()
-    if (!userId || state === 'loading') return
+    const playerId = params.playerId.trim()
+    if (!playerId || state === 'loading') return
 
     // Check client-side cache first
     const cached = PlayerValidationCache.get({
-      userId,
+      playerId,
       zoneId: params.zoneId.trim(),
-      gameId: params.gameId,
-      sku: params.sku,
+      gameSlug: params.gameSlug,
     })
 
     if (cached) {
@@ -53,23 +53,25 @@ export function usePlayerIdValidation() {
 
     try {
       const response = await PlayerService.validate({
-        userId,
+        playerId,
         zoneId: params.zoneId.trim(),
-        gameId: params.gameId,
-        sku: params.sku,
+        gameSlug: params.gameSlug,
       })
 
       // Cache the response
       PlayerValidationCache.set(
-        { userId, zoneId: params.zoneId.trim(), gameId: params.gameId, sku: params.sku },
+        { playerId, zoneId: params.zoneId.trim(), gameSlug: params.gameSlug },
         response,
       )
 
       handleResponse(response)
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal menghubungi server game'
+      console.error('[CekAkun]', msg, err)
       setState('error')
       setPlayer(null)
       setPlayerInfo(null)
+      setErrorMessage(msg)
     }
   }
 
@@ -78,6 +80,7 @@ export function usePlayerIdValidation() {
       setState('error')
       setPlayer(null)
       setPlayerInfo(null)
+      setErrorMessage(response.error)
       return
     }
 
@@ -86,17 +89,15 @@ export function usePlayerIdValidation() {
       const displayName = data.level ? `${data.playerName} (Level ${data.level})` : data.playerName
       setState('found')
       setPlayer(displayName)
-      setPlayerInfo({
-        playerName: data.playerName,
-        level: data.level,
-        avatar: data.avatar,
-      })
-    } else {
-      setState('not-found')
-      setPlayer(null)
-      setPlayerInfo(null)
+      setPlayerInfo({ playerName: data.playerName, level: data.level, avatar: data.avatar })
+      setErrorMessage(null)
+      return
     }
+
+    setState('not-found')
+    setPlayer(null)
+    setPlayerInfo(null)
   }
 
-  return { state, player, playerInfo, validate, reset }
+  return { state, player, playerInfo, errorMessage, validate, reset }
 }

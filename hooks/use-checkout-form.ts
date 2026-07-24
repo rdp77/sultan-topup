@@ -24,7 +24,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
 
   const [selectedDenom, setSelectedDenom] = useState<DenominationView | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const [userId, setUserId] = useState('')
+  const [playerIdInput, setPlayerIdInput] = useState('')
   const [zoneId, setZoneId] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
   const [email, setEmail] = useState('')
@@ -35,7 +35,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
-  const playerId = usePlayerIdValidation()
+  const playerIdValidation = usePlayerIdValidation()
   const emailValidation = useEmailValidation(email)
   const {
     paymentGroups,
@@ -44,9 +44,9 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     retry: retryPaymentMethods,
   } = usePaymentMethods(gameId)
 
-  function handleUserIdChange(value: string) {
-    setUserId(value)
-    playerId.reset()
+  function handlePlayerIdChange(value: string) {
+    setPlayerIdInput(value)
+    playerIdValidation.reset()
   }
 
   const subPrice = useMemo(
@@ -60,8 +60,9 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
 
   const waClean = whatsapp.replace(/\D/g, '')
   const waValid = /^08\d{8,12}$/.test(waClean)
-  const idValid = userId.trim().length >= 3 && (!formConfig.needsZone || zoneId.trim().length >= 1)
-  const idChecked = playerId.state === 'found'
+  const idValid =
+    playerIdInput.trim().length >= 3 && (!formConfig.needsZone || zoneId.trim().length >= 1)
+  const idChecked = playerIdValidation.state === 'found'
   const canClick = selectedDenom !== null && idValid && idChecked && turnstileToken !== null
   const allValid =
     selectedDenom !== null &&
@@ -108,7 +109,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
 
     // Build request
     const request = {
-      userId: userId.trim(),
+      playerId: playerIdInput.trim(),
       zoneId: zoneId.trim(),
       gameId,
       productId: selectedDenom.id,
@@ -154,7 +155,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
             price: String(result.amount),
             fee: String(result.fee),
             method: selectedMethod.name,
-            uid: formConfig.needsZone ? `${userId} (${zoneId})` : userId,
+            uid: formConfig.needsZone ? `${playerIdInput} (${zoneId})` : playerIdInput,
             payment: selectedMethod.id,
             paymentType: result.paymentType,
           })
@@ -181,8 +182,8 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     setSelectedDenom,
     quantity,
     setQuantity,
-    userId,
-    handleUserIdChange,
+    playerId: playerIdInput,
+    handlePlayerIdChange,
     zoneId,
     setZoneId,
     whatsapp,
@@ -195,7 +196,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     touched,
     turnstileToken,
     setTurnstileToken,
-    playerId,
+    playerIdValidation,
     emailValidation,
     subPrice,
     fee,

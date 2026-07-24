@@ -9,10 +9,9 @@ import type { GameFormConfig } from '@/lib/game-form-config'
 interface AccountStepProps {
   step: number
   formConfig: GameFormConfig
-  gameId: number
-  productSku: string
-  userId: string
-  onUserIdChange: (value: string) => void
+  gameSlug: string
+  playerIdValue: string
+  onPlayerIdChange: (value: string) => void
   zoneId: string
   onZoneIdChange: (value: string) => void
   touched: boolean
@@ -22,10 +21,9 @@ interface AccountStepProps {
 export function AccountStep({
   step,
   formConfig,
-  gameId,
-  productSku,
-  userId,
-  onUserIdChange,
+  gameSlug,
+  playerIdValue,
+  onPlayerIdChange,
   zoneId,
   onZoneIdChange,
   touched,
@@ -48,12 +46,12 @@ export function AccountStep({
               id="uid"
               type="text"
               inputMode="numeric"
-              value={userId}
-              onChange={(e) => onUserIdChange(e.target.value)}
+              value={playerIdValue}
+              onChange={(e) => onPlayerIdChange(e.target.value)}
               placeholder={formConfig.idPlaceholder}
               className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
-            {touched && userId.trim().length < 3 && (
+            {touched && playerIdValue.trim().length < 3 && (
               <p className="mt-1.5 text-xs text-destructive">
                 {formConfig.idLabel} minimal 3 karakter
               </p>
@@ -90,8 +88,8 @@ export function AccountStep({
           <div className="shrink-0">
             <button
               type="button"
-              onClick={() => playerId.validate({ userId, zoneId, gameId, sku: productSku })}
-              disabled={playerId.state === 'loading' || userId.trim().length < 3}
+              onClick={() => playerId.validate({ playerId: playerIdValue, zoneId, gameSlug })}
+              disabled={playerId.state === 'loading' || playerIdValue.trim().length < 3}
               className="press inline-flex h-10.5 shrink-0 items-center gap-1.5 rounded-lg border border-border px-4 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
             >
               {playerId.state === 'loading' ? (

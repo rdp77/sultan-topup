@@ -50,6 +50,11 @@ export async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promis
           (body as { error?: string })?.error ??
           `Request failed (${res.status})`
 
+        console.error(`[apiFetch] ${init.method ?? 'GET'} ${path} → ${res.status}`, {
+          body,
+          status: res.status,
+        })
+
         throw new ApiError(msg, res.status, body, retryable)
       }
 
