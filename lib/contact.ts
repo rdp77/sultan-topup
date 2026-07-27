@@ -11,6 +11,9 @@ export const contactConfig = {
   whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP ?? '+62 851-1135-5504',
   whatsappLink:
     process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_LINK ?? 'https://wa.me/message/MOTSNSGBUVNTJ1',
+  address:
+    process.env.NEXT_PUBLIC_CONTACT_ADDRESS ??
+    'Binong Permai Blok G3/5, Curug, Kab. Tangerang, Banten, 15810',
 } as const
 
 /**

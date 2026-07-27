@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Phone, Mail, Clock } from 'lucide-react'
+import { Phone, Mail, Clock, MapPin } from 'lucide-react'
 import { ContactForm } from '@/components/contact-form'
 import { contactConfig } from '@/lib/contact'
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
-  const { email, whatsapp, whatsappLink } = contactConfig
+  const { email, whatsapp, whatsappLink, address } = contactConfig
 
   return (
     <main id="main" className="flex-1">
@@ -33,38 +33,46 @@ export default function ContactPage() {
           bawah. Tim support siap membantu 24 jam.
         </p>
 
-        {/* Contact info - inline strip, not 3 equal cards */}
-        <ul className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-          {/* WhatsApp */}
-          {whatsapp && whatsappLink && (
-            <li className="flex items-center gap-2">
-              <Phone className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+        {/* Contact info - grouped block with hierarchy */}
+        <div className="mt-6 rounded-xl border border-border bg-card/50 px-5 py-4">
+          {/* Action row: primary contact channels */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5 text-sm">
+            {whatsapp && whatsappLink && (
               <a
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary"
               >
+                <Phone className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
                 {whatsapp}
               </a>
-            </li>
-          )}
-          <li aria-hidden="true" className="h-3.5 w-px bg-border" />
-          {/* Email */}
-          {email && (
-            <li className="flex items-center gap-2">
-              <Mail className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-              <a href={`mailto:${email}`} className="transition-colors hover:text-foreground">
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className="inline-flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary"
+              >
+                <Mail className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
                 {email}
               </a>
-            </li>
-          )}
-          <li aria-hidden="true" className="h-3.5 w-px bg-border" />
-          <li className="flex items-center gap-2">
-            <Clock className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
-            24 Jam / 7 Hari
-          </li>
-        </ul>
+            )}
+          </div>
+
+          {/* Info row: static details, muted */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-border pt-2.5 text-xs text-muted-foreground/70">
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="size-3 shrink-0" aria-hidden="true" />
+              24 Jam / 7 Hari
+            </span>
+            {address && (
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="size-3 shrink-0" aria-hidden="true" />
+                {address}
+              </span>
+            )}
+          </div>
+        </div>
 
         {/* Form */}
         <div className="mt-8 rounded-xl border border-border bg-card p-6 md:p-8">
