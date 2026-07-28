@@ -68,7 +68,7 @@
     font-variant-numeric: tabular-nums;
   }
   html {
-    @apply font-sans bg-background;
+    @apply bg-background font-sans;
     scroll-behavior: smooth;
   }
   /* Sticky navbar (64px) anchor offset */

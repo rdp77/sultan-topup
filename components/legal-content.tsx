@@ -1,14 +1,14 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { applyContactTemplate } from '@/lib/contact'
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { applyContactTemplate } from '@/lib/contact';
 
-const LEGAL_DIR = join(process.cwd(), 'content', 'legal')
+const LEGAL_DIR = join(process.cwd(), 'content', 'legal');
 
 export interface LegalConfig {
-  slug: string
-  title: string
-  description: string
-  lastUpdated: string
+  slug: string;
+  title: string;
+  description: string;
+  lastUpdated: string;
 }
 
 export const legalPages: Record<string, LegalConfig> = {
@@ -32,10 +32,10 @@ export const legalPages: Record<string, LegalConfig> = {
       'Kebijakan Pengembalian Dana Sultan Top Up — kapan dan bagaimana refund dapat diajukan.',
     lastUpdated: '2026-07-20',
   },
-}
+};
 
 function readLegalMarkdown(slug: string): string {
-  return readFileSync(join(LEGAL_DIR, `${slug}.md`), 'utf-8')
+  return readFileSync(join(LEGAL_DIR, `${slug}.md`), 'utf-8');
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,116 +48,116 @@ type MDNode =
   | { type: 'h3'; text: string }
   | { type: 'p'; children: InlineNode[] }
   | { type: 'ul'; items: InlineNode[][] }
-  | { type: 'ol'; items: InlineNode[][] }
+  | { type: 'ol'; items: InlineNode[][] };
 
 type InlineNode =
   | { type: 'text'; value: string }
   | { type: 'bold'; children: InlineNode[] }
-  | { type: 'link'; url: string; children: InlineNode[] }
+  | { type: 'link'; url: string; children: InlineNode[] };
 
 function parseMarkdown(md: string): MDNode[] {
-  const lines = md.split('\n')
-  const nodes: MDNode[] = []
-  let i = 0
+  const lines = md.split('\n');
+  const nodes: MDNode[] = [];
+  let i = 0;
 
   while (i < lines.length) {
-    const line = lines[i]
+    const line = lines[i];
 
-    const h3 = /^### (.+)$/.exec(line)
-    const h2 = /^## (.+)$/.exec(line)
-    const h1 = /^# (.+)$/.exec(line)
+    const h3 = /^### (.+)$/.exec(line);
+    const h2 = /^## (.+)$/.exec(line);
+    const h1 = /^# (.+)$/.exec(line);
 
     if (h3) {
-      nodes.push({ type: 'h3', text: h3[1] })
-      i++
-      continue
+      nodes.push({ type: 'h3', text: h3[1] });
+      i++;
+      continue;
     }
     if (h2) {
-      nodes.push({ type: 'h2', text: h2[1] })
-      i++
-      continue
+      nodes.push({ type: 'h2', text: h2[1] });
+      i++;
+      continue;
     }
     if (h1) {
-      nodes.push({ type: 'h1', text: h1[1] })
-      i++
-      continue
+      nodes.push({ type: 'h1', text: h1[1] });
+      i++;
+      continue;
     }
 
     // Unordered list
     if (line.startsWith('- ')) {
-      const items: InlineNode[][] = []
+      const items: InlineNode[][] = [];
       while (i < lines.length && lines[i].startsWith('- ')) {
-        items.push(parseInline(lines[i].slice(2)))
-        i++
+        items.push(parseInline(lines[i].slice(2)));
+        i++;
       }
-      nodes.push({ type: 'ul', items })
-      continue
+      nodes.push({ type: 'ul', items });
+      continue;
     }
 
     // Ordered list
     if (/^\d+\. /.test(line)) {
-      const items: InlineNode[][] = []
+      const items: InlineNode[][] = [];
       while (i < lines.length && /^\d+\. /.test(lines[i])) {
-        items.push(parseInline(lines[i].replace(/^\d+\. /, '')))
-        i++
+        items.push(parseInline(lines[i].replace(/^\d+\. /, '')));
+        i++;
       }
-      nodes.push({ type: 'ol', items })
-      continue
+      nodes.push({ type: 'ol', items });
+      continue;
     }
 
     // Paragraph
     if (line.trim() !== '') {
-      const paraLines: string[] = []
+      const paraLines: string[] = [];
       while (i < lines.length && lines[i].trim() !== '') {
-        if (/^(#|- |\d+\. )/.test(lines[i])) break
-        paraLines.push(lines[i])
-        i++
+        if (/^(#|- |\d+\. )/.test(lines[i])) break;
+        paraLines.push(lines[i]);
+        i++;
       }
-      nodes.push({ type: 'p', children: parseInline(paraLines.join(' ')) })
-      continue
+      nodes.push({ type: 'p', children: parseInline(paraLines.join(' ')) });
+      continue;
     }
 
-    i++
+    i++;
   }
 
-  return nodes
+  return nodes;
 }
 
 function parseInline(text: string): InlineNode[] {
-  const nodes: InlineNode[] = []
-  let remaining = text
+  const nodes: InlineNode[] = [];
+  let remaining = text;
 
   while (remaining.length > 0) {
-    const boldMatch = /\*\*(.+?)\*\*/.exec(remaining)
+    const boldMatch = /\*\*(.+?)\*\*/.exec(remaining);
     if (boldMatch?.index === 0) {
-      nodes.push({ type: 'bold', children: [{ type: 'text', value: boldMatch[1] }] })
-      remaining = remaining.slice(boldMatch[0].length)
-      continue
+      nodes.push({ type: 'bold', children: [{ type: 'text', value: boldMatch[1] }] });
+      remaining = remaining.slice(boldMatch[0].length);
+      continue;
     }
 
-    const linkMatch = /\[([^\]]+)\]\(([^)]+)\)/.exec(remaining)
+    const linkMatch = /\[([^\]]+)\]\(([^)]+)\)/.exec(remaining);
     if (linkMatch?.index === 0) {
       nodes.push({
         type: 'link',
         url: linkMatch[2],
         children: [{ type: 'text', value: linkMatch[1] }],
-      })
-      remaining = remaining.slice(linkMatch[0].length)
-      continue
+      });
+      remaining = remaining.slice(linkMatch[0].length);
+      continue;
     }
 
-    const nextToken = /(\*\*|\[)/.exec(remaining)
+    const nextToken = /(\*\*|\[)/.exec(remaining);
     if (nextToken) {
-      const before = remaining.slice(0, nextToken.index)
-      if (before) nodes.push({ type: 'text', value: before })
-      remaining = remaining.slice(nextToken.index)
+      const before = remaining.slice(0, nextToken.index);
+      if (before) nodes.push({ type: 'text', value: before });
+      remaining = remaining.slice(nextToken.index);
     } else {
-      nodes.push({ type: 'text', value: remaining })
-      remaining = ''
+      nodes.push({ type: 'text', value: remaining });
+      remaining = '';
     }
   }
 
-  return nodes
+  return nodes;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -168,25 +168,25 @@ function renderInline(nodes: InlineNode[]): React.ReactNode {
   return nodes.map((node, i) => {
     switch (node.type) {
       case 'text':
-        return node.value
+        return node.value;
       case 'bold':
         return (
-          <strong key={i} className="font-semibold text-foreground">
+          <strong key={i} className="text-foreground font-semibold">
             {renderInline(node.children)}
           </strong>
-        )
+        );
       case 'link':
         return (
           <a
             key={i}
             href={node.url}
-            className="font-medium text-primary underline underline-offset-2 transition-colors hover:text-primary/80"
+            className="text-primary hover:text-primary/80 font-medium underline underline-offset-2 transition-colors"
           >
             {renderInline(node.children)}
           </a>
-        )
+        );
     }
-  })
+  });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -194,27 +194,27 @@ function renderInline(nodes: InlineNode[]): React.ReactNode {
 /* -------------------------------------------------------------------------- */
 
 export function LegalContent({ slug }: Readonly<{ slug: string }>) {
-  const config = legalPages[slug]
+  const config = legalPages[slug];
 
   if (!config) {
     return (
-      <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
-        <p className="text-sm text-destructive">Halaman tidak ditemukan.</p>
+      <div className="border-destructive/30 bg-destructive/5 rounded-xl border px-6 py-10 text-center">
+        <p className="text-destructive text-sm">Halaman tidak ditemukan.</p>
       </div>
-    )
+    );
   }
 
-  let md: MDNode[]
+  let md: MDNode[];
   try {
-    const raw = readLegalMarkdown(slug)
-    const processed = applyContactTemplate(raw)
-    md = parseMarkdown(processed)
+    const raw = readLegalMarkdown(slug);
+    const processed = applyContactTemplate(raw);
+    md = parseMarkdown(processed);
   } catch {
     return (
-      <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
-        <p className="text-sm text-destructive">Konten halaman tidak tersedia.</p>
+      <div className="border-destructive/30 bg-destructive/5 rounded-xl border px-6 py-10 text-center">
+        <p className="text-destructive text-sm">Konten halaman tidak tersedia.</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -223,52 +223,52 @@ export function LegalContent({ slug }: Readonly<{ slug: string }>) {
         switch (node.type) {
           case 'h1':
             return (
-              <h1 key={i} className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+              <h1 key={i} className="text-foreground text-2xl font-bold tracking-tight md:text-3xl">
                 {node.text}
               </h1>
-            )
+            );
           case 'h2':
             return (
-              <h2 key={i} className="mt-10 mb-3 text-lg font-semibold text-foreground first:mt-0">
+              <h2 key={i} className="text-foreground mt-10 mb-3 text-lg font-semibold first:mt-0">
                 {node.text}
               </h2>
-            )
+            );
           case 'h3':
             return (
-              <h3 key={i} className="mt-8 mb-2 text-base font-semibold text-foreground">
+              <h3 key={i} className="text-foreground mt-8 mb-2 text-base font-semibold">
                 {node.text}
               </h3>
-            )
+            );
           case 'p':
             return (
-              <p key={i} className="mb-4 text-sm leading-relaxed text-muted-foreground">
+              <p key={i} className="text-muted-foreground mb-4 text-sm leading-relaxed">
                 {renderInline(node.children)}
               </p>
-            )
+            );
           case 'ul':
             return (
               <ul key={i} className="mb-4 ml-5 list-disc space-y-2">
                 {node.items.map((item, j) => (
-                  <li key={j} className="text-sm leading-relaxed text-muted-foreground">
+                  <li key={j} className="text-muted-foreground text-sm leading-relaxed">
                     {renderInline(item)}
                   </li>
                 ))}
               </ul>
-            )
+            );
           case 'ol':
             return (
               <ol key={i} className="mb-4 ml-5 list-decimal space-y-2">
                 {node.items.map((item, j) => (
-                  <li key={j} className="text-sm leading-relaxed text-muted-foreground">
+                  <li key={j} className="text-muted-foreground text-sm leading-relaxed">
                     {renderInline(item)}
                   </li>
                 ))}
               </ol>
-            )
+            );
           default:
-            return null
+            return null;
         }
       })}
     </article>
-  )
+  );
 }

@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { Loader2 } from 'lucide-react'
-import posthog from 'posthog-js'
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
+import posthog from 'posthog-js';
 
 export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const isLogin = mode === 'login'
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const isLogin = mode === 'login';
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (loading) return
-    setLoading(true)
-    posthog.capture(isLogin ? 'user_logged_in' : 'user_registered')
-    setTimeout(() => router.push('/dashboard'), 900)
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    posthog.capture(isLogin ? 'user_logged_in' : 'user_registered');
+    setTimeout(() => router.push('/dashboard'), 900);
   }
 
   return (
@@ -33,7 +33,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
         <h1 className="mt-4 text-2xl font-bold tracking-tight">
           {isLogin ? 'Masuk ke Sultan Top Up' : 'Buat Akun Sultan Top Up'}
         </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1.5 text-sm">
           {isLogin
             ? 'Lihat riwayat pesanan dan top up lebih cepat.'
             : 'Gratis dan cepat. Checkout tetap bisa tanpa akun.'}
@@ -43,7 +43,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
       <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
         {!isLogin && (
           <div>
-            <label htmlFor="name" className="mb-1.5 block text-sm text-muted-foreground">
+            <label htmlFor="name" className="text-muted-foreground mb-1.5 block text-sm">
               Nama
             </label>
             <input
@@ -51,12 +51,12 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
               type="text"
               required
               placeholder="Nama kamu"
-              className="w-full rounded-md border border-input bg-card px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+              className="border-input bg-card placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
             />
           </div>
         )}
         <div>
-          <label htmlFor="auth-email" className="mb-1.5 block text-sm text-muted-foreground">
+          <label htmlFor="auth-email" className="text-muted-foreground mb-1.5 block text-sm">
             Email
           </label>
           <input
@@ -64,11 +64,11 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
             type="email"
             required
             placeholder="nama@email.com"
-            className="w-full rounded-md border border-input bg-card px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+            className="border-input bg-card placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
           />
         </div>
         <div>
-          <label htmlFor="auth-password" className="mb-1.5 block text-sm text-muted-foreground">
+          <label htmlFor="auth-password" className="text-muted-foreground mb-1.5 block text-sm">
             Kata Sandi
           </label>
           <input
@@ -77,14 +77,14 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
             required
             minLength={8}
             placeholder="Minimal 8 karakter"
-            className="w-full rounded-md border border-input bg-card px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+            className="border-input bg-card placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="press mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 enabled:hover:bg-primary/90 disabled:opacity-60"
+          className="press bg-primary text-primary-foreground enabled:hover:bg-primary/90 mt-2 flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors duration-200 disabled:opacity-60"
         >
           {loading ? (
             <>
@@ -99,23 +99,23 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-6 text-center text-sm">
         {isLogin ? (
           <>
             Belum punya akun?{' '}
-            <Link href="/register" className="font-medium text-primary hover:underline">
+            <Link href="/register" className="text-primary font-medium hover:underline">
               Daftar
             </Link>
           </>
         ) : (
           <>
             Sudah punya akun?{' '}
-            <Link href="/login" className="font-medium text-primary hover:underline">
+            <Link href="/login" className="text-primary font-medium hover:underline">
               Masuk
             </Link>
           </>
         )}
       </p>
     </div>
-  )
+  );
 }

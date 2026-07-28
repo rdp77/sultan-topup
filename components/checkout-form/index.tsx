@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { useMemo } from 'react'
-import { toDenominations } from '@/lib/product-utils'
-import { useCheckoutForm } from '@/hooks/use-checkout-form'
-import { AccountStep } from './account-step'
-import { ProductStep } from './product-step'
-import { QuantityStep } from './quantity-step'
-import { ContactStep } from './contact-step'
-import { PaymentMethodStep } from './payment-method-step'
-import { OrderSummary } from './order-summary'
-import { NoProductsAvailable } from './no-products-available'
-import type { GameDetail } from '@/types/games'
+import { useMemo } from 'react';
+import { toDenominations } from '@/lib/product-utils';
+import { useCheckoutForm } from '@/hooks/use-checkout-form';
+import { AccountStep } from './account-step';
+import { ProductStep } from './product-step';
+import { QuantityStep } from './quantity-step';
+import { ContactStep } from './contact-step';
+import { PaymentMethodStep } from './payment-method-step';
+import { OrderSummary } from './order-summary';
+import { NoProductsAvailable } from './no-products-available';
+import type { GameDetail } from '@/types/games';
 
 export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
-  const denominations = useMemo(() => toDenominations(game.products), [game.products])
-  const form = useCheckoutForm({ gameId: game.id, gameName: game.name, gameSlug: game.slug })
+  const denominations = useMemo(() => toDenominations(game.products), [game.products]);
+  const form = useCheckoutForm({ gameId: game.id, gameName: game.name, gameSlug: game.slug });
 
   if (denominations.length === 0) {
-    return <NoProductsAvailable />
+    return <NoProductsAvailable />;
   }
 
   return (
@@ -84,5 +84,5 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         checkoutError={form.checkoutError}
       />
     </div>
-  )
+  );
 }

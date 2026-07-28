@@ -1,5 +1,5 @@
-import { apiFetch, ApiError } from '@/lib/api-client'
-import type { CheckoutRequest, CheckoutResponse } from '@/types/checkout'
+import { apiFetch, ApiError } from '@/lib/api-client';
+import type { CheckoutRequest, CheckoutResponse } from '@/types/checkout';
 
 export const CheckoutService = {
   /**
@@ -15,14 +15,14 @@ export const CheckoutService = {
           'Idempotency-Key': idempotencyKey,
         },
         body: JSON.stringify(request),
-      })
-      return response
+      });
+      return response;
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
         // Idempotency conflict — return structured error so caller can retry
-        return { success: false, error: 'Duplicate request detected. Please try again.' }
+        return { success: false, error: 'Duplicate request detected. Please try again.' };
       }
-      throw error
+      throw error;
     }
   },
 
@@ -31,6 +31,6 @@ export const CheckoutService = {
    * Used for refreshing payment data in /bayar page.
    */
   async getStatus(orderId: string): Promise<CheckoutResponse> {
-    return apiFetch<CheckoutResponse>(`/checkout/${orderId}`)
+    return apiFetch<CheckoutResponse>(`/checkout/${orderId}`);
   },
-}
+};

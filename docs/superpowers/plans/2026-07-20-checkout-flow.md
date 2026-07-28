@@ -58,55 +58,55 @@ Produces:
 ```typescript
 // Request body for POST /checkout
 export interface CheckoutRequest {
-  userId: string
-  zoneId: string
-  gameId: number
-  productId: number
-  sku: string
-  quantity: number
-  email: string
-  whatsapp: string
-  paymentMethod: string
+  userId: string;
+  zoneId: string;
+  gameId: number;
+  productId: number;
+  sku: string;
+  quantity: number;
+  email: string;
+  whatsapp: string;
+  paymentMethod: string;
 }
 
 // API Response from /checkout
 export interface CheckoutResponse {
-  success: boolean
-  data?: CheckoutResult
-  error?: string
+  success: boolean;
+  data?: CheckoutResult;
+  error?: string;
 }
 
 // Checkout result with payment details
 export interface CheckoutResult {
-  orderId: string
-  invoice: string
-  paymentType: 'qris' | 'va' | 'ewallet'
-  paymentData: PaymentData
-  amount: number
-  fee: number
-  total: number
-  expiryTime: string
+  orderId: string;
+  invoice: string;
+  paymentType: 'qris' | 'va' | 'ewallet';
+  paymentData: PaymentData;
+  amount: number;
+  fee: number;
+  total: number;
+  expiryTime: string;
 }
 
 // Discriminated union for different payment types
-export type PaymentData = QRISPaymentData | VAPaymentData | EWalletPaymentData
+export type PaymentData = QRISPaymentData | VAPaymentData | EWalletPaymentData;
 
 export interface QRISPaymentData {
-  type: 'qris'
-  qrCode: string
-  qrString: string
+  type: 'qris';
+  qrCode: string;
+  qrString: string;
 }
 
 export interface VAPaymentData {
-  type: 'va'
-  vaNumber: string
-  bank: string
+  type: 'va';
+  vaNumber: string;
+  bank: string;
 }
 
 export interface EWalletPaymentData {
-  type: 'ewallet'
-  deepLink: string
-  paymentUrl: string
+  type: 'ewallet';
+  deepLink: string;
+  paymentUrl: string;
 }
 ```
 
@@ -147,8 +147,8 @@ Produces:
 - [ ] **Step 1: Create services/checkout.service.ts**
 
 ```typescript
-import { apiFetch, ApiError } from '@/lib/api-client'
-import type { CheckoutRequest, CheckoutResponse, CheckoutResult } from '@/types/checkout'
+import { apiFetch, ApiError } from '@/lib/api-client';
+import type { CheckoutRequest, CheckoutResponse, CheckoutResult } from '@/types/checkout';
 
 export const CheckoutService = {
   /**
@@ -164,14 +164,14 @@ export const CheckoutService = {
           'Idempotency-Key': idempotencyKey,
         },
         body: JSON.stringify(request),
-      })
-      return response
+      });
+      return response;
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
         // Idempotency conflict - return special response
-        return { success: false, error: 'Duplicate request detected. Please try again.' }
+        return { success: false, error: 'Duplicate request detected. Please try again.' };
       }
-      throw error
+      throw error;
     }
   },
 
@@ -180,9 +180,9 @@ export const CheckoutService = {
    * Used for refreshing payment data in /bayar page.
    */
   async getStatus(orderId: string): Promise<CheckoutResponse> {
-    return apiFetch<CheckoutResponse>(`/checkout/${orderId}`)
+    return apiFetch<CheckoutResponse>(`/checkout/${orderId}`);
   },
-}
+};
 ```
 
 - [ ] **Step 2: Run TypeScript check**
@@ -231,35 +231,35 @@ Replace the `handleSubmit` function with real API call. Add new state variables.
 
 ```typescript
 // Add to existing imports
-import { CheckoutService } from '@/services/checkout.service'
-import type { CheckoutResult } from '@/types/checkout'
+import { CheckoutService } from '@/services/checkout.service';
+import type { CheckoutResult } from '@/types/checkout';
 
 // Add to state declarations (around line 28-30)
-const [checkoutLoading, setCheckoutLoading] = useState(false)
-const [checkoutError, setCheckoutError] = useState<string | null>(null)
+const [checkoutLoading, setCheckoutLoading] = useState(false);
+const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
 // Update handleSubmit function (around line 75-104)
 function handleSubmit() {
-  setTouched(true)
-  if (!canClick || submitting || !selectedDenom || !selectedMethod) return
+  setTouched(true);
+  if (!canClick || submitting || !selectedDenom || !selectedMethod) return;
 
   // Check for pending submission
-  const pendingKey = sessionStorage.getItem('checkout:pending:key')
+  const pendingKey = sessionStorage.getItem('checkout:pending:key');
   if (pendingKey) {
-    setCheckoutError('Pesanan masih diproses. Tunggu sebentar atau cek status pesanan.')
-    return
+    setCheckoutError('Pesanan masih diproses. Tunggu sebentar atau cek status pesanan.');
+    return;
   }
 
-  setSubmitting(true)
-  setCheckoutLoading(true)
-  setCheckoutError(null)
+  setSubmitting(true);
+  setCheckoutLoading(true);
+  setCheckoutError(null);
 
   // Generate idempotency key
-  const idempotencyKey = crypto.randomUUID()
+  const idempotencyKey = crypto.randomUUID();
 
   // Store pending key with timestamp
-  sessionStorage.setItem('checkout:pending:key', idempotencyKey)
-  sessionStorage.setItem(`checkout:pending:${idempotencyKey}`, Date.now().toString())
+  sessionStorage.setItem('checkout:pending:key', idempotencyKey);
+  sessionStorage.setItem(`checkout:pending:${idempotencyKey}`, Date.now().toString());
 
   // Build request
   const request = {
@@ -272,14 +272,14 @@ function handleSubmit() {
     email: email.trim(),
     whatsapp: whatsapp.replace(/\D/g, ''),
     paymentMethod: selectedMethod.id,
-  }
+  };
 
   CheckoutService.create(request, idempotencyKey)
     .then((response) => {
       if (response.success && response.data) {
         // Store result for /bayar page
-        const result = response.data as CheckoutResult
-        sessionStorage.setItem(`checkout:result:${result.orderId}`, JSON.stringify(result))
+        const result = response.data as CheckoutResult;
+        sessionStorage.setItem(`checkout:result:${result.orderId}`, JSON.stringify(result));
 
         // Track event
         posthog.capture('checkout_submitted', {
@@ -295,10 +295,10 @@ function handleSubmit() {
           payment_method_name: selectedMethod.name,
           invoice_id: result.invoice,
           order_id: result.orderId,
-        })
+        });
 
         // Clear pending state
-        sessionStorage.removeItem('checkout:pending:key')
+        sessionStorage.removeItem('checkout:pending:key');
 
         // Redirect to /bayar with order data
         const params = new URLSearchParams({
@@ -312,22 +312,22 @@ function handleSubmit() {
           uid: formConfig.needsZone ? `${userId} (${zoneId})` : userId,
           payment: selectedMethod.id,
           paymentType: result.paymentType,
-        })
-        router.push(`/bayar?${params.toString()}`)
+        });
+        router.push(`/bayar?${params.toString()}`);
       } else {
-        setCheckoutError(response.error ?? 'Terjadi kesalahan. Coba lagi.')
-        setSubmitting(false)
-        setCheckoutLoading(false)
-        sessionStorage.removeItem('checkout:pending:key')
+        setCheckoutError(response.error ?? 'Terjadi kesalahan. Coba lagi.');
+        setSubmitting(false);
+        setCheckoutLoading(false);
+        sessionStorage.removeItem('checkout:pending:key');
       }
     })
     .catch((error) => {
-      console.error('Checkout error:', error)
-      setCheckoutError('Gagal menghubungi server. Coba lagi.')
-      setSubmitting(false)
-      setCheckoutLoading(false)
-      sessionStorage.removeItem('checkout:pending:key')
-    })
+      console.error('Checkout error:', error);
+      setCheckoutError('Gagal menghubungi server. Coba lagi.');
+      setSubmitting(false);
+      setCheckoutLoading(false);
+      sessionStorage.removeItem('checkout:pending:key');
+    });
 }
 
 // Add to return object
@@ -336,7 +336,7 @@ return {
   checkoutLoading,
   checkoutError,
   setCheckoutError,
-}
+};
 ```
 
 - [ ] **Step 3: Run TypeScript check**
@@ -543,30 +543,30 @@ Add imports and update state/effect:
 
 ```typescript
 // Add to imports
-import { CheckoutService } from '@/services/checkout.service'
+import { CheckoutService } from '@/services/checkout.service';
 import type {
   CheckoutResult,
   QRISPaymentData,
   VAPaymentData,
   EWalletPaymentData,
-} from '@/types/checkout'
+} from '@/types/checkout';
 
 // Add new state (after line 133)
-const [paymentData, setPaymentData] = useState<CheckoutResult | null>(null)
-const [loadingPaymentData, setLoadingPaymentData] = useState(false)
+const [paymentData, setPaymentData] = useState<CheckoutResult | null>(null);
+const [loadingPaymentData, setLoadingPaymentData] = useState(false);
 
 // Update useEffect for data fetching (around line 151)
 useEffect(() => {
-  const orderId = params.get('orderId')
-  if (!orderId) return
+  const orderId = params.get('orderId');
+  if (!orderId) return;
 
-  setLoadingPaymentData(true)
+  setLoadingPaymentData(true);
 
   // Try sessionStorage first (instant)
-  const stored = sessionStorage.getItem(`checkout:result:${orderId}`)
+  const stored = sessionStorage.getItem(`checkout:result:${orderId}`);
   if (stored) {
     try {
-      setPaymentData(JSON.parse(stored))
+      setPaymentData(JSON.parse(stored));
     } catch {
       // Invalid JSON, fetch from API
     }
@@ -576,34 +576,34 @@ useEffect(() => {
   CheckoutService.getStatus(orderId)
     .then((response) => {
       if (response.success && response.data) {
-        setPaymentData(response.data)
+        setPaymentData(response.data);
         // Update sessionStorage for future use
-        sessionStorage.setItem(`checkout:result:${orderId}`, JSON.stringify(response.data))
+        sessionStorage.setItem(`checkout:result:${orderId}`, JSON.stringify(response.data));
       }
     })
     .catch(() => {
       // Silently fail, use sessionStorage or URL params fallback
     })
-    .finally(() => setLoadingPaymentData(false))
-}, [])
+    .finally(() => setLoadingPaymentData(false));
+}, []);
 
 // Update payment data display logic (around line 145-149)
 // Replace hardcoded dummyVa with real data from paymentData
 
-const paymentType = params.get('paymentType') ?? paymentData?.paymentType ?? 'qris'
-const isQRIS = paymentType === 'qris' || paymentData?.paymentData.type === 'qris'
+const paymentType = params.get('paymentType') ?? paymentData?.paymentType ?? 'qris';
+const isQRIS = paymentType === 'qris' || paymentData?.paymentData.type === 'qris';
 const isVA =
-  ['bca', 'bni', 'bri', 'mandiri'].includes(paymentId) || paymentData?.paymentData.type === 'va'
+  ['bca', 'bni', 'bri', 'mandiri'].includes(paymentId) || paymentData?.paymentData.type === 'va';
 
 // Update VA display (around line 147-149)
 const dummyVa = isVA
   ? paymentData?.paymentData.type === 'va'
     ? (paymentData.paymentData as VAPaymentData).vaNumber
     : `${paymentId === 'bca' ? '7521' : paymentId === 'bni' ? '9882' : paymentId === 'bri' ? '1500' : '8866'}-${Date.now().toString().slice(-8)}`
-  : ''
+  : '';
 
 // Update QRIS display - use real qrCode if available
-const qrAmount = paymentData?.total ?? total
+const qrAmount = paymentData?.total ?? total;
 ```
 
 Update QrPlaceholder to use real data if available:

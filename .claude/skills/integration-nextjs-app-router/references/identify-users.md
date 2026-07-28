@@ -15,8 +15,8 @@ PostHog AI
 ```javascript
 posthog.identify(
   'distinct_id', // Replace 'distinct_id' with your user's unique identifier
-  { email: 'max@hedgehogmail.com', name: 'Max Hedgehog' }, // optional: set additional person properties
-)
+  { email: 'max@hedgehogmail.com', name: 'Max Hedgehog' } // optional: set additional person properties
+);
 ```
 
 ### Android
@@ -46,7 +46,7 @@ posthog.identify('distinct_id', {
   // Replace "distinct_id" with your user's unique identifier
   email: 'max@hedgehogmail.com', // optional: set additional person properties
   name: 'Max Hedgehog',
-})
+});
 ```
 
 ### Dart
@@ -119,7 +119,7 @@ PostHog AI
 ### Web
 
 ```javascript
-posthog.reset()
+posthog.reset();
 ```
 
 ### iOS
@@ -137,7 +137,7 @@ PostHog.reset()
 ### React Native
 
 ```jsx
-posthog.reset()
+posthog.reset();
 ```
 
 ### Dart
@@ -153,7 +153,7 @@ Web
 PostHog AI
 
 ```javascript
-posthog.reset(true)
+posthog.reset(true);
 ```
 
 ### 4\. Person profiles and properties

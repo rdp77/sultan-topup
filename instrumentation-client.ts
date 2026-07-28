@@ -2,7 +2,7 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
   dsn: 'https://ce134fcbc3d4acfd33fd272cf67eac39@o947584.ingest.us.sentry.io/4511756519276544',
@@ -29,11 +29,11 @@ Sentry.init({
     // userInfo: false,
     // httpBodies: [],
   },
-})
+});
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
 
-import posthog from 'posthog-js'
+import posthog from 'posthog-js';
 
 posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN!, {
   api_host: '/ingest',
@@ -41,4 +41,4 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN!, {
   defaults: '2026-01-30',
   capture_exceptions: true,
   debug: process.env.NODE_ENV === 'development',
-})
+});

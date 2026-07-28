@@ -1,5 +1,5 @@
-import { apiFetch } from '@/lib/api-client'
-import type { PaymentMethodListResponse } from '@/types/payment-method'
+import { apiFetch } from '@/lib/api-client';
+import type { PaymentMethodListResponse } from '@/types/payment-method';
 
 export const PaymentMethodService = {
   /**
@@ -7,9 +7,9 @@ export const PaymentMethodService = {
    * Revalidates every 300s (5 min) — payment method configs rarely change.
    */
   list(gameId?: number): Promise<PaymentMethodListResponse> {
-    const params = gameId ? `?game_id=${gameId}` : ''
+    const params = gameId ? `?game_id=${gameId}` : '';
     return apiFetch<PaymentMethodListResponse>(`/payment-methods${params}`, {
       next: { revalidate: 300 },
-    })
+    });
   },
-}
+};

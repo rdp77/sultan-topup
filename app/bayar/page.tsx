@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
-import { BayarCard } from '@/components/bayar-card'
+import { Suspense } from 'react';
+import { BayarCard } from '@/components/bayar-card';
 
 export const metadata = {
   title: 'Pembayaran — Sultan Top Up',
@@ -29,7 +29,7 @@ export const metadata = {
     description: 'Selesaikan pembayaran top up game Anda.',
     images: ['https://sultantopup.com/og-image.png'],
   },
-}
+};
 
 export default function BayarPage() {
   return (
@@ -38,8 +38,8 @@ export default function BayarPage() {
         <Suspense
           fallback={
             <div className="flex flex-col gap-4">
-              <div className="mx-auto h-8 w-48 animate-pulse rounded bg-muted" />
-              <div className="h-80 animate-pulse rounded-xl bg-card" />
+              <div className="bg-muted mx-auto h-8 w-48 animate-pulse rounded" />
+              <div className="bg-card h-80 animate-pulse rounded-xl" />
             </div>
           }
         >
@@ -47,5 +47,5 @@ export default function BayarPage() {
         </Suspense>
       </div>
     </main>
-  )
+  );
 }

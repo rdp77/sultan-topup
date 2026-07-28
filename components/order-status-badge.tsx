@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
-import type { OrderStatus } from '@/lib/data'
+import { cn } from '@/lib/utils';
+import type { OrderStatus } from '@/lib/data';
 
 const config: Record<OrderStatus, { label: string; className: string }> = {
   success: { label: 'Berhasil', className: 'bg-success/15 text-success' },
@@ -9,12 +9,12 @@ const config: Record<OrderStatus, { label: string; className: string }> = {
     label: 'Kedaluwarsa',
     className: 'bg-muted-foreground/15 text-muted-foreground border border-border/60',
   },
-}
+};
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
-  const c = config[status]
-  if (!c) return null
+  const c = config[status];
+  if (!c) return null;
   return (
     <span className={cn('rounded-md px-2 py-1 text-xs font-medium', c.className)}>{c.label}</span>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-'use server'
+'use server';
 
-import { GameService } from '@/services'
+import { GameService } from '@/services';
 
 export async function loadMoreGamesAction(page: number) {
-  return GameService.list(page)
+  return GameService.list(page);
 }

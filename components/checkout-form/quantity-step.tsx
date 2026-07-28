@@ -1,13 +1,13 @@
-import { formatRupiah } from '@/lib/data'
-import { SectionHeading } from './section-heading'
-import type { DenominationView } from '@/lib/product-utils'
+import { formatRupiah } from '@/lib/data';
+import { SectionHeading } from './section-heading';
+import type { DenominationView } from '@/lib/product-utils';
 
 interface QuantityStepProps {
-  step: number
-  selected: DenominationView | null
-  quantity: number
-  onChange: (quantity: number) => void
-  subPrice: number
+  step: number;
+  selected: DenominationView | null;
+  quantity: number;
+  onChange: (quantity: number) => void;
+  subPrice: number;
 }
 
 export function QuantityStep({
@@ -18,14 +18,14 @@ export function QuantityStep({
   subPrice,
 }: Readonly<QuantityStepProps>) {
   return (
-    <section className="rounded-xl bg-card p-4 md:p-6">
+    <section className="bg-card rounded-xl p-4 md:p-6">
       <SectionHeading step={step} title="Jumlah Pesanan" />
       <div className="mt-3 flex items-center gap-4">
         <button
           type="button"
           onClick={() => onChange(Math.max(1, quantity - 1))}
           disabled={!selected}
-          className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-30"
+          className="press border-border hover:bg-card flex size-9 shrink-0 items-center justify-center rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-30"
           aria-label="Kurangi jumlah"
         >
           -
@@ -35,21 +35,21 @@ export function QuantityStep({
           type="button"
           onClick={() => onChange(Math.min(99, quantity + 1))}
           disabled={!selected}
-          className="press flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-30"
+          className="press border-border hover:bg-card flex size-9 shrink-0 items-center justify-center rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-30"
           aria-label="Tambah jumlah"
         >
           +
         </button>
         {selected ? (
-          <span className="ml-auto text-sm text-muted-foreground">
+          <span className="text-muted-foreground ml-auto text-sm">
             {selected.amount} × {quantity} · {formatRupiah(subPrice)}
           </span>
         ) : (
-          <span className="ml-auto text-xs text-muted-foreground">
+          <span className="text-muted-foreground ml-auto text-xs">
             Pilih nominal terlebih dahulu
           </span>
         )}
       </div>
     </section>
-  )
+  );
 }

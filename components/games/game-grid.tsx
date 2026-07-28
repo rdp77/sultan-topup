@@ -1,8 +1,8 @@
-import { GameCard } from '@/components/game-card'
-import type { Game } from '@/types/games'
+import { GameCard } from '@/components/game-card';
+import type { Game } from '@/types/games';
 
 interface GameGridProps {
-  games: Game[]
+  games: Game[];
 }
 
 export function GameGrid({ games }: Readonly<GameGridProps>) {
@@ -12,5 +12,5 @@ export function GameGrid({ games }: Readonly<GameGridProps>) {
         <GameCard key={game.slug} game={game} />
       ))}
     </div>
-  )
+  );
 }

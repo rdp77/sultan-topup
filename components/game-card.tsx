@@ -1,14 +1,14 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Game } from '@/types/games'
+import Link from 'next/link';
+import Image from 'next/image';
+import { Game } from '@/types/games';
 
 export function GameCard({ game }: Readonly<{ game: Game }>) {
   return (
     <Link
       href={`/game/${game.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition-colors duration-200 hover:border-primary/40"
+      className="group border-border/60 bg-card hover:border-primary/40 flex flex-col overflow-hidden rounded-xl border transition-colors duration-200"
     >
-      <div className="relative aspect-3/4 w-full overflow-hidden bg-background">
+      <div className="bg-background relative aspect-3/4 w-full overflow-hidden">
         <Image
           src={game.cover || process.env.NEXT_PUBLIC_PLACEHOLDER_IMAGE || ''}
           alt={game.name}
@@ -17,19 +17,19 @@ export function GameCard({ game }: Readonly<{ game: Game }>) {
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {game.popular && (
-          <span className="absolute left-2 top-2 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
+          <span className="bg-primary text-primary-foreground absolute top-2 left-2 rounded-md px-2 py-0.5 text-xs font-medium">
             Populer
           </span>
         )}
       </div>
       <div className="flex items-start justify-between gap-2 p-3">
         <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold leading-tight text-foreground">
+          <h3 className="text-foreground truncate text-sm leading-tight font-semibold">
             {game.name}
           </h3>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">{game.publisher}</p>
+          <p className="text-muted-foreground mt-0.5 truncate text-xs">{game.publisher}</p>
         </div>
       </div>
     </Link>
-  )
+  );
 }

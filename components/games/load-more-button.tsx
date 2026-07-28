@@ -1,9 +1,9 @@
-import { Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react';
 
 interface LoadMoreButtonProps {
-  remaining: number
-  isPending: boolean
-  onClick: () => void
+  remaining: number;
+  isPending: boolean;
+  onClick: () => void;
 }
 
 export function LoadMoreButton({ remaining, isPending, onClick }: Readonly<LoadMoreButtonProps>) {
@@ -13,11 +13,11 @@ export function LoadMoreButton({ remaining, isPending, onClick }: Readonly<LoadM
         type="button"
         onClick={onClick}
         disabled={isPending}
-        className="press inline-flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
+        className="press border-border text-foreground hover:bg-card inline-flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors duration-200 disabled:opacity-50"
       >
         <Loader2 className={`size-4 ${isPending ? 'animate-spin' : ''}`} aria-hidden="true" />
         {isPending ? 'Memuat...' : `Muat Lebih Banyak (${remaining} lagi)`}
       </button>
     </div>
-  )
+  );
 }

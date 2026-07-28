@@ -1,13 +1,13 @@
-import { PackageX } from 'lucide-react'
+import { PackageX } from 'lucide-react';
 
 export function NoProductsAvailable() {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl bg-card p-8 text-center">
-      <PackageX className="size-8 text-muted-foreground" aria-hidden="true" />
+    <div className="bg-card flex flex-col items-center gap-2 rounded-xl p-8 text-center">
+      <PackageX className="text-muted-foreground size-8" aria-hidden="true" />
       <p className="text-sm font-medium">Produk belum tersedia</p>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Nominal top up untuk game ini sedang tidak tersedia. Silakan cek kembali nanti.
       </p>
     </div>
-  )
+  );
 }

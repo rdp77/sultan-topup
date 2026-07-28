@@ -1,6 +1,6 @@
-import { withSentryConfig } from '@sentry/nextjs'
+import { withSentryConfig } from '@sentry/nextjs';
 
-const hasSentryToken = !!process.env.SENTRY_AUTH_TOKEN
+const hasSentryToken = !!process.env.SENTRY_AUTH_TOKEN;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -24,10 +24,10 @@ const nextConfig = {
         source: '/ingest/:path*',
         destination: 'https://us.i.posthog.com/:path*',
       },
-    ]
+    ];
   },
   skipTrailingSlashRedirect: true,
-}
+};
 
 export default withSentryConfig(nextConfig, {
   org: 'wreative',
@@ -50,4 +50,4 @@ export default withSentryConfig(nextConfig, {
       removeDebugLogging: true,
     },
   },
-})
+});

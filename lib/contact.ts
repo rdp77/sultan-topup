@@ -14,7 +14,7 @@ export const contactConfig = {
   address:
     process.env.NEXT_PUBLIC_CONTACT_ADDRESS ??
     'Binong Permai Blok G3/5, Curug, Kab. Tangerang, Banten, 15810',
-} as const
+} as const;
 
 /**
  * Replace contact placeholder variables in a template string.
@@ -27,5 +27,5 @@ export function applyContactTemplate(content: string): string {
   return content
     .replaceAll('{{CONTACT_EMAIL}}', contactConfig.email)
     .replaceAll('{{CONTACT_WHATSAPP_LINK}}', contactConfig.whatsappLink)
-    .replaceAll('{{CONTACT_WHATSAPP}}', contactConfig.whatsapp)
+    .replaceAll('{{CONTACT_WHATSAPP}}', contactConfig.whatsapp);
 }

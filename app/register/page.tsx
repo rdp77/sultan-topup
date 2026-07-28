@@ -1,4 +1,4 @@
-import { AuthForm } from '@/components/auth-form'
+import { AuthForm } from '@/components/auth-form';
 
 export const metadata = {
   title: 'Daftar — Sultan Top Up',
@@ -27,12 +27,12 @@ export const metadata = {
     description: 'Daftar akun Sultan Top Up.',
     images: ['https://sultantopup.com/og-image.png'],
   },
-}
+};
 
 export default function RegisterPage() {
   return (
     <main id="main" className="flex flex-1 items-center px-4 py-16 md:px-6">
       <AuthForm mode="register" />
     </main>
-  )
+  );
 }

@@ -79,21 +79,21 @@ PostHog AI
 ### instrumentation-client.js
 
 ```javascript
-import posthog from 'posthog-js'
+import posthog from 'posthog-js';
 posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   defaults: '2026-05-30',
-})
+});
 ```
 
 ### instrumentation-client.ts
 
 ```typescript
-import posthog from 'posthog-js'
+import posthog from 'posthog-js';
 posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN!, {
   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   defaults: '2026-05-30',
-})
+});
 ```
 
 Bootstrapping with `instrumentation-client`
@@ -148,14 +148,14 @@ JavaScript
 PostHog AI
 
 ```javascript
-'use client'
-import posthog from 'posthog-js'
+'use client';
+import posthog from 'posthog-js';
 export default function Home() {
   return (
     <div>
       <button onClick={() => posthog.capture('test_event')}>Click me for an event</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -168,11 +168,11 @@ JavaScript
 PostHog AI
 
 ```javascript
-'use client'
-import { useFeatureFlagEnabled } from '@posthog/react'
+'use client';
+import { useFeatureFlagEnabled } from '@posthog/react';
 export default function FeatureComponent() {
-  const showNewFeature = useFeatureFlagEnabled('new-feature')
-  return showNewFeature ? <NewFeature /> : <OldFeature />
+  const showNewFeature = useFeatureFlagEnabled('new-feature');
+  return showNewFeature ? <NewFeature /> : <OldFeature />;
 }
 ```
 
@@ -231,14 +231,14 @@ PostHog AI
 
 ```javascript
 // app/posthog.js
-import { PostHog } from 'posthog-node'
+import { PostHog } from 'posthog-node';
 export default function PostHogClient() {
   const posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
     host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     flushAt: 1,
     flushInterval: 0,
-  })
-  return posthogClient
+  });
+  return posthogClient;
 }
 ```
 
@@ -254,21 +254,21 @@ JavaScript
 PostHog AI
 
 ```javascript
-import Link from 'next/link'
-import PostHogClient from '../posthog'
+import Link from 'next/link';
+import PostHogClient from '../posthog';
 export default async function About() {
-  const posthog = PostHogClient()
+  const posthog = PostHogClient();
   const flags = await posthog.getAllFlags(
-    'user_distinct_id', // replace with a user's distinct ID
-  )
-  await posthog.shutdown()
+    'user_distinct_id' // replace with a user's distinct ID
+  );
+  await posthog.shutdown();
   return (
     <main>
       <h1>About</h1>
       <Link href="/">Go home</Link>
       {flags['main-cta'] && <Link href="http://posthog.com/">Go to PostHog</Link>}
     </main>
-  )
+  );
 }
 ```
 
@@ -284,16 +284,16 @@ PostHog AI
 
 ```javascript
 // pages/posts/[id].js
-import { useContext, useEffect, useState } from 'react'
-import { getServerSession } from 'next-auth/next'
-import { PostHog } from 'posthog-node'
+import { useContext, useEffect, useState } from 'react';
+import { getServerSession } from 'next-auth/next';
+import { PostHog } from 'posthog-node';
 export default function Post({ post, flags }) {
-  const [ctaState, setCtaState] = useState()
+  const [ctaState, setCtaState] = useState();
   useEffect(() => {
     if (flags) {
-      setCtaState(flags['blog-cta'])
+      setCtaState(flags['blog-cta']);
     }
-  })
+  });
   return (
     <div>
       <h1>{post.title}</h1>
@@ -306,33 +306,33 @@ export default function Post({ post, flags }) {
       )}
       <button onClick={likePost}>Like</button>
     </div>
-  )
+  );
 }
 export async function getServerSideProps(ctx) {
-  const session = await getServerSession(ctx.req, ctx.res)
-  let flags = null
+  const session = await getServerSession(ctx.req, ctx.res);
+  let flags = null;
   if (session) {
     const client = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
       host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-    })
-    flags = await client.getAllFlags(session.user.email)
+    });
+    flags = await client.getAllFlags(session.user.email);
     client.capture({
       distinctId: session.user.email,
       event: 'loaded blog article',
       properties: {
         $current_url: ctx.req.url,
       },
-    })
-    await client.shutdown()
+    });
+    await client.shutdown();
   }
-  const { posts } = await import('../../blog.json')
-  const post = posts.find((post) => post.id.toString() === ctx.params.id)
+  const { posts } = await import('../../blog.json');
+  const post = posts.find((post) => post.id.toString() === ctx.params.id);
   return {
     props: {
       post,
       flags,
     },
-  }
+  };
 }
 ```
 
@@ -359,7 +359,7 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
       tags: ['posthog'], // Can be used with Next.js `revalidateTag` function
     },
   },
-})
+});
 ```
 
 ## Configuring a reverse proxy to PostHog

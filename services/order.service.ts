@@ -1,5 +1,5 @@
-import { apiFetch } from '@/lib/api-client'
-import type { OrderListApiResponse, OrderLookupResponse } from '@/types/order'
+import { apiFetch } from '@/lib/api-client';
+import type { OrderListApiResponse, OrderLookupResponse } from '@/types/order';
 
 export const OrderService = {
   /**
@@ -7,11 +7,11 @@ export const OrderService = {
    * GET /orders/lookup?invoice=...&email=... (or &phone=...)
    */
   lookup(invoice: string, contact: string): Promise<OrderLookupResponse> {
-    const isEmail = contact.includes('@')
-    const params = new URLSearchParams({ invoice })
-    if (isEmail) params.set('email', contact)
-    else params.set('phone', contact)
-    return apiFetch<OrderLookupResponse>(`/orders/lookup?${params}`)
+    const isEmail = contact.includes('@');
+    const params = new URLSearchParams({ invoice });
+    if (isEmail) params.set('email', contact);
+    else params.set('phone', contact);
+    return apiFetch<OrderLookupResponse>(`/orders/lookup?${params}`);
   },
 
   /**
@@ -21,6 +21,6 @@ export const OrderService = {
   list(): Promise<OrderListApiResponse> {
     return apiFetch<OrderListApiResponse>('/orders', {
       next: { revalidate: 30 },
-    })
+    });
   },
-}
+};

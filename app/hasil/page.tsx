@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
-import { ResultCard } from '@/components/result-card'
+import { Suspense } from 'react';
+import { ResultCard } from '@/components/result-card';
 
 export const metadata = {
   title: 'Status Pesanan — Sultan Top Up',
@@ -29,7 +29,7 @@ export const metadata = {
     description: 'Lihat status transaksi top up game Anda.',
     images: ['https://sultantopup.com/og-image.png'],
   },
-}
+};
 
 export default function ResultPage() {
   return (
@@ -38,9 +38,9 @@ export default function ResultPage() {
         <Suspense
           fallback={
             <div className="flex flex-col gap-4">
-              <div className="mx-auto size-20 animate-pulse rounded-full bg-card" />
-              <div className="mx-auto h-6 w-48 animate-pulse rounded-md bg-card" />
-              <div className="h-64 animate-pulse rounded-xl bg-card" />
+              <div className="bg-card mx-auto size-20 animate-pulse rounded-full" />
+              <div className="bg-card mx-auto h-6 w-48 animate-pulse rounded-md" />
+              <div className="bg-card h-64 animate-pulse rounded-xl" />
             </div>
           }
         >
@@ -48,5 +48,5 @@ export default function ResultPage() {
         </Suspense>
       </div>
     </main>
-  )
+  );
 }

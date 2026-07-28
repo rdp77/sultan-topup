@@ -14,39 +14,39 @@ Mengubah checkout form dari dummy submit menjadi functional API call ke backend 
 ```typescript
 // Request
 interface CheckoutRequest {
-  userId: string
-  zoneId: string
-  gameId: number
-  productId: number
-  sku: string
-  quantity: number
-  email: string
-  whatsapp: string
-  paymentMethod: string
+  userId: string;
+  zoneId: string;
+  gameId: number;
+  productId: number;
+  sku: string;
+  quantity: number;
+  email: string;
+  whatsapp: string;
+  paymentMethod: string;
 }
 
 // Response
 interface CheckoutResponse {
-  success: boolean
-  data?: CheckoutResult
-  error?: string
+  success: boolean;
+  data?: CheckoutResult;
+  error?: string;
 }
 
 interface CheckoutResult {
-  orderId: string
-  invoice: string
-  paymentType: 'qris' | 'va' | 'ewallet'
-  paymentData: PaymentData
-  amount: number
-  fee: number
-  total: number
-  expiryTime: string
+  orderId: string;
+  invoice: string;
+  paymentType: 'qris' | 'va' | 'ewallet';
+  paymentData: PaymentData;
+  amount: number;
+  fee: number;
+  total: number;
+  expiryTime: string;
 }
 
 type PaymentData =
   | { type: 'qris'; qrCode: string; qrString: string }
   | { type: 'va'; vaNumber: string; bank: string }
-  | { type: 'ewallet'; deepLink: string; paymentUrl: string }
+  | { type: 'ewallet'; deepLink: string; paymentUrl: string };
 ```
 
 ---
@@ -113,29 +113,29 @@ Struktur mengikuti `services/game.service.ts` dan `services/player.service.ts`:
 **Logic:**
 
 ```typescript
-const orderId = params.get('orderId')
-const [paymentData, setPaymentData] = useState<CheckoutResult | null>(null)
-const [loading, setLoading] = useState(!!orderId)
+const orderId = params.get('orderId');
+const [paymentData, setPaymentData] = useState<CheckoutResult | null>(null);
+const [loading, setLoading] = useState(!!orderId);
 
 useEffect(() => {
-  if (!orderId) return
+  if (!orderId) return;
 
   // Try sessionStorage first (instant)
-  const stored = sessionStorage.getItem(`checkout:result:${orderId}`)
+  const stored = sessionStorage.getItem(`checkout:result:${orderId}`);
   if (stored) {
-    setPaymentData(JSON.parse(stored))
-    setLoading(false)
-    return
+    setPaymentData(JSON.parse(stored));
+    setLoading(false);
+    return;
   }
 
   // Fallback: fetch from API
   CheckoutService.getStatus(orderId)
     .then((res) => {
-      if (res.success) setPaymentData(res.data!)
+      if (res.success) setPaymentData(res.data!);
     })
     .catch(() => {})
-    .finally(() => setLoading(false))
-}, [orderId])
+    .finally(() => setLoading(false));
+}, [orderId]);
 ```
 
 **Render:**

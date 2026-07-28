@@ -1,33 +1,33 @@
 export type Game = {
-  slug: string
-  name: string
-  publisher: string
-  image: string
-  currency: string
-  idLabel: string
-  idPlaceholder: string
-  needsZone: boolean
-  popular: boolean
-}
+  slug: string;
+  name: string;
+  publisher: string;
+  image: string;
+  currency: string;
+  idLabel: string;
+  idPlaceholder: string;
+  needsZone: boolean;
+  popular: boolean;
+};
 
 export type Denomination = {
-  id: string
-  amount: string
-  price: number
-  badge?: 'popular' | 'best-value'
-}
+  id: string;
+  amount: string;
+  price: number;
+  badge?: 'popular' | 'best-value';
+};
 
 export type PaymentMethod = {
-  id: string
-  name: string
-  fee: number
-  feeType: 'flat' | 'percent'
-}
+  id: string;
+  name: string;
+  fee: number;
+  feeType: 'flat' | 'percent';
+};
 
 export type PaymentGroup = {
-  group: string
-  methods: PaymentMethod[]
-}
+  group: string;
+  methods: PaymentMethod[];
+};
 
 export const games: Game[] = [
   {
@@ -206,10 +206,10 @@ export const games: Game[] = [
     needsZone: false,
     popular: false,
   },
-]
+];
 
 export function getGame(slug: string): Game | undefined {
-  return games.find((g) => g.slug === slug)
+  return games.find((g) => g.slug === slug);
 }
 
 export const denominations: Record<string, Denomination[]> = {
@@ -223,7 +223,7 @@ export const denominations: Record<string, Denomination[]> = {
     { id: 'ml-7', amount: '1050 Diamonds', price: 249000 },
     { id: 'ml-8', amount: '2195 Diamonds', price: 512000 },
   ],
-}
+};
 
 const defaultDenoms: Denomination[] = [
   { id: 'd-1', amount: '100', price: 16000 },
@@ -232,15 +232,15 @@ const defaultDenoms: Denomination[] = [
   { id: 'd-4', amount: '1060', price: 155000 },
   { id: 'd-5', amount: '2180', price: 305000, badge: 'best-value' },
   { id: 'd-6', amount: '5600', price: 760000 },
-]
+];
 
 export function getDenominations(game: Game): Denomination[] {
-  const list = denominations[game.slug]
-  if (list) return list
+  const list = denominations[game.slug];
+  if (list) return list;
   return defaultDenoms.map((d) => ({
     ...d,
     amount: `${d.amount} ${game.currency}`,
-  }))
+  }));
 }
 
 export const paymentGroups: PaymentGroup[] = [
@@ -266,31 +266,31 @@ export const paymentGroups: PaymentGroup[] = [
       { id: 'mandiri', name: 'Mandiri Virtual Account', fee: 4000, feeType: 'flat' },
     ],
   },
-]
+];
 
 export function calcFee(method: PaymentMethod, price: number): number {
-  return method.feeType === 'percent' ? Math.ceil((price * method.fee) / 100) : method.fee
+  return method.feeType === 'percent' ? Math.ceil((price * method.fee) / 100) : method.fee;
 }
 
 export function formatRupiah(n: number): string {
-  return `Rp ${(n ?? 0).toLocaleString('id-ID')}`
+  return `Rp ${(n ?? 0).toLocaleString('id-ID')}`;
 }
 
-export type OrderStatus = 'success' | 'failed' | 'processing' | 'expired'
+export type OrderStatus = 'success' | 'failed' | 'processing' | 'expired';
 
 export type Order = {
-  invoice: string
-  game: string
-  product: string
-  price: number
-  fee: number
-  total: number
-  method: string
-  userId: string
-  phone: string
-  status: OrderStatus
-  date: string
-}
+  invoice: string;
+  game: string;
+  product: string;
+  price: number;
+  fee: number;
+  total: number;
+  method: string;
+  userId: string;
+  phone: string;
+  status: OrderStatus;
+  date: string;
+};
 
 export const mockOrders: Order[] = [
   {
@@ -345,14 +345,14 @@ export const mockOrders: Order[] = [
     status: 'expired',
     date: '15 Juni 2026, 11:03',
   },
-]
+];
 
 export type LeaderboardEntry = {
-  rank: number
-  name: string
-  total: number
-  transactions: number
-}
+  rank: number;
+  name: string;
+  total: number;
+  transactions: number;
+};
 
 export const leaderboard: LeaderboardEntry[] = [
   { rank: 1, name: 'Rizky***', total: 12450000, transactions: 87 },
@@ -365,4 +365,4 @@ export const leaderboard: LeaderboardEntry[] = [
   { rank: 8, name: 'Nadia***', total: 3980000, transactions: 29 },
   { rank: 9, name: 'Yoga***', total: 3540000, transactions: 33 },
   { rank: 10, name: 'Intan***', total: 3120000, transactions: 26 },
-]
+];

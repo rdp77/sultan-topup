@@ -1,18 +1,18 @@
-import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { AnnouncementBar } from '@/components/announcement-bar'
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
-import './globals.css'
-import { FloatingWhatsApp } from '@/components/floating-whatsapp'
-import { GoogleAnalytics } from '@next/third-parties/google'
-import { contactConfig } from '@/lib/contact'
+import type { Metadata, Viewport } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import { AnnouncementBar } from '@/components/announcement-bar';
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/footer';
+import './globals.css';
+import { FloatingWhatsApp } from '@/components/floating-whatsapp';
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { contactConfig } from '@/lib/contact';
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
-})
+});
 
 export const metadata: Metadata = {
   title: 'Sultan Top Up — Top Up Game Cepat & Aman',
@@ -71,12 +71,12 @@ export const metadata: Metadata = {
     google: 'LIovFvCv7ZsFCgRA_RCpxPfs5TqUAaipyj7jCt5P_so',
     me: 'https://sultantopup.com',
   },
-}
+};
 
 export const viewport: Viewport = {
   colorScheme: 'dark',
   themeColor: '#040819',
-}
+};
 
 const jsonLdOrganization = {
   '@type': 'Organization',
@@ -99,7 +99,7 @@ const jsonLdOrganization = {
     email: contactConfig.email,
     telephone: contactConfig.whatsapp,
   },
-}
+};
 
 const jsonLdWebSite = {
   '@type': 'WebSite',
@@ -108,17 +108,17 @@ const jsonLdWebSite = {
   url: 'https://sultantopup.com',
   description: 'Jasa top up game cepat dan aman',
   publisher: { '@id': 'https://sultantopup.com' },
-}
+};
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [jsonLdOrganization, jsonLdWebSite],
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="id" className={`${geistSans.variable} ${geistMono.variable} bg-background`}>
@@ -148,5 +148,5 @@ export default function RootLayout({
         <GoogleAnalytics gaId="G-EDHJ84L47B" />
       </body>
     </html>
-  )
+  );
 }

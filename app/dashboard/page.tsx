@@ -1,6 +1,6 @@
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
-import { OrderList } from '@/components/order-list'
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
+import { OrderList } from '@/components/order-list';
 
 export const metadata = {
   title: 'Dashboard — Sultan Top Up',
@@ -30,7 +30,7 @@ export const metadata = {
     description: 'Dashboard akun Sultan Top Up.',
     images: ['https://sultantopup.com/og-image.png'],
   },
-}
+};
 
 export default function DashboardPage() {
   return (
@@ -39,13 +39,13 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Riwayat Pesanan</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm">
               Semua transaksi top up kamu ada di sini.
             </p>
           </div>
           <Link
             href="/"
-            className="press flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
+            className="press bg-primary text-primary-foreground hover:bg-primary/90 flex shrink-0 items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors duration-200"
           >
             <Plus className="size-4" aria-hidden="true" />
             <span className="hidden sm:inline">Top Up Baru</span>
@@ -56,5 +56,5 @@ export default function DashboardPage() {
         <OrderList />
       </div>
     </main>
-  )
+  );
 }

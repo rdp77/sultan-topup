@@ -1,34 +1,34 @@
-import { NextResponse } from 'next/server'
-import dns from 'node:dns/promises'
+import { NextResponse } from 'next/server';
+import dns from 'node:dns/promises';
 
 export async function POST(req: Request) {
   try {
-    const { email } = (await req.json()) as { email?: string }
+    const { email } = (await req.json()) as { email?: string };
     if (!email || typeof email !== 'string') {
-      return NextResponse.json({ valid: false, reason: 'Email is required' }, { status: 400 })
+      return NextResponse.json({ valid: false, reason: 'Email is required' }, { status: 400 });
     }
 
-    const trimmed = email.trim()
-    const atIdx = trimmed.lastIndexOf('@')
+    const trimmed = email.trim();
+    const atIdx = trimmed.lastIndexOf('@');
     if (atIdx === -1 || atIdx === trimmed.length - 1) {
-      return NextResponse.json({ valid: false, reason: 'Missing domain' })
+      return NextResponse.json({ valid: false, reason: 'Missing domain' });
     }
 
-    const domain = trimmed.slice(atIdx + 1)
+    const domain = trimmed.slice(atIdx + 1);
 
     // Check MX records — if domain has no mail server, it can't receive email
     try {
-      const records = await dns.resolveMx(domain)
+      const records = await dns.resolveMx(domain);
       if (!records || records.length === 0) {
-        return NextResponse.json({ valid: false, reason: `No mail server found for ${domain}` })
+        return NextResponse.json({ valid: false, reason: `No mail server found for ${domain}` });
       }
-      return NextResponse.json({ valid: true })
+      return NextResponse.json({ valid: true });
     } catch (dnsErr: unknown) {
-      let msg = 'Unknown DNS error'
+      let msg = 'Unknown DNS error';
       if (dnsErr instanceof Error) {
-        msg = dnsErr.message
+        msg = dnsErr.message;
       } else if (typeof dnsErr === 'string') {
-        msg = dnsErr
+        msg = dnsErr;
       }
       // ENOTFOUND = domain doesn't exist at all
       // ENODATA = domain exists but no MX records
@@ -37,9 +37,9 @@ export async function POST(req: Request) {
         reason: msg.includes('ENOTFOUND')
           ? `Domain ${domain} not found`
           : `No mail server for ${domain}`,
-      })
+      });
     }
   } catch {
-    return NextResponse.json({ valid: false, reason: 'Server error' }, { status: 500 })
+    return NextResponse.json({ valid: false, reason: 'Server error' }, { status: 500 });
   }
 }

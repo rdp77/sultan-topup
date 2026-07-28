@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { AlertTriangle, Loader2, Search, UserCheck } from 'lucide-react'
-import { SectionHeading } from './section-heading'
-import { InfoTooltip } from './info-tooltip'
-import type { usePlayerIdValidation } from '@/hooks/use-player-id-validation'
-import type { GameFormConfig } from '@/lib/game-form-config'
+import { AlertTriangle, Loader2, Search, UserCheck } from 'lucide-react';
+import { SectionHeading } from './section-heading';
+import { InfoTooltip } from './info-tooltip';
+import type { usePlayerIdValidation } from '@/hooks/use-player-id-validation';
+import type { GameFormConfig } from '@/lib/game-form-config';
 
 interface AccountStepProps {
-  step: number
-  formConfig: GameFormConfig
-  gameSlug: string
-  playerIdValue: string
-  onPlayerIdChange: (value: string) => void
-  zoneId: string
-  onZoneIdChange: (value: string) => void
-  touched: boolean
-  playerId: ReturnType<typeof usePlayerIdValidation>
+  step: number;
+  formConfig: GameFormConfig;
+  gameSlug: string;
+  playerIdValue: string;
+  onPlayerIdChange: (value: string) => void;
+  zoneId: string;
+  onZoneIdChange: (value: string) => void;
+  touched: boolean;
+  playerId: ReturnType<typeof usePlayerIdValidation>;
 }
 
 export function AccountStep({
@@ -30,12 +30,12 @@ export function AccountStep({
   playerId,
 }: Readonly<AccountStepProps>) {
   return (
-    <section className="rounded-xl bg-card p-4 md:p-6">
+    <section className="bg-card rounded-xl p-4 md:p-6">
       <SectionHeading step={step} title="Masukkan Data Akun" />
       <div className="mt-4 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
-            <label htmlFor="uid" className="mb-1.5 flex items-center text-sm text-muted-foreground">
+            <label htmlFor="uid" className="text-muted-foreground mb-1.5 flex items-center text-sm">
               {formConfig.idLabel}
               <InfoTooltip>
                 Buka game lalu masuk ke halaman profil. {formConfig.idLabel} biasanya tertera di
@@ -49,10 +49,10 @@ export function AccountStep({
               value={playerIdValue}
               onChange={(e) => onPlayerIdChange(e.target.value)}
               placeholder={formConfig.idPlaceholder}
-              className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+              className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
             />
             {touched && playerIdValue.trim().length < 3 && (
-              <p className="mt-1.5 text-xs text-destructive">
+              <p className="text-destructive mt-1.5 text-xs">
                 {formConfig.idLabel} minimal 3 karakter
               </p>
             )}
@@ -61,7 +61,7 @@ export function AccountStep({
           <div className="w-full sm:w-36">
             <label
               htmlFor="zone-id"
-              className="mb-1.5 flex items-center text-sm text-muted-foreground"
+              className="text-muted-foreground mb-1.5 flex items-center text-sm"
             >
               Server / Zone ID
               <InfoTooltip>
@@ -78,10 +78,10 @@ export function AccountStep({
               onChange={(e) => onZoneIdChange(e.target.value)}
               placeholder={formConfig.needsZone ? 'Contoh: 2001' : 'Opsional'}
               disabled={!formConfig.needsZone}
-              className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40"
+              className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-40"
             />
             {formConfig.needsZone && touched && zoneId.trim().length < 1 && (
-              <p className="mt-1.5 text-xs text-destructive">Zone ID wajib diisi</p>
+              <p className="text-destructive mt-1.5 text-xs">Zone ID wajib diisi</p>
             )}
           </div>
 
@@ -90,7 +90,7 @@ export function AccountStep({
               type="button"
               onClick={() => playerId.validate({ playerId: playerIdValue, zoneId, gameSlug })}
               disabled={playerId.state === 'loading' || playerIdValue.trim().length < 3}
-              className="press inline-flex h-10.5 shrink-0 items-center gap-1.5 rounded-lg border border-border px-4 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-card disabled:opacity-50"
+              className="press border-border text-foreground hover:bg-card inline-flex h-10.5 shrink-0 items-center gap-1.5 rounded-lg border px-4 text-xs font-medium transition-colors duration-200 disabled:opacity-50"
             >
               {playerId.state === 'loading' ? (
                 <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
@@ -104,19 +104,19 @@ export function AccountStep({
 
         <div className="-mt-1">
           {playerId.state === 'found' && playerId.player && (
-            <p className="flex items-center gap-1.5 text-xs text-success">
+            <p className="text-success flex items-center gap-1.5 text-xs">
               <UserCheck className="size-3.5" aria-hidden="true" />
               Akun ditemukan: {playerId.player}
             </p>
           )}
           {playerId.state === 'not-found' && (
-            <p className="flex items-center gap-1.5 text-xs text-destructive">
+            <p className="text-destructive flex items-center gap-1.5 text-xs">
               <AlertTriangle className="size-3.5" aria-hidden="true" />
               Akun tidak ditemukan. Periksa kembali {formConfig.idLabel} kamu.
             </p>
           )}
           {playerId.state === 'error' && (
-            <p className="flex items-center gap-1.5 text-xs text-destructive">
+            <p className="text-destructive flex items-center gap-1.5 text-xs">
               <AlertTriangle className="size-3.5" aria-hidden="true" />
               Gagal menghubungi server game. Coba lagi nanti.
             </p>
@@ -124,5 +124,5 @@ export function AccountStep({
         </div>
       </div>
     </section>
-  )
+  );
 }

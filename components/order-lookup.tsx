@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Loader2, Search, SearchX } from 'lucide-react'
-import posthog from 'posthog-js'
-import { OrderStatusBadge } from '@/components/order-status-badge'
-import { formatRupiah, type Order, type OrderStatus } from '@/lib/data'
-import { OrderService } from '@/services'
-import type { OrderApiItem } from '@/types/order'
+import { useState } from 'react';
+import { Loader2, Search, SearchX } from 'lucide-react';
+import posthog from 'posthog-js';
+import { OrderStatusBadge } from '@/components/order-status-badge';
+import { formatRupiah, type Order, type OrderStatus } from '@/lib/data';
+import { OrderService } from '@/services';
+import type { OrderApiItem } from '@/types/order';
 
 const STATUS_MAP: Record<string, OrderStatus> = {
   completed: 'success',
   failed: 'failed',
   pending: 'processing',
-}
+};
 
 function toOrder(item: OrderApiItem): Order {
   return {
@@ -27,41 +27,41 @@ function toOrder(item: OrderApiItem): Order {
     phone: item.phone,
     status: STATUS_MAP[item.status] ?? 'failed',
     date: item.created_at,
-  }
+  };
 }
 
 export function OrderLookup() {
-  const [invoice, setInvoice] = useState('')
-  const [contact, setContact] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<Order | null | 'not-found'>(null)
+  const [invoice, setInvoice] = useState('');
+  const [contact, setContact] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<Order | null | 'not-found'>(null);
 
   async function handleSearch(e: React.FormEvent) {
-    e.preventDefault()
-    if (!invoice.trim() || !contact.trim() || loading) return
-    setLoading(true)
-    setResult(null)
+    e.preventDefault();
+    if (!invoice.trim() || !contact.trim() || loading) return;
+    setLoading(true);
+    setResult(null);
 
     try {
-      const res = await OrderService.lookup(invoice.trim(), contact.trim())
-      const found = res.data ?? null
+      const res = await OrderService.lookup(invoice.trim(), contact.trim());
+      const found = res.data ?? null;
       posthog.capture('order_lookup_performed', {
         found: !!found,
         order_status: found?.status ?? null,
-      })
-      setResult(found ? toOrder(found) : 'not-found')
+      });
+      setResult(found ? toOrder(found) : 'not-found');
     } catch {
-      setResult('not-found')
+      setResult('not-found');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <form onSubmit={handleSearch} className="flex flex-col gap-4 rounded-xl bg-card p-5">
+      <form onSubmit={handleSearch} className="bg-card flex flex-col gap-4 rounded-xl p-5">
         <div>
-          <label htmlFor="invoice" className="mb-1.5 block text-sm text-muted-foreground">
+          <label htmlFor="invoice" className="text-muted-foreground mb-1.5 block text-sm">
             Nomor Invoice
           </label>
           <input
@@ -70,11 +70,11 @@ export function OrderLookup() {
             value={invoice}
             onChange={(e) => setInvoice(e.target.value)}
             placeholder="Contoh: INV-20260702-8F3K"
-            className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+            className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
           />
         </div>
         <div>
-          <label htmlFor="contact" className="mb-1.5 block text-sm text-muted-foreground">
+          <label htmlFor="contact" className="text-muted-foreground mb-1.5 block text-sm">
             Email / Nomor WhatsApp
           </label>
           <input
@@ -83,13 +83,13 @@ export function OrderLookup() {
             value={contact}
             onChange={(e) => setContact(e.target.value)}
             placeholder="nama@email.com atau 08xxxxxxxxxx"
-            className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/30"
+            className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
           />
         </div>
         <button
           type="submit"
           disabled={loading || !invoice.trim() || !contact.trim()}
-          className="press flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 enabled:hover:bg-primary/90 disabled:opacity-60"
+          className="press bg-primary text-primary-foreground enabled:hover:bg-primary/90 flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors duration-200 disabled:opacity-60"
         >
           {loading ? (
             <>
@@ -103,28 +103,28 @@ export function OrderLookup() {
             </>
           )}
         </button>
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           Coba dengan invoice contoh: INV-20260702-8F3K
         </p>
       </form>
 
       {result === 'not-found' && (
-        <div className="flex flex-col items-center gap-2 rounded-xl bg-card p-8 text-center">
-          <SearchX className="size-10 text-muted-foreground" aria-hidden="true" />
+        <div className="bg-card flex flex-col items-center gap-2 rounded-xl p-8 text-center">
+          <SearchX className="text-muted-foreground size-10" aria-hidden="true" />
           <p className="text-sm font-medium">Pesanan tidak ditemukan</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Periksa kembali nomor invoice dan kontak yang kamu masukkan.
           </p>
         </div>
       )}
 
       {result && result !== 'not-found' && (
-        <div className="rounded-xl bg-card p-5">
+        <div className="bg-card rounded-xl p-5">
           <div className="flex items-center justify-between gap-4">
-            <span className="font-mono text-xs text-muted-foreground">{result.invoice}</span>
+            <span className="text-muted-foreground font-mono text-xs">{result.invoice}</span>
             <OrderStatusBadge status={result.status} />
           </div>
-          <dl className="mt-4 flex flex-col gap-2.5 border-t border-border pt-4 text-sm">
+          <dl className="border-border mt-4 flex flex-col gap-2.5 border-t pt-4 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Game</dt>
               <dd>{result.game}</dd>
@@ -145,7 +145,7 @@ export function OrderLookup() {
               <dt className="text-muted-foreground">Tanggal</dt>
               <dd>{result.date}</dd>
             </div>
-            <div className="flex justify-between gap-4 border-t border-border pt-2.5 font-semibold">
+            <div className="border-border flex justify-between gap-4 border-t pt-2.5 font-semibold">
               <dt>Total</dt>
               <dd className="text-primary">{formatRupiah(result.total)}</dd>
             </div>
@@ -155,25 +155,25 @@ export function OrderLookup() {
 
       {/* Skeleton — same shape as the result card, shown while searching */}
       {loading && !result && (
-        <div className="rounded-xl bg-card p-5" aria-busy="true" aria-label="Mencari pesanan">
+        <div className="bg-card rounded-xl p-5" aria-busy="true" aria-label="Mencari pesanan">
           <div className="flex items-center justify-between gap-4">
-            <span className="h-3 w-32 animate-pulse rounded bg-muted" />
-            <span className="h-5 w-20 animate-pulse rounded bg-muted" />
+            <span className="bg-muted h-3 w-32 animate-pulse rounded" />
+            <span className="bg-muted h-5 w-20 animate-pulse rounded" />
           </div>
-          <dl className="mt-4 flex flex-col gap-2.5 border-t border-border pt-4">
+          <dl className="border-border mt-4 flex flex-col gap-2.5 border-t pt-4">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex justify-between gap-4">
-                <span className="h-3 w-16 animate-pulse rounded bg-muted" />
-                <span className="h-3 w-28 animate-pulse rounded bg-muted" />
+                <span className="bg-muted h-3 w-16 animate-pulse rounded" />
+                <span className="bg-muted h-3 w-28 animate-pulse rounded" />
               </div>
             ))}
-            <div className="mt-1 flex justify-between gap-4 border-t border-border pt-2.5">
-              <span className="h-4 w-12 animate-pulse rounded bg-muted" />
-              <span className="h-4 w-24 animate-pulse rounded bg-muted" />
+            <div className="border-border mt-1 flex justify-between gap-4 border-t pt-2.5">
+              <span className="bg-muted h-4 w-12 animate-pulse rounded" />
+              <span className="bg-muted h-4 w-24 animate-pulse rounded" />
             </div>
           </dl>
         </div>
       )}
     </div>
-  )
+  );
 }

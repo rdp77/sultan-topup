@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { useEffect, useState, useCallback } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
+import { useEffect, useState, useCallback } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 
 type Slide = {
-  srcDesktop: string
-  srcMobile: string
-  alt: string
-  label?: string
-  sub?: string
-}
+  srcDesktop: string;
+  srcMobile: string;
+  alt: string;
+  label?: string;
+  sub?: string;
+};
 
 const slides: Slide[] = [
   {
@@ -28,17 +28,17 @@ const slides: Slide[] = [
     srcMobile: '/banners/banner3.png',
     alt: 'Event dan promo terbaru',
   },
-]
+];
 
 export function BannerSlider() {
-  const [i, setI] = useState(0)
-  const prev = () => setI((v) => (v - 1 + slides.length) % slides.length)
-  const next = useCallback(() => setI((v) => (v + 1) % slides.length), [])
+  const [i, setI] = useState(0);
+  const prev = () => setI((v) => (v - 1 + slides.length) % slides.length);
+  const next = useCallback(() => setI((v) => (v + 1) % slides.length), []);
 
   useEffect(() => {
-    const t = setInterval(next, 5000)
-    return () => clearInterval(t)
-  }, [next])
+    const t = setInterval(next, 5000);
+    return () => clearInterval(t);
+  }, [next]);
 
   return (
     <div
@@ -75,13 +75,13 @@ export function BannerSlider() {
             />
             {(s.label || s.sub) && (
               <>
-                <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
+                <div className="from-background via-background/30 absolute inset-0 bg-linear-to-t to-transparent" />
                 <div className="absolute bottom-0 left-0 p-4 md:p-8">
                   {s.label && (
-                    <p className="text-lg font-bold text-foreground md:text-2xl">{s.label}</p>
+                    <p className="text-foreground text-lg font-bold md:text-2xl">{s.label}</p>
                   )}
                   {s.sub && (
-                    <p className="mt-1 text-sm text-muted-foreground md:text-base">{s.sub}</p>
+                    <p className="text-muted-foreground mt-1 text-sm md:text-base">{s.sub}</p>
                   )}
                 </div>
               </>
@@ -93,7 +93,7 @@ export function BannerSlider() {
       <button
         type="button"
         onClick={prev}
-        className="press absolute left-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-background/60 text-foreground backdrop-blur transition hover:bg-background/90"
+        className="press bg-background/60 text-foreground hover:bg-background/90 absolute top-1/2 left-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full backdrop-blur transition"
         aria-label="Slide sebelumnya"
       >
         <ChevronLeft className="size-5" aria-hidden="true" />
@@ -101,13 +101,13 @@ export function BannerSlider() {
       <button
         type="button"
         onClick={next}
-        className="press absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-background/60 text-foreground backdrop-blur transition hover:bg-background/90"
+        className="press bg-background/60 text-foreground hover:bg-background/90 absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full backdrop-blur transition"
         aria-label="Slide berikutnya"
       >
         <ChevronRight className="size-5" aria-hidden="true" />
       </button>
 
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist">
+      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5" role="tablist">
         {slides.map((s, idx) => (
           <button
             key={`${s.srcDesktop}-${idx}`}
@@ -116,12 +116,12 @@ export function BannerSlider() {
             role="tab"
             aria-selected={idx === i}
             className={`size-2 rounded-full transition-all duration-300 ${
-              idx === i ? 'w-5 bg-primary' : 'bg-muted-foreground/40'
+              idx === i ? 'bg-primary w-5' : 'bg-muted-foreground/40'
             }`}
             aria-label={`Slide ${idx + 1}`}
           />
         ))}
       </div>
     </div>
-  )
+  );
 }
