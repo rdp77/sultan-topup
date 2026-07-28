@@ -70,6 +70,40 @@ export default async function GamePage({ params }: PageProps) {
   })
   await posthog.flush()
 
+  // JSON-LD: BreadcrumbList + SoftwareApplication
+  const gameJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://sultantopup.com' },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: `Top Up ${game.name}`,
+            item: `https://sultantopup.com/game/${game.slug}`,
+          },
+        ],
+      },
+      {
+        '@type': 'SoftwareApplication',
+        name: game.name,
+        applicationCategory: 'GameApplication',
+        operatingSystem: 'Android, iOS',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'IDR',
+          availability: 'https://schema.org/InStock',
+          url: `https://sultantopup.com/game/${game.slug}`,
+        },
+        description: game.publisher,
+        url: `https://sultantopup.com/game/${game.slug}`,
+      },
+    ],
+  }
+
   const placeholder = {
     id: 0,
     cover: process.env.NEXT_PUBLIC_PLACEHOLDER_IMAGE || '',
@@ -83,6 +117,12 @@ export default async function GamePage({ params }: PageProps) {
 
   return (
     <main id="main" className="flex-1">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(gameJsonLd).replaceAll('<', String.raw`<`),
+        }}
+      />
       {/* Banner */}
       <div className="relative h-40 w-full overflow-hidden md:h-56">
         <Image

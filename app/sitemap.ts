@@ -4,6 +4,10 @@ import { legalPages } from '@/components/legal-content'
 
 const BASE_URL = 'https://sultantopup.com'
 
+// Fixed dates for static pages — avoids sending "today" to crawlers every build
+const STATIC_UPDATED = '2026-07-27'
+const LEGAL_UPDATED = '2026-07-22'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = []
 
@@ -11,56 +15,56 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   entries.push({
     url: BASE_URL,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'daily',
     priority: 1,
   })
 
   entries.push({
     url: `${BASE_URL}/lacak`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'weekly',
     priority: 0.9,
   })
 
   entries.push({
     url: `${BASE_URL}/leaderboard`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'daily',
     priority: 0.8,
   })
 
   entries.push({
     url: `${BASE_URL}/faq`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'weekly',
     priority: 0.7,
   })
 
   entries.push({
     url: `${BASE_URL}/contact`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'monthly',
     priority: 0.6,
   })
 
   entries.push({
     url: `${BASE_URL}/login`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'monthly',
     priority: 0.6,
   })
 
   entries.push({
     url: `${BASE_URL}/register`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'monthly',
     priority: 0.6,
   })
 
   entries.push({
     url: `${BASE_URL}/dashboard`,
-    lastModified: new Date(),
+    lastModified: STATIC_UPDATED,
     changeFrequency: 'monthly',
     priority: 0.5,
   })

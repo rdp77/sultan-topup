@@ -25,7 +25,6 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    nocache: true,
   },
   alternates: {
     canonical: 'https://sultantopup.com',

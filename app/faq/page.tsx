@@ -30,8 +30,29 @@ export default function FaqPage() {
     }
   }
 
+  // Build FAQPage JSON-LD from parsed FAQ data
+  const allFaqItems = Object.values(dataMap).flatMap((d) => d.items)
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: allFaqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer.replace(/<[^>]*>/g, ''), // strip HTML tags
+      },
+    })),
+  }
+
   return (
     <main id="main" className="flex-1">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd).replaceAll('<', String.raw`<`),
+        }}
+      />
       <div className="mx-auto max-w-5xl px-4 py-12 md:px-6 md:py-16">
         <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
           Pertanyaan yang Sering Diajukan
