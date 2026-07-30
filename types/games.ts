@@ -7,16 +7,12 @@ export interface GameDetailResponse {
 }
 
 export interface Game {
-  id: number;
-  is_active: boolean;
   is_popular: boolean;
   cover: string;
   name: string;
   slug: string;
   publisher: string;
   description: string;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface GameDetail {
@@ -26,6 +22,4 @@ export interface GameDetail {
   slug: string;
   publisher: string;
   products: GameProduct[];
-  created_at: string;
-  updated_at: string;
 }

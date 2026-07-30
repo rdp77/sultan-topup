@@ -211,7 +211,6 @@ The hero section leads with "Top up game favoritmu dalam hitungan detik" followe
 | Low   | `rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0...` | Cards, subtle elevation |
 | Mid   | `rgba(0, 0, 0, 0.1) 0px 2px 10px 0px`                                                 | Dropdowns, popovers     |
 
-
 ## 7. Do's and Don'ts
 
 ### Do
