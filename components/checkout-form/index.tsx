@@ -5,7 +5,7 @@ import { toDenominations } from '@/lib/product-utils';
 import { useCheckoutForm } from '@/hooks/use-checkout-form';
 import { AccountStep } from './account-step';
 import { ProductStep } from './product-step';
-import { QuantityStep } from './quantity-step';
+// import { QuantityStep } from './quantity-step'; {/* Quantity step sementara tidak dibutuhkan */}
 import { ContactStep } from './contact-step';
 import { PaymentMethodStep } from './payment-method-step';
 import { OrderSummary } from './order-summary';
@@ -39,6 +39,7 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         selected={form.selectedDenom}
         onSelect={form.setSelectedDenom}
       />
+      {/* Quantity step sementara tidak dibutuhkan
       <QuantityStep
         step={3}
         selected={form.selectedDenom}
@@ -46,8 +47,9 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         onChange={form.setQuantity}
         subPrice={form.subPrice}
       />
+      */}
       <ContactStep
-        step={4}
+        step={3}
         email={form.email}
         onEmailChange={form.setEmail}
         emailValidation={form.emailValidation}
@@ -57,7 +59,7 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         touched={form.touched}
       />
       <PaymentMethodStep
-        step={5}
+        step={4}
         selected={form.selectedMethod}
         onSelect={form.setSelectedMethod}
         selectedDenom={form.selectedDenom}

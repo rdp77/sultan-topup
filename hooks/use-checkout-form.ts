@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
+import { z } from 'zod';
 import { calcFee, type PaymentMethod } from '@/lib/data';
 import { getGameFormConfig } from '@/lib/game-form-config';
 import type { DenominationView } from '@/lib/product-utils';
@@ -22,6 +23,66 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
   const router = useRouter();
   const formConfig = getGameFormConfig(gameSlug);
 
+  const checkoutSchema = useMemo(
+    () =>
+      z
+        .object({
+          playerId: z.string().min(3, `${formConfig.idLabel} minimal 3 karakter`),
+          zoneId: z.string(),
+          email: z.email('Format email tidak valid'),
+          whatsapp: z.string().regex(/^08\d{8,12}$/, 'Nomor WA tidak valid (contoh: 0812xxxx)'),
+          selectedDenom: z
+            .object({
+              id: z.number(),
+              sku: z.string(),
+              amount: z.string(),
+              price: z.number(),
+              badge: z.string().nullable(),
+            })
+            .nullable(),
+          selectedMethod: z
+            .object({
+              id: z.string(),
+              name: z.string(),
+              fee: z.number(),
+              feeType: z.string(),
+            })
+            .nullable(),
+          turnstileToken: z.string().nullable(),
+        })
+        .superRefine((data, ctx) => {
+          if (formConfig.needsZone && data.zoneId.trim().length < 1) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['zoneId'],
+              message: 'Zone ID wajib diisi',
+            });
+          }
+          if (!data.selectedDenom) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['selectedDenom'],
+              message: 'Pilih nominal terlebih dahulu',
+            });
+          }
+          if (!data.selectedMethod) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['selectedMethod'],
+              message: 'Pilih metode pembayaran',
+            });
+          }
+          if (!data.turnstileToken) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['turnstileToken'],
+              message: 'Selesaikan verifikasi keamanan',
+            });
+          }
+        }),
+    [formConfig]
+  );
+
   const [selectedDenom, setSelectedDenom] = useState<DenominationView | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [playerIdInput, setPlayerIdInput] = useState('');
@@ -34,6 +95,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [zodFieldErrors, setZodFieldErrors] = useState<Record<string, string>>({});
 
   const playerIdValidation = usePlayerIdValidation();
   const emailValidation = useEmailValidation(email);
@@ -74,19 +136,47 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     turnstileToken !== null;
 
   function getSubmitError(): string {
-    if (!selectedDenom) return 'Pilih nominal terlebih dahulu.';
-    if (!idValid)
-      return `Isi ${formConfig.idLabel}${formConfig.needsZone ? ' dan Zone ID' : ''} dengan benar.`;
+    const result = z.safeParse(checkoutSchema, {
+      playerId: playerIdInput,
+      zoneId,
+      email,
+      whatsapp: waClean,
+      selectedDenom,
+      selectedMethod,
+      turnstileToken,
+    });
+    if (!result.success) {
+      const first = result.error.issues[0];
+      return first?.message ?? '';
+    }
     if (!idChecked) return 'Cek Akun terlebih dahulu.';
-    if (!emailValidation.isValid) return 'Masukkan email yang valid.';
-    if (!waValid) return 'Masukkan nomor WhatsApp yang valid.';
-    if (!selectedMethod) return 'Pilih metode pembayaran.';
-    if (!turnstileToken) return 'Selesaikan verifikasi keamanan di atas.';
+    if (!emailValidation.isValid) return 'Email belum diverifikasi.';
     return '';
   }
 
   function handleSubmit() {
     setTouched(true);
+
+    const result = z.safeParse(checkoutSchema, {
+      playerId: playerIdInput,
+      zoneId,
+      email,
+      whatsapp: waClean,
+      selectedDenom,
+      selectedMethod,
+      turnstileToken,
+    });
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as string;
+        if (!errors[field]) errors[field] = issue.message;
+      }
+      setZodFieldErrors(errors);
+    } else {
+      setZodFieldErrors({});
+    }
+
     if (!canClick || submitting || !selectedDenom || !selectedMethod) return;
 
     // Check for pending submission to prevent duplicate
@@ -213,5 +303,6 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     paymentMethodsLoading,
     paymentMethodsError,
     retryPaymentMethods,
+    zodFieldErrors,
   };
 }

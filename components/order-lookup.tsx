@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Loader2, Search, SearchX } from 'lucide-react';
 import posthog from 'posthog-js';
+import { z } from 'zod';
 import { OrderStatusBadge } from '@/components/order-status-badge';
 import { formatRupiah, type Order, type OrderStatus } from '@/lib/data';
 import { OrderService } from '@/services';
@@ -13,6 +14,17 @@ const STATUS_MAP: Record<string, OrderStatus> = {
   failed: 'failed',
   pending: 'processing',
 };
+
+const orderLookupSchema = z.object({
+  invoice: z.string().min(1, 'Nomor invoice wajib diisi'),
+  contact: z
+    .string()
+    .min(1, 'Email atau nomor WA wajib diisi')
+    .refine(
+      (v) => v.includes('@') || /^08\d{8,12}$/.test(v.replace(/\D/g, '')),
+      'Masukkan email atau nomor WA yang valid'
+    ),
+});
 
 function toOrder(item: OrderApiItem): Order {
   return {
@@ -35,10 +47,26 @@ export function OrderLookup() {
   const [contact, setContact] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Order | null | 'not-found'>(null);
+  const [zodErrors, setZodErrors] = useState<Record<string, string>>({});
 
-  async function handleSearch(e: React.FormEvent) {
+  async function handleSearch(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!invoice.trim() || !contact.trim() || loading) return;
+
+    const parseResult = z.safeParse(orderLookupSchema, {
+      invoice: invoice.trim(),
+      contact: contact.trim(),
+    });
+    if (!parseResult.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of parseResult.error.issues) {
+        const field = issue.path[0] as string;
+        if (!errors[field]) errors[field] = issue.message;
+      }
+      setZodErrors(errors);
+      return;
+    }
+    setZodErrors({});
+    if (loading) return;
     setLoading(true);
     setResult(null);
 
@@ -72,6 +100,9 @@ export function OrderLookup() {
             placeholder="Contoh: INV-20260702-8F3K"
             className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
           />
+          {zodErrors.invoice && (
+            <p className="text-destructive mt-1 text-xs">{zodErrors.invoice}</p>
+          )}
         </div>
         <div>
           <label htmlFor="contact" className="text-muted-foreground mb-1.5 block text-sm">
@@ -85,6 +116,9 @@ export function OrderLookup() {
             placeholder="nama@email.com atau 08xxxxxxxxxx"
             className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
           />
+          {zodErrors.contact && (
+            <p className="text-destructive mt-1 text-xs">{zodErrors.contact}</p>
+          )}
         </div>
         <button
           type="submit"

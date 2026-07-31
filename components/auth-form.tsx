@@ -12,7 +12,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
   const [loading, setLoading] = useState(false);
   const isLogin = mode === 'login';
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
