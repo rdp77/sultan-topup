@@ -65,12 +65,12 @@ export function Navbar() {
               </Link>
             );
           })}
-          <Link
+          {/* <Link
             href="/login"
             className="press border-border text-foreground hover:bg-card focus-visible:ring-primary/60 focus-visible:ring-offset-background rounded-lg border px-4 py-2 text-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             Masuk
-          </Link>
+          </Link> */}
         </div>
 
         <button
@@ -114,13 +114,13 @@ export function Navbar() {
               </Link>
             );
           })}
-          <Link
+          {/* <Link
             href="/login"
             onClick={() => setOpen(false)}
             className="border-border hover:bg-card focus-visible:ring-primary/60 mt-1 rounded-md border px-3 py-2.5 text-center text-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none"
           >
             Masuk
-          </Link>
+          </Link> */}
         </div>
       </div>
     </header>
