@@ -14,7 +14,7 @@ const GAME_FORM_CONFIG: Record<string, GameFormConfig> = {
 const DEFAULT_FORM_CONFIG: GameFormConfig = {
   idLabel: 'User ID',
   idPlaceholder: 'Masukkan User ID kamu',
-  needsZone: false,
+  needsZone: true,
 };
 
 export function getGameFormConfig(slug: string): GameFormConfig {
