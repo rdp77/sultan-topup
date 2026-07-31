@@ -26,12 +26,14 @@ export function AnnouncementBar() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      setDismissed(JSON.parse(localStorage.getItem('announcement-dismissed') ?? '[]'));
-    } catch (err) {
-      console.warn('Gagal membaca announcement-dismissed dari localStorage:', err);
-    }
-    setHydrated(true);
+    queueMicrotask(() => {
+      try {
+        setDismissed(JSON.parse(localStorage.getItem('announcement-dismissed') ?? '[]'));
+      } catch (err) {
+        console.warn('Gagal membaca announcement-dismissed dari localStorage:', err);
+      }
+      setHydrated(true);
+    });
   }, []);
 
   const visible = announcements.filter((a) => !dismissed.includes(a.id));

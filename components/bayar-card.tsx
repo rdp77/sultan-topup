@@ -239,13 +239,13 @@ export function BayarCard() {
   useEffect(() => {
     if (!orderId) return;
 
-    setIsLoadingPayment(true);
+    queueMicrotask(() => setIsLoadingPayment(true));
 
     // Try sessionStorage first (instant load)
     const stored = sessionStorage.getItem(`checkout:result:${orderId}`);
     if (stored) {
       try {
-        setPaymentData(JSON.parse(stored));
+        queueMicrotask(() => setPaymentData(JSON.parse(stored)));
       } catch {
         // Invalid JSON, will fetch from API below
       }

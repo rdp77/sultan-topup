@@ -65,7 +65,7 @@ export function ResultCard() {
   // Simulate payment confirmation: processing -> success after a short delay
   useEffect(() => {
     if (statusParam) {
-      setStatus(statusParam);
+      queueMicrotask(() => setStatus(statusParam));
       return;
     }
     const t = setTimeout(() => setStatus('success'), 2500);

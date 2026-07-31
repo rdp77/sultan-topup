@@ -63,8 +63,10 @@ export function usePaymentMethods(gameId?: number): UsePaymentMethodsResult {
       if (cached) {
         try {
           const parsed = JSON.parse(cached) as PaymentGroup[];
-          setPaymentGroups(parsed);
-          setIsLoading(false);
+          queueMicrotask(() => {
+            setPaymentGroups(parsed);
+            setIsLoading(false);
+          });
           fetchedRef.current = true;
           return;
         } catch {
@@ -73,7 +75,7 @@ export function usePaymentMethods(gameId?: number): UsePaymentMethodsResult {
       }
     }
 
-    fetchMethods();
+    queueMicrotask(() => fetchMethods());
     fetchedRef.current = true;
   }, [fetchMethods, cacheKey]);
 
