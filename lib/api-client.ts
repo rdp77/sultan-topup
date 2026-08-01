@@ -45,9 +45,10 @@ export async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promis
         const retryable = res.status >= 500 || res.status === 429;
 
         // Attempt to extract message from common API shapes
+        const errBody = body as { message?: string; error?: string | { message: string } };
         const msg =
-          (body as { message?: string })?.message ??
-          (body as { error?: string })?.error ??
+          errBody?.message ??
+          (typeof errBody?.error === 'string' ? errBody.error : errBody?.error?.message) ??
           `Request failed (${res.status})`;
 
         console.error(`[apiFetch] ${init.method ?? 'GET'} ${path} → ${res.status}`, {

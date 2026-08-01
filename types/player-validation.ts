@@ -4,15 +4,22 @@ export interface PlayerValidationRequest {
   zoneId: string;
 }
 
+export interface PlayerValidationError {
+  message: string;
+  code: string;
+}
+
 export interface PlayerValidationResponse {
+  success: boolean;
   data: PlayerValidationData | null;
-  error: string | null;
+  error: string | PlayerValidationError | null;
+  provider: string;
 }
 
 export interface PlayerValidationData {
-  playerId: string;
-  zoneId: string;
-  playerName: string;
+  id: string;
+  username: string;
+  zone_name: string;
   level: number | null;
-  avatar: string | null;
+  country: string | null;
 }

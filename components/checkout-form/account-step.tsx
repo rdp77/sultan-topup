@@ -118,7 +118,7 @@ export function AccountStep({
           {playerId.state === 'error' && (
             <p className="text-destructive flex items-center gap-1.5 text-xs">
               <AlertTriangle className="size-3.5" aria-hidden="true" />
-              Gagal menghubungi server game. Coba lagi nanti.
+              {playerId.errorMessage ?? 'Terjadi kesalahan. Coba lagi nanti.'}
             </p>
           )}
         </div>
