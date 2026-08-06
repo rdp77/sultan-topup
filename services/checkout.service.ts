@@ -1,5 +1,10 @@
 import { apiFetch, ApiError } from '@/lib/api-client';
-import type { CheckoutRequest, CheckoutResponse } from '@/types/checkout';
+import type {
+  CheckoutRequest,
+  CheckoutResponse,
+  CheckoutServiceResult,
+  CheckoutResult,
+} from '@/types/checkout';
 
 function toApiPayload(request: CheckoutRequest) {
   console.log('toApiPayload', request);
@@ -21,9 +26,9 @@ export const CheckoutService = {
    * Create a new checkout order.
    * Sends idempotency key in header to prevent duplicate orders.
    */
-  async create(request: CheckoutRequest, idempotencyKey: string): Promise<CheckoutResponse> {
+  async create(request: CheckoutRequest, idempotencyKey: string): Promise<CheckoutServiceResult> {
     try {
-      const response = await apiFetch<CheckoutResponse>('/checkout', {
+      const data = await apiFetch<CheckoutResult>('/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,10 +36,9 @@ export const CheckoutService = {
         },
         body: JSON.stringify(toApiPayload(request)),
       });
-      return response;
+      return { success: true, data };
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
-        // Idempotency conflict — return structured error so caller can retry
         return { success: false, error: 'Duplicate request detected. Please try again.' };
       }
       throw error;

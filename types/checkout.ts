@@ -22,13 +22,13 @@ export interface CheckoutResponse {
 export interface CheckoutResult {
   orderId: string;
   invoice: string;
-  paymentType: 'qris' | 'va' | 'ewallet';
-  paymentData: PaymentData;
   amount: number;
   fee: number;
-  total: number;
-  expiryTime: string;
+  paymentType: string;
 }
+
+export type CheckoutServiceResult =
+  { success: true; data: CheckoutResult } | { success: false; error: string };
 
 // Discriminated union for different payment types
 export type PaymentData = QRISPaymentData | VAPaymentData | EWalletPaymentData;

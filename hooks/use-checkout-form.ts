@@ -154,7 +154,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     return '';
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     setTouched(true);
 
     const result = z.safeParse(checkoutSchema, {
@@ -177,9 +177,8 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
       setZodFieldErrors({});
     }
 
-    if (!canClick || submitting || !selectedDenom || !selectedMethod) return;
+    if (!allValid || submitting || !selectedDenom || !selectedMethod) return;
 
-    // Check for pending submission to prevent duplicate
     const pendingKey = sessionStorage.getItem('checkout:pending:key');
     if (pendingKey) {
       setCheckoutError('Pesanan masih diproses. Tunggu sebentar atau cek status pesanan.');
@@ -190,14 +189,10 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     setCheckoutLoading(true);
     setCheckoutError(null);
 
-    // Generate idempotency key
     const idempotencyKey = crypto.randomUUID();
-
-    // Store pending key with timestamp
     sessionStorage.setItem('checkout:pending:key', idempotencyKey);
     sessionStorage.setItem(`checkout:pending:${idempotencyKey}`, Date.now().toString());
 
-    // Build request
     const request = {
       playerId: playerIdInput.trim(),
       zoneId: zoneId.trim(),
@@ -210,60 +205,63 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
       paymentMethod: selectedMethod.id,
     };
 
-    CheckoutService.create(request, idempotencyKey)
-      .then((response) => {
-        if (response.success && response.data) {
-          // Store result for /bayar page
-          const result = response.data as CheckoutResult;
-          sessionStorage.setItem(`checkout:result:${result.orderId}`, JSON.stringify(result));
+    try {
+      const response = await CheckoutService.create(request, idempotencyKey);
 
-          // Track event
-          posthog.capture('checkout_submitted', {
-            game_name: gameName,
-            game_slug: gameSlug,
-            product_amount: selectedDenom.amount,
-            product_price: selectedDenom.price,
-            quantity,
-            sub_price: subPrice,
-            fee,
-            total: subPrice + fee,
-            payment_method_id: selectedMethod.id,
-            payment_method_name: selectedMethod.name,
-            invoice_id: result.invoice,
-            order_id: result.orderId,
-          });
-
-          // Clear pending state
-          sessionStorage.removeItem('checkout:pending:key');
-
-          // Redirect to /bayar with order data
-          const params = new URLSearchParams({
-            orderId: result.orderId,
-            invoice: result.invoice,
-            game: gameName,
-            product: `${selectedDenom.amount} × ${quantity}`,
-            price: String(result.amount),
-            fee: String(result.fee),
-            method: selectedMethod.name,
-            uid: formConfig.needsZone ? `${playerIdInput} (${zoneId})` : playerIdInput,
-            payment: selectedMethod.id,
-            paymentType: result.paymentType,
-          });
-          router.push(`/bayar?${params.toString()}`);
-        } else {
-          setCheckoutError(response.error ?? 'Terjadi kesalahan. Coba lagi.');
-          setSubmitting(false);
-          setCheckoutLoading(false);
-          sessionStorage.removeItem('checkout:pending:key');
-        }
-      })
-      .catch((error) => {
-        console.error('Checkout error:', error);
-        setCheckoutError('Gagal menghubungi server. Coba lagi.');
+      if (!response.success) {
+        setCheckoutError(response.error);
+        sessionStorage.removeItem('checkout:pending:key');
         setSubmitting(false);
         setCheckoutLoading(false);
-        sessionStorage.removeItem('checkout:pending:key');
+        return;
+      }
+
+      const order = response.data;
+      sessionStorage.setItem(`checkout:result:${order.orderId}`, JSON.stringify(order));
+
+      posthog.capture('checkout_submitted', {
+        game_name: gameName,
+        game_slug: gameSlug,
+        product_amount: selectedDenom.amount,
+        product_price: selectedDenom.price,
+        quantity,
+        sub_price: subPrice,
+        fee,
+        total: subPrice + fee,
+        payment_method_id: selectedMethod.id,
+        payment_method_name: selectedMethod.name,
+        invoice_id: order.invoice,
+        order_id: order.orderId,
       });
+
+      sessionStorage.removeItem('checkout:pending:key');
+
+      const params = new URLSearchParams({
+        orderId: order.orderId,
+        invoice: order.invoice,
+        game: gameName,
+        product: `${selectedDenom.amount} × ${quantity}`,
+        price: String(order.amount),
+        fee: String(order.fee),
+        method: selectedMethod.name,
+        uid: formConfig.needsZone ? `${playerIdInput} (${zoneId})` : playerIdInput,
+        payment: selectedMethod.id,
+        paymentType: order.paymentType,
+      });
+      router.push(`/bayar?${params.toString()}`);
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setCheckoutError('Gagal menghubungi server. Coba lagi.');
+      sessionStorage.removeItem('checkout:pending:key');
+      setSubmitting(false);
+      setCheckoutLoading(false);
+    } finally {
+      if (!checkoutError) {
+        // hanya reset loading kalau bukan jalur redirect sukses
+      }
+      setSubmitting(false);
+      setCheckoutLoading(false);
+    }
   }
 
   return {
