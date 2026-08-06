@@ -5,6 +5,7 @@ import type {
   CheckoutServiceResult,
   CheckoutResult,
 } from '@/types/checkout';
+import { OrderLookupResponse } from '@/types/order';
 
 function toApiPayload(request: CheckoutRequest) {
   return {
@@ -45,10 +46,11 @@ export const CheckoutService = {
   },
 
   /**
-   * Get checkout order status by orderId.
-   * Used for refreshing payment data in /bayar page.
+   * Get checkout order status by invoice.
+   * Used for refreshing payment data in /payment page.
    */
-  async getStatus(orderId: string): Promise<CheckoutResponse> {
-    return apiFetch<CheckoutResponse>(`/checkout/${orderId}`);
+  async getStatus(invoice: string): Promise<CheckoutServiceResult> {
+    const response = await apiFetch<{ data: CheckoutResult }>(`/orders/${invoice}`);
+    return { success: true, data: response.data };
   },
 };

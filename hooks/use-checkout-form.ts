@@ -8,7 +8,6 @@ import { calcFee, type PaymentMethod } from '@/lib/data';
 import { getGameFormConfig } from '@/lib/game-form-config';
 import type { DenominationView } from '@/lib/product-utils';
 import { CheckoutService } from '@/services';
-import type { CheckoutResult } from '@/types/checkout';
 import { usePlayerIdValidation } from './use-player-id-validation';
 import { useEmailValidation } from './use-email-validation';
 import { usePaymentMethods } from './use-payment-methods';

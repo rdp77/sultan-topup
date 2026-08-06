@@ -1,38 +1,39 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Copy, Check, Clock, Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { PaymentLogo } from '@/components/payment-logo';
-import { formatRupiah } from '@/lib/data';
-import { CheckoutService } from '@/services';
-import type { CheckoutResult } from '@/types/checkout';
-
-const POLL_INTERVAL_MS = 5000;
+import { OrderSummary } from '@/components/order-summary';
+import { PaymentCardSkeleton } from '@/components/payment-card-skeleton';
+import { usePaymentPolling } from '@/hooks/use-payment-polling';
+import { resolvePaymentType } from '@/lib/payment';
+import { QRCodeSVG } from 'qrcode.react';
 
 // --- Sub-components ---
 
 function QrImage({ amount, data }: Readonly<{ amount: number; data?: string }>) {
   if (data) {
-    // payment_number dari gateway adalah string QRIS (EMVCo) → generate gambar QR di client
-    const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=384x384&data=${encodeURIComponent(data)}`;
     return (
       <div className="border-border mx-auto flex size-48 items-center justify-center overflow-hidden rounded-xl border-2 bg-white p-4">
-        <Image
-          src={qrSrc}
-          alt={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
-          width={192}
-          height={192}
-          className="size-full object-contain"
-          unoptimized
+        <QRCodeSVG
+          value={data}
+          size={192}
+          level="H" // required when embedding a logo — lower levels risk unscannable codes
+          imageSettings={{
+            src: '/favicon-96x96.png', // small monochrome mark, NOT full logo with wordmark
+            width: 36, // keep under ~20% of `size` to stay within level H tolerance
+            height: 36,
+            excavate: true, // clears QR modules behind the logo instead of overlapping them
+          }}
         />
       </div>
     );
   }
 
-  // Placeholder while waiting for QR data
+  // Placeholder while waiting for QR data from the server.
   return (
     <div
       className="border-border mx-auto flex size-48 animate-pulse items-center justify-center rounded-xl border-2 bg-white p-4"
@@ -123,9 +124,7 @@ function PaymentTimer({
       const remaining = Math.max(0, Math.floor((target - Date.now()) / 1000));
       setLeft(remaining);
       setInitial((prev) => prev ?? remaining);
-      if (remaining <= 0) {
-        onExpire?.();
-      }
+      if (remaining <= 0) onExpire?.();
     }
 
     tick();
@@ -167,107 +166,54 @@ function PaymentTimer({
 export function BayarCard() {
   const router = useRouter();
   const params = useSearchParams();
-  const [data, setData] = useState<CheckoutResult | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasFetchError, setHasFetchError] = useState(false);
 
-  // URL params (dipakai untuk render awal sebelum data API datang, dan untuk field yang gak ada di API seperti uid)
-  const orderId = params.get('orderId');
-  const fallbackGame = params.get('game') ?? 'Mobile Legends';
-  const fallbackProduct = params.get('product') ?? '';
-  const fallbackPrice = Number(params.get('price') ?? 0);
-  const fallbackFee = Number(params.get('fee') ?? 0);
-  const methodName = params.get('method') ?? 'Pembayaran';
-  const paymentId = params.get('payment') ?? 'qris';
-  const fallbackInvoice = params.get('invoice') ?? '';
-  const uid = params.get('uid') ?? '-';
+  // The only param the checkout flow now sends. Everything else (game,
+  // product, price, method, uid, ...) must come from the server.
+  const invoice = params.get('invoice');
+
+  const { data, isLoading, hasFetchError } = usePaymentPolling(invoice);
 
   const order = data?.order;
   const payment = data?.payment;
 
-  const isQris = payment ? payment.method.type === 'qris' : paymentId === 'qris';
-  const isVa = payment ? payment.method.type === 'va' : paymentId !== 'qris';
+  const paymentType = useMemo(() => resolvePaymentType(payment), [payment]);
+  const isQris = paymentType === 'qris';
+  const isVa = paymentType === 'va';
 
-  const gameName = order?.game.name ?? fallbackGame;
-  const productLabel = order ? `${order.product.amount} × ${order.quantity}` : fallbackProduct;
-  const price = order?.subtotal ?? fallbackPrice;
-  const fee = order?.fee ?? fallbackFee;
-  const total = order?.total_price ?? price + fee;
-  const invoice = order?.invoice_number ?? fallbackInvoice;
-
-  const bankCode = payment?.method.code ?? paymentId;
+  const bankCode = payment?.method.code ?? '';
   const vaNumber = payment?.payment_number ?? '';
   const qrData = payment?.payment_number;
 
   const redirectToResult = useCallback(
     (status: string) => {
-      const redirect = new URLSearchParams(params.toString());
+      const redirect = new URLSearchParams();
       redirect.set('status', status);
       if (invoice) redirect.set('invoice', invoice);
       router.push(`/hasil?${redirect.toString()}`);
     },
-    [params, invoice, router]
+    [invoice, router]
   );
 
-  // Fetch + polling status pembayaran
+  // Redirect once the server-reported payment status is no longer 'pending'.
   useEffect(() => {
-    if (!orderId) {
-      setIsLoading(false);
-      return;
-    }
+    const status = payment?.status;
+    if (!status || status === 'pending') return;
+    redirectToResult(status);
+  }, [payment?.status, redirectToResult]);
 
-    let cancelled = false;
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    async function poll() {
-      try {
-        const response = await CheckoutService.getStatus(orderId as string);
-        if (cancelled) return;
-
-        if (response.success && response.data) {
-          setData(response.data);
-          setHasFetchError(false);
-
-          const status = response.data.payment.status;
-          if (status !== 'pending') {
-            redirectToResult(status);
-            return; // stop polling
-          }
-        } else {
-          setHasFetchError(true);
-        }
-      } catch {
-        setHasFetchError(true);
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-
-      if (!cancelled) {
-        timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
-      }
-    }
-
-    poll();
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timeoutId);
-    };
-  }, [orderId, redirectToResult]);
-
-  // Track page view
+  // Track page view once data is available.
   useEffect(() => {
-    if (!data) return;
+    if (!data || !order || !payment) return;
     posthog.capture('payment_page_viewed', {
-      game: gameName,
-      product: productLabel,
-      price,
-      fee,
-      total,
-      payment_method_id: payment?.method.id ?? paymentId,
-      payment_method_name: methodName,
-      invoice_id: invoice,
-      payment_type: isQris ? 'qris' : isVa ? 'va' : 'other',
+      game: order.game.name,
+      product: `${order.product.amount} × ${order.quantity}`,
+      price: order.subtotal,
+      fee: order.fee,
+      total: order.total_price,
+      payment_method_id: payment.method.id,
+      payment_method_name: payment.method.name,
+      invoice_id: order.invoice_number,
+      payment_type: paymentType,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -276,6 +222,36 @@ export function BayarCard() {
     redirectToResult('expired');
   }, [redirectToResult]);
 
+  // No invoice in the URL at all — nothing to fetch, nothing to render.
+  if (!invoice) {
+    return (
+      <div className="text-center">
+        <p className="text-destructive text-sm">Invoice tidak ditemukan.</p>
+      </div>
+    );
+  }
+
+  // Still loading the first response and nothing to show yet.
+  if (isLoading && !data) {
+    return <PaymentCardSkeleton />;
+  }
+
+  // Fetch failed on the very first attempt and we still have nothing.
+  if (!data) {
+    return (
+      <div className="text-center">
+        <p className="text-destructive text-sm">
+          Gagal memuat data pembayaran. Silakan muat ulang halaman.
+        </p>
+      </div>
+    );
+  }
+
+  const gameName = order!.game.name;
+  const productLabel = `${order!.product.amount} × ${order!.quantity}`;
+  const total = order!.total_price;
+  const paymentMethodName = payment!.method.type.toUpperCase();
+
   return (
     <div className="flex flex-col items-center text-center">
       {/* Payment method badge */}
@@ -283,7 +259,7 @@ export function BayarCard() {
         <span className="bg-background text-muted-foreground flex size-6 items-center justify-center rounded">
           <PaymentLogo id={bankCode} />
         </span>
-        <span className="text-sm font-medium">{payment?.method.name ?? methodName}</span>
+        <span className="text-sm font-medium">{paymentMethodName}</span>
       </div>
 
       <h1 className="mt-4 text-2xl font-bold tracking-tight">Selesaikan Pembayaran</h1>
@@ -317,40 +293,22 @@ export function BayarCard() {
           </div>
         )}
 
-        {/* Order summary */}
-        <dl className="border-border mt-5 flex flex-col gap-2 border-t pt-4 text-left text-sm">
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">Game</dt>
-            <dd>{gameName}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">Produk</dt>
-            <dd>{productLabel}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">ID Akun</dt>
-            <dd>{uid}</dd>
-          </div>
-          <div className="border-border flex justify-between border-t pt-2 font-semibold">
-            <dt>Total</dt>
-            <dd className="text-primary">{formatRupiah(total)}</dd>
-          </div>
-        </dl>
+        <OrderSummary gameName={gameName} productLabel={productLabel} total={total} />
       </div>
 
       {/* Timer */}
       <div className="mt-5 w-full max-w-xs">
-        <PaymentTimer expiresAt={payment?.expired_at ?? null} onExpire={handleExpire} />
+        <PaymentTimer expiresAt={payment!.expired_at} onExpire={handleExpire} />
         <p className="text-muted-foreground mt-2 text-center text-xs">
           Batas waktu pembayaran. Jangan tutup halaman ini.
         </p>
       </div>
 
-      {/* Loading / error indicator */}
+      {/* Background refetch indicator (data already loaded once, still polling) */}
       {isLoading && (
         <div className="text-muted-foreground mt-4 flex items-center gap-2 text-xs">
           <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
-          Memuat data pembayaran...
+          Memperbarui status pembayaran...
         </div>
       )}
       {hasFetchError && !isLoading && (
@@ -360,20 +318,21 @@ export function BayarCard() {
       )}
 
       {/* Invoice */}
-      {invoice && (
-        <div className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-xs">
-          <span>
-            Invoice: <span className="font-mono">{invoice}</span>
-          </span>
-          <CopyButton
-            text={invoice}
-            label="Salin"
-            onCopy={() =>
-              posthog.capture('invoice_copied', { invoice_id: invoice, source: 'payment_page' })
-            }
-          />
-        </div>
-      )}
+      <div className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-xs">
+        <span>
+          Invoice: <span className="font-mono">{order!.invoice_number}</span>
+        </span>
+        <CopyButton
+          text={order!.invoice_number}
+          label="Salin"
+          onCopy={() =>
+            posthog.capture('invoice_copied', {
+              invoice_id: order!.invoice_number,
+              source: 'payment_page',
+            })
+          }
+        />
+      </div>
     </div>
   );
 }
