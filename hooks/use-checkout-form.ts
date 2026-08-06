@@ -216,8 +216,11 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
         return;
       }
 
-      const order = response.data;
-      sessionStorage.setItem(`checkout:result:${order.orderId}`, JSON.stringify(order));
+      const responseData = response.data;
+      sessionStorage.setItem(
+        `checkout:result:${responseData.order.id}`,
+        JSON.stringify(responseData.order)
+      );
 
       posthog.capture('checkout_submitted', {
         game_name: gameName,
@@ -230,23 +233,14 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
         total: subPrice + fee,
         payment_method_id: selectedMethod.id,
         payment_method_name: selectedMethod.name,
-        invoice_id: order.invoice,
-        order_id: order.orderId,
+        invoice_id: responseData.order.invoice_number,
+        order_id: responseData.order.id,
       });
 
       sessionStorage.removeItem('checkout:pending:key');
 
       const params = new URLSearchParams({
-        orderId: order.orderId,
-        invoice: order.invoice,
-        game: gameName,
-        product: `${selectedDenom.amount} × ${quantity}`,
-        price: String(order.amount),
-        fee: String(order.fee),
-        method: selectedMethod.name,
-        uid: formConfig.needsZone ? `${playerIdInput} (${zoneId})` : playerIdInput,
-        payment: selectedMethod.id,
-        paymentType: order.paymentType,
+        invoice: String(responseData.order.invoice_number),
       });
       router.push(`/bayar?${params.toString()}`);
     } catch (error) {

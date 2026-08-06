@@ -7,7 +7,6 @@ import type {
 } from '@/types/checkout';
 
 function toApiPayload(request: CheckoutRequest) {
-  console.log('toApiPayload', request);
   return {
     player_id: request.playerId,
     zone_id: request.zoneId,
@@ -28,7 +27,7 @@ export const CheckoutService = {
    */
   async create(request: CheckoutRequest, idempotencyKey: string): Promise<CheckoutServiceResult> {
     try {
-      const data = await apiFetch<CheckoutResult>('/checkout', {
+      const response = await apiFetch<{ data: CheckoutResult }>('/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +35,7 @@ export const CheckoutService = {
         },
         body: JSON.stringify(toApiPayload(request)),
       });
-      return { success: true, data };
+      return { success: true, data: response.data };
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
         return { success: false, error: 'Duplicate request detected. Please try again.' };

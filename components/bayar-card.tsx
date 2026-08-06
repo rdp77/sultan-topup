@@ -1,34 +1,27 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Copy, Check, Clock, Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { PaymentLogo } from '@/components/payment-logo';
 import { formatRupiah } from '@/lib/data';
 import { CheckoutService } from '@/services';
-import type { CheckoutResult, QRISPaymentData, VAPaymentData } from '@/types/checkout';
+import type { CheckoutResult } from '@/types/checkout';
 
-// --- Helper constants ---
-const VA_BANK_CODES: Record<string, string> = {
-  bca: '7521',
-  bni: '9882',
-  bri: '1500',
-  mandiri: '8866',
-};
-
-const VA_BANKS = ['bca', 'bni', 'bri', 'mandiri'] as const;
-const PAYMENT_TIMEOUT_SECONDS = 600;
+const POLL_INTERVAL_MS = 5000;
 
 // --- Sub-components ---
 
-function QrPlaceholder({ amount, qrCode }: Readonly<{ amount: number; qrCode?: string }>) {
-  if (qrCode) {
+function QrImage({ amount, data }: Readonly<{ amount: number; data?: string }>) {
+  if (data) {
+    // payment_number dari gateway adalah string QRIS (EMVCo) → generate gambar QR di client
+    const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=384x384&data=${encodeURIComponent(data)}`;
     return (
       <div className="border-border mx-auto flex size-48 items-center justify-center overflow-hidden rounded-xl border-2 bg-white p-4">
         <Image
-          src={qrCode}
+          src={qrSrc}
           alt={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
           width={192}
           height={192}
@@ -39,33 +32,13 @@ function QrPlaceholder({ amount, qrCode }: Readonly<{ amount: number; qrCode?: s
     );
   }
 
-  // Dummy QR pattern for development
+  // Placeholder while waiting for QR data
   return (
     <div
-      className="border-border mx-auto flex size-48 items-center justify-center rounded-xl border-2 bg-white p-4"
+      className="border-border mx-auto flex size-48 animate-pulse items-center justify-center rounded-xl border-2 bg-white p-4"
       aria-label={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
     >
-      <svg viewBox="0 0 160 160" className="size-full" aria-hidden="true">
-        <rect width="160" height="160" fill="white" />
-        {Array.from({ length: 7 }, (_, r) =>
-          Array.from({ length: 7 }, (_, c) => {
-            const x = 12 + c * 22;
-            const y = 12 + r * 22;
-            const fill = (r * 7 + c) % 3 === 0 || (r + c) % 4 === 0 ? '#6366f1' : 'white';
-            return fill === 'white' ? null : (
-              <rect
-                key={`${r}-${c}`}
-                x={x}
-                y={y}
-                width={14 + ((r * c) % 8)}
-                height={14 + ((r * c) % 8)}
-                fill={fill}
-                rx={3}
-              />
-            );
-          })
-        )}
-      </svg>
+      <Loader2 className="text-muted-foreground size-8 animate-spin" aria-hidden="true" />
     </div>
   );
 }
@@ -82,7 +55,7 @@ function CopyButton({
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
-    if (copied) return;
+    if (copied || !text) return;
     navigator.clipboard?.writeText(text);
     setCopied(true);
     onCopy?.();
@@ -110,7 +83,7 @@ function CopyButton({
   );
 }
 
-function VaNumberDisplay({ number, bank }: Readonly<{ number: string; bank: string }>) {
+function VaNumberDisplay({ number, bankCode }: Readonly<{ number: string; bankCode: string }>) {
   return (
     <div className="bg-background flex flex-col gap-2 rounded-lg p-4 text-left">
       <div className="flex items-center justify-between gap-2">
@@ -118,33 +91,60 @@ function VaNumberDisplay({ number, bank }: Readonly<{ number: string; bank: stri
         <CopyButton
           text={number}
           label="Salin VA"
-          onCopy={() => posthog.capture('va_number_copied', { bank })}
+          onCopy={() => posthog.capture('va_number_copied', { bank: bankCode })}
         />
       </div>
       <span className="text-foreground font-mono text-lg font-semibold tracking-wide">
-        {number}
+        {number || '—'}
       </span>
       <p className="text-muted-foreground text-xs">
         Penerima:{' '}
-        <span className="text-foreground font-medium">Sultan Top Up ({bank.toUpperCase()})</span>
+        <span className="text-foreground font-medium">
+          Sultan Top Up ({bankCode.toUpperCase()})
+        </span>
       </p>
     </div>
   );
 }
 
-function PaymentTimer({ initialSeconds = PAYMENT_TIMEOUT_SECONDS }) {
-  const [left, setLeft] = useState(initialSeconds);
+function PaymentTimer({
+  expiresAt,
+  onExpire,
+}: Readonly<{ expiresAt: string | null; onExpire?: () => void }>) {
+  const [left, setLeft] = useState<number | null>(null);
+  const [initial, setInitial] = useState<number | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLeft((prev) => Math.max(0, prev - 1));
-    }, 1000);
+    if (!expiresAt) return;
+
+    const target = new Date(expiresAt).getTime();
+
+    function tick() {
+      const remaining = Math.max(0, Math.floor((target - Date.now()) / 1000));
+      setLeft(remaining);
+      setInitial((prev) => prev ?? remaining);
+      if (remaining <= 0) {
+        onExpire?.();
+      }
+    }
+
+    tick();
+    const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [expiresAt, onExpire]);
+
+  if (left === null || initial === null) {
+    return (
+      <div className="flex items-center gap-3 text-xs">
+        <Clock className="text-warning size-3.5" aria-hidden="true" />
+        <span className="text-muted-foreground">Memuat batas waktu...</span>
+      </div>
+    );
+  }
 
   const minutes = Math.floor(left / 60);
   const seconds = left % 60;
-  const percentage = (left / initialSeconds) * 100;
+  const percentage = initial > 0 ? (left / initial) * 100 : 0;
 
   return (
     <div className="flex items-center gap-3 text-xs">
@@ -162,144 +162,128 @@ function PaymentTimer({ initialSeconds = PAYMENT_TIMEOUT_SECONDS }) {
   );
 }
 
-// --- Payment type helpers ---
-
-function getVaBankPrefix(bankId: string): string {
-  return VA_BANK_CODES[bankId] ?? '0000';
-}
-
-function generateFallbackVaNumber(bankId: string): string {
-  const prefix = getVaBankPrefix(bankId);
-  const suffix = Date.now().toString().slice(-8);
-  return `${prefix}-${suffix}`;
-}
-
-function getVaNumberFromPaymentData(paymentData: CheckoutResult | null, paymentId: string): string {
-  if (!paymentData) {
-    return generateFallbackVaNumber(paymentId);
-  }
-
-  if (paymentData.paymentData.type === 'va') {
-    return (paymentData.paymentData as VAPaymentData).vaNumber;
-  }
-
-  return generateFallbackVaNumber(paymentId);
-}
-
-function isPaymentVa(paymentData: CheckoutResult | null, paymentId: string): boolean {
-  if (!paymentData) {
-    return VA_BANKS.includes(paymentId as (typeof VA_BANKS)[number]);
-  }
-  return paymentData.paymentData.type === 'va';
-}
-
-function isPaymentQris(paymentData: CheckoutResult | null, paymentType: string): boolean {
-  if (!paymentData) {
-    return paymentType === 'qris';
-  }
-  return paymentData.paymentData.type === 'qris';
-}
-
 // --- Main component ---
 
 export function BayarCard() {
   const router = useRouter();
   const params = useSearchParams();
-  const [paymentData, setPaymentData] = useState<CheckoutResult | null>(null);
-  const [isLoadingPayment, setIsLoadingPayment] = useState(false);
-  const [isSimulating, setIsSimulating] = useState(false);
+  const [data, setData] = useState<CheckoutResult | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasFetchError, setHasFetchError] = useState(false);
 
-  // URL params
+  // URL params (dipakai untuk render awal sebelum data API datang, dan untuk field yang gak ada di API seperti uid)
   const orderId = params.get('orderId');
-  const game = params.get('game') ?? 'Mobile Legends';
-  const product = params.get('product') ?? '514 Diamonds';
-  const price = Number(params.get('price') ?? 126500);
-  const fee = Number(params.get('fee') ?? 886);
-  const methodName = params.get('method') ?? 'QRIS';
+  const fallbackGame = params.get('game') ?? 'Mobile Legends';
+  const fallbackProduct = params.get('product') ?? '';
+  const fallbackPrice = Number(params.get('price') ?? 0);
+  const fallbackFee = Number(params.get('fee') ?? 0);
+  const methodName = params.get('method') ?? 'Pembayaran';
   const paymentId = params.get('payment') ?? 'qris';
-  const invoice = params.get('invoice') ?? 'INV-';
-  const uid = params.get('uid') ?? '12345678';
-  const paymentType = params.get('paymentType') ?? 'qris';
+  const fallbackInvoice = params.get('invoice') ?? '';
+  const uid = params.get('uid') ?? '-';
 
-  // Computed values
-  const total = price + fee;
+  const order = data?.order;
+  const payment = data?.payment;
 
-  const qrAmount = paymentData?.total ?? total;
+  const isQris = payment ? payment.method.type === 'qris' : paymentId === 'qris';
+  const isVa = payment ? payment.method.type === 'va' : paymentId !== 'qris';
 
-  const isQris = useMemo(() => isPaymentQris(paymentData, paymentType), [paymentData, paymentType]);
+  const gameName = order?.game.name ?? fallbackGame;
+  const productLabel = order ? `${order.product.amount} × ${order.quantity}` : fallbackProduct;
+  const price = order?.subtotal ?? fallbackPrice;
+  const fee = order?.fee ?? fallbackFee;
+  const total = order?.total_price ?? price + fee;
+  const invoice = order?.invoice_number ?? fallbackInvoice;
 
-  const isVa = useMemo(() => isPaymentVa(paymentData, paymentId), [paymentData, paymentId]);
+  const bankCode = payment?.method.code ?? paymentId;
+  const vaNumber = payment?.payment_number ?? '';
+  const qrData = payment?.payment_number;
 
-  const vaNumber = useMemo(
-    () => getVaNumberFromPaymentData(paymentData, paymentId),
-    [paymentData, paymentId]
+  const redirectToResult = useCallback(
+    (status: string) => {
+      const redirect = new URLSearchParams(params.toString());
+      redirect.set('status', status);
+      if (invoice) redirect.set('invoice', invoice);
+      router.push(`/hasil?${redirect.toString()}`);
+    },
+    [params, invoice, router]
   );
 
-  // Fetch payment data from sessionStorage or API
+  // Fetch + polling status pembayaran
   useEffect(() => {
-    if (!orderId) return;
+    if (!orderId) {
+      setIsLoading(false);
+      return;
+    }
 
-    queueMicrotask(() => setIsLoadingPayment(true));
+    let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
-    // Try sessionStorage first (instant load)
-    const stored = sessionStorage.getItem(`checkout:result:${orderId}`);
-    if (stored) {
+    async function poll() {
       try {
-        queueMicrotask(() => setPaymentData(JSON.parse(stored)));
+        const response = await CheckoutService.getStatus(orderId as string);
+        if (cancelled) return;
+
+        if (response.success && response.data) {
+          setData(response.data);
+          setHasFetchError(false);
+
+          const status = response.data.payment.status;
+          if (status !== 'pending') {
+            redirectToResult(status);
+            return; // stop polling
+          }
+        } else {
+          setHasFetchError(true);
+        }
       } catch {
-        // Invalid JSON, will fetch from API below
+        setHasFetchError(true);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+
+      if (!cancelled) {
+        timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
       }
     }
 
-    // Fetch fresh data from API
-    CheckoutService.getStatus(orderId)
-      .then((response) => {
-        if (response.success && response.data) {
-          setPaymentData(response.data);
-          sessionStorage.setItem(`checkout:result:${orderId}`, JSON.stringify(response.data));
-        }
-      })
-      .catch(() => {
-        // Silently fail, use sessionStorage or URL params fallback
-      })
-      .finally(() => setIsLoadingPayment(false));
-  }, [orderId]);
+    poll();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
+  }, [orderId, redirectToResult]);
 
   // Track page view
   useEffect(() => {
+    if (!data) return;
     posthog.capture('payment_page_viewed', {
-      game,
-      product,
+      game: gameName,
+      product: productLabel,
       price,
       fee,
       total,
-      payment_method_id: paymentId,
+      payment_method_id: payment?.method.id ?? paymentId,
       payment_method_name: methodName,
       invoice_id: invoice,
       payment_type: isQris ? 'qris' : isVa ? 'va' : 'other',
     });
-  }, [game, product, price, fee, total, paymentId, methodName, invoice, isQris, isVa]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
-  // Simulate redirect to result after timeout
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsSimulating(true);
-      const redirect = new URLSearchParams(params.toString());
-      redirect.set('status', 'processing');
-      redirect.set('invoice', invoice);
-      router.push(`/hasil?${redirect.toString()}`);
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, [params, invoice, router]);
+  const handleExpire = useCallback(() => {
+    redirectToResult('expired');
+  }, [redirectToResult]);
 
   return (
     <div className="flex flex-col items-center text-center">
       {/* Payment method badge */}
       <div className="border-border bg-card flex items-center gap-2 rounded-full border px-4 py-1.5">
         <span className="bg-background text-muted-foreground flex size-6 items-center justify-center rounded">
-          <PaymentLogo id={paymentId} />
+          <PaymentLogo id={bankCode} />
         </span>
-        <span className="text-sm font-medium">{methodName}</span>
+        <span className="text-sm font-medium">{payment?.method.name ?? methodName}</span>
       </div>
 
       <h1 className="mt-4 text-2xl font-bold tracking-tight">Selesaikan Pembayaran</h1>
@@ -311,26 +295,17 @@ export function BayarCard() {
 
       {/* Payment display */}
       <div className="bg-card mt-6 w-full rounded-xl p-6">
-        {isQris && (
-          <QrPlaceholder
-            amount={qrAmount}
-            qrCode={
-              paymentData?.paymentData.type === 'qris'
-                ? (paymentData.paymentData as QRISPaymentData).qrCode
-                : undefined
-            }
-          />
-        )}
+        {isQris && <QrImage amount={total} data={qrData} />}
 
         {isVa && (
           <div className="space-y-4">
             <div className="bg-background/50 flex items-center gap-3 rounded-lg px-4 py-2.5">
-              <PaymentLogo id={paymentId} className="size-6" />
+              <PaymentLogo id={bankCode} className="size-6" />
               <span className="text-sm font-semibold">
-                Virtual Account {paymentId.toUpperCase()}
+                Virtual Account {bankCode.toUpperCase()}
               </span>
             </div>
-            <VaNumberDisplay number={vaNumber} bank={paymentId} />
+            <VaNumberDisplay number={vaNumber} bankCode={bankCode} />
             <div className="bg-muted/30 text-muted-foreground flex flex-col gap-2 rounded-lg p-3 text-left text-xs">
               <p>
                 <span className="text-foreground font-semibold">Cara bayar:</span> Buka aplikasi
@@ -346,11 +321,11 @@ export function BayarCard() {
         <dl className="border-border mt-5 flex flex-col gap-2 border-t pt-4 text-left text-sm">
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Game</dt>
-            <dd>{game}</dd>
+            <dd>{gameName}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Produk</dt>
-            <dd>{product}</dd>
+            <dd>{productLabel}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">ID Akun</dt>
@@ -365,38 +340,40 @@ export function BayarCard() {
 
       {/* Timer */}
       <div className="mt-5 w-full max-w-xs">
-        <PaymentTimer />
+        <PaymentTimer expiresAt={payment?.expired_at ?? null} onExpire={handleExpire} />
         <p className="text-muted-foreground mt-2 text-center text-xs">
-          {isSimulating
-            ? 'Pembayaran diterima! Mengalihkan...'
-            : 'Batas waktu pembayaran. Jangan tutup halaman ini.'}
+          Batas waktu pembayaran. Jangan tutup halaman ini.
         </p>
-        {isSimulating && (
-          <Loader2 className="text-primary mx-auto mt-2 size-5 animate-spin" aria-hidden="true" />
-        )}
       </div>
 
-      {/* Loading indicator */}
-      {isLoadingPayment && (
+      {/* Loading / error indicator */}
+      {isLoading && (
         <div className="text-muted-foreground mt-4 flex items-center gap-2 text-xs">
           <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
           Memuat data pembayaran...
         </div>
       )}
+      {hasFetchError && !isLoading && (
+        <p className="text-destructive mt-4 text-xs">
+          Gagal memuat status pembayaran terbaru. Menampilkan data terakhir.
+        </p>
+      )}
 
       {/* Invoice */}
-      <div className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-xs">
-        <span>
-          Invoice: <span className="font-mono">{invoice}</span>
-        </span>
-        <CopyButton
-          text={invoice}
-          label="Salin"
-          onCopy={() =>
-            posthog.capture('invoice_copied', { invoice_id: invoice, source: 'payment_page' })
-          }
-        />
-      </div>
+      {invoice && (
+        <div className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-xs">
+          <span>
+            Invoice: <span className="font-mono">{invoice}</span>
+          </span>
+          <CopyButton
+            text={invoice}
+            label="Salin"
+            onCopy={() =>
+              posthog.capture('invoice_copied', { invoice_id: invoice, source: 'payment_page' })
+            }
+          />
+        </div>
+      )}
     </div>
   );
 }
