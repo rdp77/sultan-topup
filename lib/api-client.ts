@@ -30,8 +30,12 @@ export async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promis
   for (let attempt = 0; attempt <= retry; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...init.headers,
+        },
       });
 
       if (!res.ok) {
