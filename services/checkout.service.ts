@@ -1,11 +1,5 @@
 import { apiFetch, ApiError } from '@/lib/api-client';
-import type {
-  CheckoutRequest,
-  CheckoutResponse,
-  CheckoutServiceResult,
-  CheckoutResult,
-} from '@/types/checkout';
-import { OrderLookupResponse } from '@/types/order';
+import type { CheckoutRequest, CheckoutServiceResult, CheckoutResult } from '@/types/checkout';
 
 function toApiPayload(request: CheckoutRequest) {
   return {
