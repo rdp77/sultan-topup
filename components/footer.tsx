@@ -6,7 +6,7 @@ function generateSocialMediaLinks() {
     { name: 'Instagram', url: 'https://instagram.com/sultantopupofficial' },
     { name: 'Tiktok', url: 'https://tiktok.com/@sultantopupofficial' },
     { name: 'Threads', url: 'https://threads.net/@sultantopupofficial' },
-    { name: 'YouTube', url: 'https://youtube.com/@sultantopupofficial' },
+    { name: 'YouTube', url: 'https://youtube.com/@sultantopup' },
     { name: 'Facebook', url: 'https://facebook.com/sultantopupofficial' },
   ];
 }
