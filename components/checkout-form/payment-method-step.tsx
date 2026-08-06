@@ -77,7 +77,7 @@ export function PaymentMethodStep({
       )}
 
       {/* Empty state */}
-      {!isLoading && !error && paymentGroups && paymentGroups.length === 0 && (
+      {!isLoading && !error && paymentGroups?.length === 0 && (
         <div className="border-border mt-4 flex flex-col items-center gap-2 rounded-xl border border-dashed px-4 py-8 text-center">
           <p className="text-muted-foreground text-sm">
             Tidak ada metode pembayaran tersedia saat ini.
