@@ -16,13 +16,15 @@ interface UsePaymentMethodsResult {
  * (array of groups, each with a `payment_methods` array).
  * Maps `code` -> logo-friendly `id`, `fee_value` (string) -> `fee` (number),
  * and `fee_type` -> `feeType` to match the local `PaymentMethod` type.
- * Caches results in sessionStorage keyed by optional gameId.
+ *
+ * Caching is handled entirely by Next.js Data Cache (see
+ * PaymentMethodService.list — revalidate: 300s). No client-side cache here,
+ * to avoid two independent staleness windows.
  */
 export function usePaymentMethods(gameId?: number): UsePaymentMethodsResult {
   const [paymentGroups, setPaymentGroups] = useState<PaymentGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const cacheKey = `payment-methods:${gameId ?? 'all'}`;
   const fetchedRef = useRef(false);
 
   const fetchMethods = useCallback(() => {
@@ -42,10 +44,6 @@ export function usePaymentMethods(gameId?: number): UsePaymentMethodsResult {
         }));
 
         setPaymentGroups(groups);
-
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem(cacheKey, JSON.stringify(groups));
-        }
       })
       .catch((err) => {
         setError(err instanceof Error ? err.message : 'Gagal memuat metode pembayaran');
@@ -53,31 +51,13 @@ export function usePaymentMethods(gameId?: number): UsePaymentMethodsResult {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [gameId, cacheKey]);
+  }, [gameId]);
 
   useEffect(() => {
     if (fetchedRef.current) return;
-
-    if (typeof window !== 'undefined') {
-      const cached = sessionStorage.getItem(cacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached) as PaymentGroup[];
-          queueMicrotask(() => {
-            setPaymentGroups(parsed);
-            setIsLoading(false);
-          });
-          fetchedRef.current = true;
-          return;
-        } catch {
-          // Invalid cache fall through to fetch
-        }
-      }
-    }
-
-    queueMicrotask(() => fetchMethods());
     fetchedRef.current = true;
-  }, [fetchMethods, cacheKey]);
+    fetchMethods();
+  }, [fetchMethods]);
 
   return { paymentGroups, isLoading, error, retry: fetchMethods };
 }

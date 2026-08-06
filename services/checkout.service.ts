@@ -1,6 +1,21 @@
 import { apiFetch, ApiError } from '@/lib/api-client';
 import type { CheckoutRequest, CheckoutResponse } from '@/types/checkout';
 
+function toApiPayload(request: CheckoutRequest) {
+  console.log('toApiPayload', request);
+  return {
+    player_id: request.playerId,
+    zone_id: request.zoneId,
+    game_id: request.gameId,
+    product_id: request.productId,
+    sku: request.sku,
+    quantity: request.quantity,
+    email: request.email,
+    whatsapp: request.whatsapp,
+    payment_method: request.paymentMethod,
+  };
+}
+
 export const CheckoutService = {
   /**
    * Create a new checkout order.
@@ -14,7 +29,7 @@ export const CheckoutService = {
           'Content-Type': 'application/json',
           'Idempotency-Key': idempotencyKey,
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(toApiPayload(request)),
       });
       return response;
     } catch (error) {
