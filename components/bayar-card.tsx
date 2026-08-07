@@ -1,170 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
-import { Copy, Check, Clock, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { PaymentLogo } from '@/components/payment-logo';
 import { OrderSummary } from '@/components/order-summary';
 import { PaymentCardSkeleton } from '@/components/payment-card-skeleton';
 import { usePaymentPolling } from '@/hooks/use-payment-polling';
 import { resolvePaymentType } from '@/lib/payment';
-import { QRCodeSVG } from 'qrcode.react';
-
-// --- Sub-components ---
-
-function QrImage({ amount, data }: Readonly<{ amount: number; data?: string }>) {
-  if (data) {
-    return (
-      <div className="border-border mx-auto flex size-48 items-center justify-center overflow-hidden rounded-xl border-2 bg-white p-4">
-        <QRCodeSVG
-          value={data}
-          size={192}
-          level="H" // required when embedding a logo — lower levels risk unscannable codes
-          imageSettings={{
-            src: '/favicon-96x96.png', // small monochrome mark, NOT full logo with wordmark
-            width: 36, // keep under ~20% of `size` to stay within level H tolerance
-            height: 36,
-            excavate: true, // clears QR modules behind the logo instead of overlapping them
-          }}
-        />
-      </div>
-    );
-  }
-
-  // Placeholder while waiting for QR data from the server.
-  return (
-    <div
-      className="border-border mx-auto flex size-48 animate-pulse items-center justify-center rounded-xl border-2 bg-white p-4"
-      aria-label={`QRIS Rp ${amount.toLocaleString('id-ID')}`}
-    >
-      <Loader2 className="text-muted-foreground size-8 animate-spin" aria-hidden="true" />
-    </div>
-  );
-}
-
-function CopyButton({
-  text,
-  label = 'Salin',
-  onCopy,
-}: Readonly<{
-  text: string;
-  label?: string;
-  onCopy?: () => void;
-}>) {
-  const [copied, setCopied] = useState(false);
-
-  function handleCopy() {
-    if (copied || !text) return;
-    navigator.clipboard?.writeText(text);
-    setCopied(true);
-    onCopy?.();
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      className="press border-border text-foreground hover:bg-card inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors duration-200"
-    >
-      {copied ? (
-        <>
-          <Check className="size-3" aria-hidden="true" />
-          Tersalin
-        </>
-      ) : (
-        <>
-          <Copy className="size-3" aria-hidden="true" />
-          {label}
-        </>
-      )}
-    </button>
-  );
-}
-
-function VaNumberDisplay({ number, bankCode }: Readonly<{ number: string; bankCode: string }>) {
-  return (
-    <div className="bg-background flex flex-col gap-2 rounded-lg p-4 text-left">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-muted-foreground text-xs">Nomor Virtual Account</span>
-        <CopyButton
-          text={number}
-          label="Salin VA"
-          onCopy={() => posthog.capture('va_number_copied', { bank: bankCode })}
-        />
-      </div>
-      <span className="text-foreground font-mono text-lg font-semibold tracking-wide">
-        {number || '—'}
-      </span>
-      <p className="text-muted-foreground text-xs">
-        Penerima:{' '}
-        <span className="text-foreground font-medium">
-          Sultan Top Up ({bankCode.toUpperCase()})
-        </span>
-      </p>
-    </div>
-  );
-}
-
-function PaymentTimer({
-  expiresAt,
-  onExpire,
-}: Readonly<{ expiresAt: string | null; onExpire?: () => void }>) {
-  const [left, setLeft] = useState<number | null>(null);
-  const [initial, setInitial] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!expiresAt) return;
-
-    const target = new Date(expiresAt).getTime();
-
-    function tick() {
-      const remaining = Math.max(0, Math.floor((target - Date.now()) / 1000));
-      setLeft(remaining);
-      setInitial((prev) => prev ?? remaining);
-      if (remaining <= 0) onExpire?.();
-    }
-
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [expiresAt, onExpire]);
-
-  if (left === null || initial === null) {
-    return (
-      <div className="flex items-center gap-3 text-xs">
-        <Clock className="text-warning size-3.5" aria-hidden="true" />
-        <span className="text-muted-foreground">Memuat batas waktu...</span>
-      </div>
-    );
-  }
-
-  const hours = Math.floor(left / 3600);
-  const minutes = Math.floor((left % 3600) / 60);
-  const seconds = left % 60;
-  const percentage = initial > 0 ? (left / initial) * 100 : 0;
-
-  const display =
-    hours > 0
-      ? `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-      : `${minutes}:${String(seconds).padStart(2, '0')}`;
-
-  return (
-    <div className="flex items-center gap-3 text-xs">
-      <Clock className="text-warning size-3.5" aria-hidden="true" />
-      <span className="tabular-nums">{display}</span>
-      <div className="bg-muted h-1.5 flex-1 overflow-hidden rounded-full">
-        <div
-          className="bg-warning h-full rounded-full transition-all duration-1000 ease-linear"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-// --- Main component ---
+import { QrImage } from '@/components/qr-image';
+import { CopyButton } from '@/components/copy-button';
+import { VaNumberDisplay } from '@/components/va-number-display';
+import { PaymentTimer } from '@/components/payment-timer';
 
 export function BayarCard() {
   const router = useRouter();
