@@ -241,7 +241,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
       const params = new URLSearchParams({
         invoice: String(responseData.order.invoice_number),
       });
-      router.push(`/bayar?${params.toString()}`);
+      router.push(`/pay?${params.toString()}`);
     } catch (error) {
       console.error('Checkout error:', error);
       setCheckoutError('Gagal menghubungi server. Coba lagi.');

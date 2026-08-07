@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { BayarCard } from '@/components/bayar-card';
+import { PayCard } from '@/components/pay-card';
 
 export const metadata = {
   title: 'Pembayaran — Sultan Top Up',
@@ -43,7 +43,7 @@ export default function BayarPage() {
             </div>
           }
         >
-          <BayarCard />
+          <PayCard />
         </Suspense>
       </div>
     </main>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
@@ -14,7 +14,7 @@ import { CopyButton } from '@/components/copy-button';
 import { VaNumberDisplay } from '@/components/va-number-display';
 import { PaymentTimer } from '@/components/payment-timer';
 
-export function BayarCard() {
+export function PayCard() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -35,6 +35,9 @@ export function BayarCard() {
   const vaNumber = payment?.payment_number ?? '';
   const qrData = payment?.payment_number;
 
+  const hasRedirectedRef = useRef(false);
+  const hasTrackedViewRef = useRef(false);
+
   const redirectToResult = useCallback(
     (status: string) => {
       const redirect = new URLSearchParams();
@@ -46,15 +49,19 @@ export function BayarCard() {
   );
 
   // Redirect once the server-reported payment status is no longer 'pending'.
+  // Guarded so a stray extra poll tick can't trigger a second navigation.
   useEffect(() => {
     const status = payment?.status;
-    if (!status || status === 'pending') return;
+    if (!status || status === 'pending' || hasRedirectedRef.current) return;
+    hasRedirectedRef.current = true;
     redirectToResult(status);
   }, [payment?.status, redirectToResult]);
 
-  // Track page view once data is available.
+  // Track page view exactly once, regardless of how many times `data`
+  // is replaced by subsequent polling responses.
   useEffect(() => {
-    if (!data || !order || !payment) return;
+    if (!order || !payment || hasTrackedViewRef.current) return;
+    hasTrackedViewRef.current = true;
     posthog.capture('payment_page_viewed', {
       game: order.game.name,
       product: `${order.product.amount} × ${order.quantity}`,
@@ -66,8 +73,7 @@ export function BayarCard() {
       invoice_id: order.invoice_number,
       payment_type: paymentType,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [order, payment, paymentType]);
 
   const handleExpire = useCallback(() => {
     redirectToResult('expired');
@@ -88,10 +94,10 @@ export function BayarCard() {
     notFound();
   }
 
-  const gameName = order!.game.name;
-  const productLabel = `${order!.product.amount} × ${order!.quantity}`;
-  const total = order!.total_price;
-  const paymentMethodName = payment!.method.type.toUpperCase();
+  const gameName = data.order.game.name;
+  const productLabel = `${data.order.product.amount} × ${data.order.quantity}`;
+  const total = data.order.total_price;
+  const paymentMethodName = data.payment.method.type.toUpperCase();
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -139,7 +145,7 @@ export function BayarCard() {
 
       {/* Timer */}
       <div className="mt-5 w-full max-w-xs">
-        <PaymentTimer expiresAt={payment!.expired_at} onExpire={handleExpire} />
+        <PaymentTimer expiresAt={data.payment.expired_at} onExpire={handleExpire} />
         <p className="text-muted-foreground mt-2 text-center text-xs">
           Batas waktu pembayaran. Jangan tutup halaman ini.
         </p>
@@ -161,14 +167,14 @@ export function BayarCard() {
       {/* Invoice */}
       <div className="text-muted-foreground mt-4 flex items-center justify-center gap-2 text-xs">
         <span>
-          Invoice: <span className="font-mono">{order!.invoice_number}</span>
+          Invoice: <span className="font-mono">{data.order.invoice_number}</span>
         </span>
         <CopyButton
-          text={order!.invoice_number}
+          text={data.order.invoice_number}
           label="Salin"
           onCopy={() =>
             posthog.capture('invoice_copied', {
-              invoice_id: order!.invoice_number,
+              invoice_id: data.order.invoice_number,
               source: 'payment_page',
             })
           }
