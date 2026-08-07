@@ -11,7 +11,7 @@ const config: Record<OrderStatus, { label: string; className: string }> = {
   },
 };
 
-export function OrderStatusBadge({ status }: { status: OrderStatus }) {
+export function OrderStatusBadge({ status }: Readonly<{ status: OrderStatus }>) {
   const c = config[status];
   if (!c) return null;
   return (

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 const links = [
   { href: '/', label: 'Beranda' },
-  { href: '/lacak', label: 'Lacak Pesanan' },
+  { href: '/lookup', label: 'Lacak Pesanan' },
   { href: '/leaderboard', label: 'Leaderboard' },
 ];
 

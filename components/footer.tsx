@@ -57,7 +57,7 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/lacak" className="hover:text-foreground transition-colors duration-200">
+              <Link href="/lookup" className="hover:text-foreground transition-colors duration-200">
                 Lacak Pesanan
               </Link>
             </li>

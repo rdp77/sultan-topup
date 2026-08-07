@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   entries.push({
-    url: `${BASE_URL}/lacak`,
+    url: `${BASE_URL}/lookup`,
     lastModified: STATIC_UPDATED,
     changeFrequency: 'weekly',
     priority: 0.9,
