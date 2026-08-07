@@ -140,16 +140,20 @@ function PaymentTimer({
     );
   }
 
-  const minutes = Math.floor(left / 60);
+  const hours = Math.floor(left / 3600);
+  const minutes = Math.floor((left % 3600) / 60);
   const seconds = left % 60;
   const percentage = initial > 0 ? (left / initial) * 100 : 0;
+
+  const display =
+    hours > 0
+      ? `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+      : `${minutes}:${String(seconds).padStart(2, '0')}`;
 
   return (
     <div className="flex items-center gap-3 text-xs">
       <Clock className="text-warning size-3.5" aria-hidden="true" />
-      <span className="tabular-nums">
-        {minutes}:{String(seconds).padStart(2, '0')}
-      </span>
+      <span className="tabular-nums">{display}</span>
       <div className="bg-muted h-1.5 flex-1 overflow-hidden rounded-full">
         <div
           className="bg-warning h-full rounded-full transition-all duration-1000 ease-linear"
