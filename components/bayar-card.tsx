@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { Copy, Check, Clock, Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { PaymentLogo } from '@/components/payment-logo';
@@ -223,11 +223,7 @@ export function BayarCard() {
 
   // No invoice in the URL at all — nothing to fetch, nothing to render.
   if (!invoice) {
-    return (
-      <div className="text-center">
-        <p className="text-destructive text-sm">Invoice tidak ditemukan.</p>
-      </div>
-    );
+    notFound();
   }
 
   // Still loading the first response and nothing to show yet.
@@ -237,13 +233,7 @@ export function BayarCard() {
 
   // Fetch failed on the very first attempt and we still have nothing.
   if (!data) {
-    return (
-      <div className="text-center">
-        <p className="text-destructive text-sm">
-          Gagal memuat data pembayaran. Silakan muat ulang halaman.
-        </p>
-      </div>
-    );
+    notFound();
   }
 
   const gameName = order!.game.name;
