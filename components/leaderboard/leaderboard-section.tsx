@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Trophy } from 'lucide-react';
-import { formatRupiah, leaderboard as dummyData, type LeaderboardEntry } from '@/lib/data';
+import { leaderboard as dummyData, type LeaderboardEntry } from '@/lib/data';
+import { formatRupiah } from '@/lib/utils';
 import { LeaderboardService } from '@/services';
 
 const isDev = process.env.NODE_ENV === 'development';
