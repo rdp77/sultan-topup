@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Loader2, Plus, PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { formatRupiah, type Order, type OrderStatus } from '@/lib/data';
+import { type OrderApiItem, type Order, type OrderStatus } from '@/types/order';
 import { OrderService } from '@/services';
-import type { OrderApiItem } from '@/types/order';
+import { formatRupiah } from '@/lib/utils';
 
 const PAGE_SIZE = 6;
 
@@ -27,6 +27,7 @@ function toOrder(item: OrderApiItem): Order {
     method: item.payment_method,
     userId: item.email,
     phone: item.phone,
+    playerId: item.player_id,
     status: STATUS_MAP[item.status] ?? 'failed',
     date: item.created_at,
   };

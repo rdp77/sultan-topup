@@ -3,7 +3,7 @@
 import { Loader2, ShieldCheck } from 'lucide-react';
 import Turnstile from 'react-turnstile';
 import { cn, formatRupiah } from '@/lib/utils';
-import { type PaymentMethod } from '@/lib/data';
+import { type PaymentMethod } from '@/types/payment-method';
 import type { DenominationView } from '@/lib/product-utils';
 
 interface OrderSummaryProps {

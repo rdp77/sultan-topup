@@ -14,8 +14,8 @@ import {
   Check,
 } from 'lucide-react';
 import posthog from 'posthog-js';
-import { cn } from '@/lib/utils';
-import { formatRupiah, type OrderStatus } from '@/lib/data';
+import { cn, formatRupiah } from '@/lib/utils';
+import { type OrderStatus } from '@/types/order';
 
 const statusConfig: Record<
   OrderStatus,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { PaymentMethodService } from '@/services';
-import { type PaymentMethod, type PaymentGroup } from '@/lib/data';
+import { type PaymentMethod, type PaymentGroup } from '@/types/payment-method';
 
 interface UsePaymentMethodsResult {
   paymentGroups: PaymentGroup[];

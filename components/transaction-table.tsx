@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { type Order, type OrderStatus } from '@/lib/data';
+import { type Order, type OrderStatus } from '@/types/order';
 import { formatDate } from '@/lib/utils';
 import { OrderService } from '@/services';
 import type { OrderApiItem } from '@/types/order';

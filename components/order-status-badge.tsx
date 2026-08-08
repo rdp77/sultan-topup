@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import type { OrderStatus } from '@/lib/data';
+import type { OrderStatus } from '@/types/order';
 
 const config: Record<OrderStatus, { label: string; className: string }> = {
   success: { label: 'Berhasil', className: 'bg-success/15 text-success' },
