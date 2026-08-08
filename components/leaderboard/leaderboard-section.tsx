@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Trophy } from 'lucide-react';
-import { leaderboard as dummyData, type LeaderboardEntry } from '@/lib/data';
+import { type LeaderboardEntry } from '@/types/leaderboard';
 import { formatRupiah } from '@/lib/utils';
 import { LeaderboardService } from '@/services';
-
-const isDev = process.env.NODE_ENV === 'development';
 
 function Skeleton() {
   return (
@@ -86,13 +84,11 @@ function getRowClass(rank: number): string {
 }
 
 export function LeaderboardSection() {
-  const [data, setData] = useState<LeaderboardEntry[]>(isDev ? dummyData : []);
-  const [loading, setLoading] = useState(!isDev);
+  const [data, setData] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isDev) return;
-
     let cancelled = false;
 
     LeaderboardService.list()
