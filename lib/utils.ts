@@ -1,3 +1,4 @@
+import { PaymentMethod } from '@/types/payment-method';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -25,4 +26,8 @@ export function formatDate(date: string): string {
     month: 'long',
     year: 'numeric',
   }).format(new Date(date));
+}
+
+export function calcFee(method: PaymentMethod, price: number): number {
+  return method.feeType === 'percent' ? Math.ceil((price * method.fee) / 100) : method.fee;
 }

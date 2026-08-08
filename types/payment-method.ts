@@ -21,3 +21,15 @@ export interface ApiPaymentMethodItem {
   created_at: string;
   updated_at: string;
 }
+
+export type PaymentGroup = {
+  group: string;
+  methods: PaymentMethod[];
+};
+
+export type PaymentMethod = {
+  id: string;
+  name: string;
+  fee: number;
+  feeType: 'flat' | 'percent';
+};

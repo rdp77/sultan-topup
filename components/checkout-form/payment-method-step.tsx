@@ -2,9 +2,9 @@
 
 import posthog from 'posthog-js';
 import { Check, AlertCircle, RefreshCw } from 'lucide-react';
-import { cn, formatRupiah } from '@/lib/utils';
+import { cn, formatRupiah, calcFee } from '@/lib/utils';
 import { PaymentLogo } from '@/components/payment-logo';
-import { calcFee, type PaymentMethod, type PaymentGroup } from '@/lib/data';
+import { type PaymentMethod, type PaymentGroup } from '@/types/payment-method';
 import { SectionHeading } from './section-heading';
 import type { DenominationView } from '@/lib/product-utils';
 

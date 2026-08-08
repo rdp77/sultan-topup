@@ -1,14 +1,3 @@
-export type PaymentMethod = {
-  id: string;
-  name: string;
-  fee: number;
-  feeType: 'flat' | 'percent';
-};
-
-export function calcFee(method: PaymentMethod, price: number): number {
-  return method.feeType === 'percent' ? Math.ceil((price * method.fee) / 100) : method.fee;
-}
-
 export type OrderStatus = 'success' | 'failed' | 'processing' | 'expired';
 
 export type Order = {
