@@ -5,7 +5,8 @@ import { Loader2, Search, SearchX } from 'lucide-react';
 import posthog from 'posthog-js';
 import { z } from 'zod';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { formatRupiah, type Order, type OrderStatus } from '@/lib/data';
+import { type Order, type OrderStatus } from '@/lib/data';
+import { formatRupiah } from '@/lib/utils';
 import { OrderService } from '@/services';
 import type { OrderApiItem } from '@/types/order';
 
@@ -37,6 +38,7 @@ function toOrder(item: OrderApiItem): Order {
     method: item.payment_method,
     userId: item.email,
     phone: item.phone,
+    playerId: item.player_id,
     status: STATUS_MAP[item.status] ?? 'failed',
     date: item.created_at,
   };
@@ -168,8 +170,8 @@ export function OrderLookup() {
               <dd>{result.product}</dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-muted-foreground">User ID</dt>
-              <dd>{result.userId}</dd>
+              <dt className="text-muted-foreground">Player ID</dt>
+              <dd>{result.playerId}</dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Metode</dt>

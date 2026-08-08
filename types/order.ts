@@ -9,6 +9,7 @@ export interface OrderApiItem {
   quantity: number;
   email: string;
   phone: string;
+  player_id: string;
   total_price: number;
   payment_method: string;
   created_at: string;

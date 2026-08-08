@@ -2,8 +2,7 @@
 
 import { Check } from 'lucide-react';
 import posthog from 'posthog-js';
-import { cn } from '@/lib/utils';
-import { formatRupiah } from '@/lib/data';
+import { cn, formatRupiah } from '@/lib/utils';
 import { SectionHeading } from './section-heading';
 import type { DenominationView } from '@/lib/product-utils';
 

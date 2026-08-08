@@ -272,10 +272,6 @@ export function calcFee(method: PaymentMethod, price: number): number {
   return method.feeType === 'percent' ? Math.ceil((price * method.fee) / 100) : method.fee;
 }
 
-export function formatRupiah(n: number): string {
-  return `Rp ${(n ?? 0).toLocaleString('id-ID')}`;
-}
-
 export type OrderStatus = 'success' | 'failed' | 'processing' | 'expired';
 
 export type Order = {
@@ -287,65 +283,11 @@ export type Order = {
   total: number;
   method: string;
   userId: string;
+  playerId: string;
   phone: string;
   status: OrderStatus;
   date: string;
 };
-
-export const mockOrders: Order[] = [
-  {
-    invoice: 'INV-20260702-8F3K',
-    game: 'Mobile Legends',
-    product: '514 Diamonds',
-    price: 126500,
-    fee: 886,
-    total: 127386,
-    method: 'QRIS',
-    userId: '12345678 (2001)',
-    phone: '081234567890',
-    status: 'success',
-    date: '2 Juli 2026, 14:32',
-  },
-  {
-    invoice: 'INV-20260628-2QWE',
-    game: 'Free Fire',
-    product: '520 Diamonds',
-    price: 79000,
-    fee: 1000,
-    total: 80000,
-    method: 'GoPay',
-    userId: '987654321',
-    phone: '085712345678',
-    status: 'success',
-    date: '28 Juni 2026, 09:15',
-  },
-  {
-    invoice: 'INV-20260620-7HJL',
-    game: 'PUBG Mobile',
-    product: '1060 UC',
-    price: 155000,
-    fee: 4000,
-    total: 159000,
-    method: 'BCA Virtual Account',
-    userId: '5123456789',
-    phone: '081398765432',
-    status: 'processing',
-    date: '20 Juni 2026, 21:47',
-  },
-  {
-    invoice: 'INV-20260615-4ZXC',
-    game: 'Genshin Impact',
-    product: '2180 Genesis Crystals',
-    price: 305000,
-    fee: 2135,
-    total: 307135,
-    method: 'QRIS',
-    userId: '800123456',
-    phone: '087856789012',
-    status: 'expired',
-    date: '15 Juni 2026, 11:03',
-  },
-];
 
 export type LeaderboardEntry = {
   rank: number;

@@ -1,4 +1,4 @@
-import { formatRupiah } from '@/lib/data';
+import { formatRupiah } from '@/lib/utils';
 
 interface OrderSummaryProps {
   gameName: string;

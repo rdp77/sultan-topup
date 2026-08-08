@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { formatRupiah, type Order, type OrderStatus } from '@/lib/data';
+import { type Order, type OrderStatus } from '@/lib/data';
 import { OrderService } from '@/services';
 import type { OrderApiItem } from '@/types/order';
 
@@ -25,30 +25,11 @@ function toOrder(item: OrderApiItem): Order {
     total: item.total_price,
     method: item.payment_method,
     userId: item.email,
+    playerId: item.player_id,
     phone: item.phone,
     status: STATUS_MAP[item.status] ?? 'failed',
     date: item.created_at,
   };
-}
-
-// --- Masking helpers ---
-function maskEnd(value: string, show = 4): string {
-  if (!value || value.length <= show) return value || '••••';
-  return value.slice(0, -show) + '\u2022'.repeat(show);
-}
-
-function maskPhone(phone: string): string {
-  if (!phone || phone.length < 8) return maskEnd(phone || '', 4);
-  return phone.slice(0, 4) + '\u2022'.repeat(phone.length - 6) + phone.slice(-2);
-}
-
-function maskPrice(n: number): string {
-  const raw = formatRupiah(n);
-  // Replace last 3 digit chars before "dot" or end with bullets
-  const digits = raw.replace(/\D/g, '');
-  if (digits.length <= 3) return raw.replace(/\d{3}$/, (m) => '\u2022'.repeat(m.length));
-  const masked = digits.slice(0, -3) + '\u2022\u2022\u2022';
-  return `Rp ${Number(masked.slice(0, -9) || '0').toLocaleString('id-ID')}${masked.slice(-9)}`;
 }
 
 const HEADERS = [
@@ -56,7 +37,8 @@ const HEADERS = [
   'Status',
   'Game',
   'Produk',
-  'User ID',
+  'Player ID',
+  'Email',
   'No. HP',
   'Metode',
   'Tanggal',
@@ -148,7 +130,7 @@ export function TransactionTable() {
                 className="border-border/30 hover:bg-accent/50 border-b transition-colors duration-150 last:border-b-0"
               >
                 <td className="text-muted-foreground px-5 py-3.5 font-mono text-xs whitespace-nowrap">
-                  {maskEnd(order.invoice, 4)}
+                  {order.invoice}
                 </td>
                 <td className="px-5 py-3.5 whitespace-nowrap">
                   <OrderStatusBadge status={order.status} />
@@ -158,10 +140,13 @@ export function TransactionTable() {
                   {order.product}
                 </td>
                 <td className="text-muted-foreground px-5 py-3.5 font-mono text-xs whitespace-nowrap">
-                  {maskEnd(order.userId, 4)}
+                  {order.playerId}
                 </td>
                 <td className="text-muted-foreground px-5 py-3.5 font-mono text-xs whitespace-nowrap">
-                  {maskPhone(order.phone)}
+                  {order.userId}
+                </td>
+                <td className="text-muted-foreground px-5 py-3.5 font-mono text-xs whitespace-nowrap">
+                  {order.phone}
                 </td>
                 <td className="text-muted-foreground px-5 py-3.5 text-sm whitespace-nowrap">
                   {order.method}
@@ -170,7 +155,7 @@ export function TransactionTable() {
                   {order.date}
                 </td>
                 <td className="text-primary px-5 py-3.5 text-sm font-semibold whitespace-nowrap">
-                  {maskPrice(order.total)}
+                  {order.total}
                 </td>
               </tr>
             ))}
