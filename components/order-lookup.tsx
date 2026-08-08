@@ -6,7 +6,7 @@ import posthog from 'posthog-js';
 import { z } from 'zod';
 import { OrderStatusBadge } from '@/components/order-status-badge';
 import { type Order, type OrderStatus } from '@/lib/data';
-import { formatRupiah } from '@/lib/utils';
+import { formatRupiah, formatDateTime } from '@/lib/utils';
 import { OrderService } from '@/services';
 import type { OrderApiItem } from '@/types/order';
 
@@ -179,7 +179,7 @@ export function OrderLookup() {
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Tanggal</dt>
-              <dd>{result.date}</dd>
+              <dd>{formatDateTime(result.date)}</dd>
             </div>
             <div className="border-border flex justify-between gap-4 border-t pt-2.5 font-semibold">
               <dt>Total</dt>

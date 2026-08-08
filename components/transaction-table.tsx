@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
 import { type Order, type OrderStatus } from '@/lib/data';
+import { formatDate } from '@/lib/utils';
 import { OrderService } from '@/services';
 import type { OrderApiItem } from '@/types/order';
 
@@ -152,7 +153,7 @@ export function TransactionTable() {
                   {order.method}
                 </td>
                 <td className="text-muted-foreground px-5 py-3.5 text-xs whitespace-nowrap">
-                  {order.date}
+                  {formatDate(order.date)}
                 </td>
                 <td className="text-primary px-5 py-3.5 text-sm font-semibold whitespace-nowrap">
                   {order.total}
