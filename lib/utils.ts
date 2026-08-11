@@ -33,7 +33,7 @@ export function calcFee(method: PaymentMethod, price: number): number {
     case 'flat':
       return method.feeFlatAmount;
     case 'percent':
-      return Math.ceil((price * method.feeFlatAmount) / 100);
+      return Math.ceil((price * method.feePercentage) / 100);
     case 'combined':
       return Math.ceil((price * method.feePercentage) / 100) + method.feeFlatAmount;
     default: {

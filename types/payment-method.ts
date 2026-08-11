@@ -14,7 +14,8 @@ export interface ApiPaymentMethodItem {
   name: string;
   type: 'va' | 'ewallet' | 'qris' | 'retail';
   fee_type: 'flat' | 'percent';
-  fee_value: string; // "1000.00"
+  fee_flat: string; // "1000.00"
+  fee_percentage: string;
   min_amount: string | null;
   max_amount: string | null;
   priority: number;
