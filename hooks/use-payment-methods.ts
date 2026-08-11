@@ -65,13 +65,15 @@ export function usePaymentMethods(gameId?: number): UsePaymentMethodsResult {
 function mapMethod(m: {
   code: string;
   name: string;
-  fee_type: 'flat' | 'percent';
+  fee_type: 'flat' | 'percent' | 'combined';
   fee_value: string;
+  fee_percentage?: string;
 }): PaymentMethod {
   return {
     id: m.code,
     name: m.name,
-    fee: Math.round(Number.parseFloat(m.fee_value)),
     feeType: m.fee_type,
+    feeFlatAmount: Math.round(Number.parseFloat(m.fee_value)),
+    feePercentage: m.fee_percentage ? Number.parseFloat(m.fee_percentage) : 0,
   };
 }

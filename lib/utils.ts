@@ -29,5 +29,16 @@ export function formatDate(date: string): string {
 }
 
 export function calcFee(method: PaymentMethod, price: number): number {
-  return method.feeType === 'percent' ? Math.ceil((price * method.fee) / 100) : method.fee;
+  switch (method.feeType) {
+    case 'flat':
+      return method.feeFlatAmount;
+    case 'percent':
+      return Math.ceil((price * method.feeFlatAmount) / 100);
+    case 'combined':
+      return Math.ceil((price * method.feePercentage) / 100) + method.feeFlatAmount;
+    default: {
+      const _exhaustive: never = method.feeType;
+      throw new Error(`Unhandled feeType: ${_exhaustive}`);
+    }
+  }
 }

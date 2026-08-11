@@ -30,6 +30,7 @@ export type PaymentGroup = {
 export type PaymentMethod = {
   id: string;
   name: string;
-  fee: number;
-  feeType: 'flat' | 'percent';
+  feeFlatAmount: number;
+  feePercentage: number;
+  feeType: 'flat' | 'percent' | 'combined';
 };
