@@ -16,6 +16,7 @@ import {
 import posthog from 'posthog-js';
 import { cn, formatRupiah } from '@/lib/utils';
 import { type OrderStatus } from '@/types/order';
+import { usePaymentPolling } from '@/hooks/use-payment-polling';
 
 const statusConfig: Record<
   OrderStatus,
@@ -52,7 +53,6 @@ export function ResultCard() {
   const [status, setStatus] = useState<OrderStatus>('processing');
   const capturedRef = useRef(false);
 
-  const statusParam = params.get('status') as OrderStatus | null;
   const game = params.get('game') ?? 'Mobile Legends';
   const product = params.get('product') ?? '514 Diamonds';
   const price = Number(params.get('price') ?? 126500);
@@ -61,16 +61,19 @@ export function ResultCard() {
   const uid = params.get('uid') ?? '12345678 (2001)';
   const [copied, setCopied] = useState(false);
   const invoice = params.get('invoice') ?? 'INV-20260702-8F3K';
+  const { data } = usePaymentPolling(invoice);
 
-  // Simulate payment confirmation: processing -> success after a short delay
+  // Status comes only from the server-reported payment status — the `status`
+  // URL param is intentionally never read, so it can't be spoofed by editing
+  // the address bar.
   useEffect(() => {
-    if (statusParam) {
-      queueMicrotask(() => setStatus(statusParam));
-      return;
-    }
-    const t = setTimeout(() => setStatus('success'), 2500);
-    return () => clearTimeout(t);
-  }, [statusParam]);
+    const serverStatus = data?.payment.status;
+    if (!serverStatus || serverStatus === 'pending') return;
+    const isKnownStatus = (Object.keys(statusConfig) as OrderStatus[]).includes(
+      serverStatus as OrderStatus
+    );
+    queueMicrotask(() => setStatus(isKnownStatus ? (serverStatus as OrderStatus) : 'failed'));
+  }, [data]);
 
   // Capture order result viewed once the final status is known
   useEffect(() => {
