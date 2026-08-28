@@ -1,11 +1,13 @@
 export type OrderStatus = 'pending' | 'completed' | 'failed' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'expired';
+export type ProviderStatus = 'pending' | 'completed' | 'failed' | 'processing';
 
 // Raw item from GET /orders (Laravel API)
 export interface OrderApiItem {
   invoice_number: string;
   status: OrderStatus;
-  payment_status: string;
-  provider_status: string;
+  payment_status: PaymentStatus;
+  provider_status: ProviderStatus;
   game: string;
   product: string;
   quantity: number;
