@@ -22,9 +22,11 @@
 ### Task 1: Derive `ResultCard` status from the server instead of the URL
 
 **Files:**
+
 - Modify: `components/result-card.tsx`
 
 **Interfaces:**
+
 - Consumes: `usePaymentPolling(invoice: string | null): { data: CheckoutResult | null; isLoading: boolean; hasFetchError: boolean }` from `@/hooks/use-payment-polling` (existing, unchanged). `CheckoutResult.payment.status: string` from `@/types/checkout` (existing, unchanged).
 - Produces: no new exports — `ResultCard` keeps its current signature (`export function ResultCard()`), used by `app/result/page.tsx` (unchanged).
 
@@ -41,21 +43,21 @@ import { usePaymentPolling } from '@/hooks/use-payment-polling';
 Delete this block:
 
 ```typescript
-  const statusParam = params.get('status') as OrderStatus | null;
+const statusParam = params.get('status') as OrderStatus | null;
 ```
 
 and this block:
 
 ```typescript
-  // Simulate payment confirmation: processing -> success after a short delay
-  useEffect(() => {
-    if (statusParam) {
-      queueMicrotask(() => setStatus(statusParam));
-      return;
-    }
-    const t = setTimeout(() => setStatus('success'), 2500);
-    return () => clearTimeout(t);
-  }, [statusParam]);
+// Simulate payment confirmation: processing -> success after a short delay
+useEffect(() => {
+  if (statusParam) {
+    queueMicrotask(() => setStatus(statusParam));
+    return;
+  }
+  const t = setTimeout(() => setStatus('success'), 2500);
+  return () => clearTimeout(t);
+}, [statusParam]);
 ```
 
 The URL's `status` value must never reach `setStatus` again.
@@ -65,23 +67,23 @@ The URL's `status` value must never reach `setStatus` again.
 Right after the `invoice` line (`const invoice = params.get('invoice') ?? 'INV-20260702-8F3K';`), add:
 
 ```typescript
-  const { data } = usePaymentPolling(invoice);
+const { data } = usePaymentPolling(invoice);
 ```
 
 Then, where the deleted effect used to be, add the replacement effect that derives status only from the server response:
 
 ```typescript
-  // Status comes only from the server-reported payment status — the `status`
-  // URL param is intentionally never read, so it can't be spoofed by editing
-  // the address bar.
-  useEffect(() => {
-    const serverStatus = data?.payment.status;
-    if (!serverStatus || serverStatus === 'pending') return;
-    const isKnownStatus = (Object.keys(statusConfig) as OrderStatus[]).includes(
-      serverStatus as OrderStatus
-    );
-    setStatus(isKnownStatus ? (serverStatus as OrderStatus) : 'failed');
-  }, [data]);
+// Status comes only from the server-reported payment status — the `status`
+// URL param is intentionally never read, so it can't be spoofed by editing
+// the address bar.
+useEffect(() => {
+  const serverStatus = data?.payment.status;
+  if (!serverStatus || serverStatus === 'pending') return;
+  const isKnownStatus = (Object.keys(statusConfig) as OrderStatus[]).includes(
+    serverStatus as OrderStatus
+  );
+  setStatus(isKnownStatus ? (serverStatus as OrderStatus) : 'failed');
+}, [data]);
 ```
 
 This mirrors the `STATUS_MAP[item.status] ?? 'failed'` fallback convention already used in `components/order-list.tsx`, `components/order-lookup.tsx`, and `components/transaction-table.tsx` — an unrecognized backend value degrades to `'failed'` instead of crashing `statusConfig[status]` lookups.
@@ -97,7 +99,8 @@ Expected: no new type errors (confirms `usePaymentPolling`'s return type and `Ch
 - [ ] **Step 5: Manual verification**
 
 Run: `npm run dev`, then:
-1. Visit `/result?invoice=<a real pending invoice>&status=success` — confirm the page shows the *actual* server status (e.g. still "Sedang Diproses"), not `success`, proving the URL param is ignored.
+
+1. Visit `/result?invoice=<a real pending invoice>&status=success` — confirm the page shows the _actual_ server status (e.g. still "Sedang Diproses"), not `success`, proving the URL param is ignored.
 2. Visit `/result?invoice=<a real completed invoice>` (no `status` param) — confirm the correct terminal status renders once the fetch resolves.
 3. Confirm `posthog.capture('order_result_viewed', ...)` still fires exactly once, after a terminal status is reached (existing effect at line ~76, unchanged).
 
