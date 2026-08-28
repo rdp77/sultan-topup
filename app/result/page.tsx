@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { ResultCard } from '@/components/result-card';
+import { ResultCardSkeleton } from '@/components/result-card-skeleton';
 
 export const metadata = {
   title: 'Status Pesanan — Sultan Top Up',
@@ -35,15 +36,7 @@ export default function ResultPage() {
   return (
     <main id="main" className="flex-1">
       <div className="mx-auto max-w-lg px-4 py-12 md:px-6 md:py-16">
-        <Suspense
-          fallback={
-            <div className="flex flex-col gap-4">
-              <div className="bg-card mx-auto size-20 animate-pulse rounded-full" />
-              <div className="bg-card mx-auto h-6 w-48 animate-pulse rounded-md" />
-              <div className="bg-card h-64 animate-pulse rounded-xl" />
-            </div>
-          }
-        >
+        <Suspense fallback={<ResultCardSkeleton />}>
           <ResultCard />
         </Suspense>
       </div>

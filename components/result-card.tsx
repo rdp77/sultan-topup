@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, notFound } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import {
   CheckCircle2,
@@ -17,6 +17,7 @@ import posthog from 'posthog-js';
 import { cn, formatRupiah } from '@/lib/utils';
 import { type OrderStatus } from '@/types/order';
 import { usePaymentPolling } from '@/hooks/use-payment-polling';
+import { ResultCardSkeleton } from '@/components/result-card-skeleton';
 
 const statusConfig: Record<
   OrderStatus,
@@ -60,8 +61,9 @@ export function ResultCard() {
   const method = params.get('method') ?? 'QRIS';
   const uid = params.get('uid') ?? '12345678 (2001)';
   const [copied, setCopied] = useState(false);
-  const invoice = params.get('invoice') ?? 'INV-20260702-8F3K';
-  const { data } = usePaymentPolling(invoice);
+  // No dummy fallback — a missing/empty invoice must 404, not fetch a fake one.
+  const invoice = params.get('invoice');
+  const { data, isLoading } = usePaymentPolling(invoice);
 
   // Status comes only from the server-reported payment status — the `status`
   // URL param is intentionally never read, so it can't be spoofed by editing
@@ -91,6 +93,21 @@ export function ResultCard() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
+
+  // No invoice in the URL at all (missing or empty) — nothing to fetch, nothing to render.
+  if (!invoice) {
+    notFound();
+  }
+
+  // Still loading the first response and nothing to show yet.
+  if (isLoading && !data) {
+    return <ResultCardSkeleton />;
+  }
+
+  // Fetch failed (including 404 from the backend) on the first attempt — nothing to show.
+  if (!data) {
+    notFound();
+  }
 
   const config = statusConfig[status];
   const Icon = config.icon;
