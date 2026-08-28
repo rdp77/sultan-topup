@@ -65,11 +65,14 @@ export function ResultCard() {
   const invoice = params.get('invoice');
   const { data, isLoading } = usePaymentPolling(invoice);
 
-  // Status comes only from the server-reported payment status — the `status`
-  // URL param is intentionally never read, so it can't be spoofed by editing
-  // the address bar.
+  // Status comes only from the server-reported ORDER status (data.order.status)
+  // — not data.payment.status, which is the raw status of one payment attempt
+  // and can lag/differ from the order (e.g. still 'pending' or 'cancelled' on
+  // an expired attempt after the order itself is 'completed' via a retry).
+  // The `status` URL param is intentionally never read, so it can't be
+  // spoofed by editing the address bar.
   useEffect(() => {
-    const serverStatus = data?.payment.status;
+    const serverStatus = data?.order.status;
     if (!serverStatus || serverStatus === 'pending') return;
     const isKnownStatus = (Object.keys(statusConfig) as OrderStatus[]).includes(
       serverStatus as OrderStatus
