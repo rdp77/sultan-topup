@@ -3,7 +3,7 @@ export type OrderStatus = 'pending' | 'completed' | 'failed' | 'cancelled';
 // Raw item from GET /orders (Laravel API)
 export interface OrderApiItem {
   invoice_number: string;
-  status: 'completed' | 'failed' | 'pending';
+  status: OrderStatus;
   payment_status: string;
   provider_status: string;
   game: string;
