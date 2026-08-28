@@ -5,11 +5,11 @@ export const metadata = {
   title: 'Lacak Pesanan — Sultan Top Up',
   description:
     'Lacak status pesanan top up game Anda. Masukkan nomor invoice dan kontak yang Anda gunakan saat checkout.',
-  alternates: { canonical: 'https://sultantopup.com/lacak' },
+  alternates: { canonical: 'https://sultantopup.com/lookup' },
   openGraph: {
     title: 'Lacak Pesanan — Sultan Top Up',
     description: 'Lacak status pesanan top up game Anda. Masukkan nomor invoice dan kontak.',
-    url: 'https://sultantopup.com/lacak',
+    url: 'https://sultantopup.com/lookup',
     siteName: 'Sultan Top Up',
     images: [
       {

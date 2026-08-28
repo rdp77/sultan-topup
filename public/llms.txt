@@ -3,7 +3,7 @@
 
 ## Situs
 - Beranda: https://sultantopup.com
-- Lacak Pesanan: https://sultantopup.com/lacak
+- Lacak Pesanan: https://sultantopup.com/lookup
 - Leaderboard: https://sultantopup.com/leaderboard
 - FAQ: https://sultantopup.com/faq
 - Kontak: https://sultantopup.com/contact

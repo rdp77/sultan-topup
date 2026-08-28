@@ -38,7 +38,7 @@ Sultan Top Up adalah platform top up game tercepat dan terpercaya di Indonesia. 
 
 ## Halaman Penting
 - **Beranda** (`/`) — Daftar lengkap game yang tersedia. Pilih dan langsung top up.
-- **Lacak Pesanan** (`/lacak`) — Cek status transaksi dengan nomor invoice.
+- **Lacak Pesanan** (`/lookup`) — Cek status transaksi dengan nomor invoice.
 - **Leaderboard** (`/leaderboard`) — Peringkat top spender bulanan.
 - **Kebijakan Privasi** (`/legal/privacy-policy`) — Bagaimana kami menjaga data Anda.
 - **Syarat & Ketentuan** (`/legal/terms-and-conditions`) — Aturan penggunaan layanan.

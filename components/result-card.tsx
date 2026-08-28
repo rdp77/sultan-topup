@@ -173,7 +173,7 @@ export function ResultCard() {
           Top Up Lagi
         </Link>
         <Link
-          href="/lacak"
+          href="/lookup"
           className="press border-border hover:bg-card flex flex-1 items-center justify-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium transition-colors duration-200"
         >
           <Search className="size-4" aria-hidden="true" />

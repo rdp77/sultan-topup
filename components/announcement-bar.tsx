@@ -17,7 +17,7 @@ const announcements: Announcement[] = [
   {
     id: 'promo-juli-2026',
     text: 'Promo Juli! Cashback 20% untuk semua transaksi QRIS.',
-    href: '/lacak',
+    href: '/lookup',
   },
 ];
 
