@@ -38,15 +38,13 @@ export function PayCard() {
   const hasRedirectedRef = useRef(false);
   const hasTrackedViewRef = useRef(false);
 
-  const redirectToResult = useCallback(
-    (status: string) => {
-      const redirect = new URLSearchParams();
-      redirect.set('status', status);
-      if (invoice) redirect.set('invoice', invoice);
-      router.push(`/result?${redirect.toString()}`);
-    },
-    [invoice, router]
-  );
+  // `/result` fetches the authoritative status itself by invoice — it no
+  // longer trusts a `status` URL param, so this redirect doesn't send one.
+  const redirectToResult = useCallback(() => {
+    const redirect = new URLSearchParams();
+    if (invoice) redirect.set('invoice', invoice);
+    router.push(`/result?${redirect.toString()}`);
+  }, [invoice, router]);
 
   // Redirect once the server-reported payment status is no longer 'pending'.
   // Guarded so a stray extra poll tick can't trigger a second navigation.
@@ -54,7 +52,7 @@ export function PayCard() {
     const status = payment?.status;
     if (!status || status === 'pending' || hasRedirectedRef.current) return;
     hasRedirectedRef.current = true;
-    redirectToResult(status);
+    redirectToResult();
   }, [payment?.status, redirectToResult]);
 
   // Track page view exactly once, regardless of how many times `data`
@@ -76,7 +74,7 @@ export function PayCard() {
   }, [order, payment, paymentType]);
 
   const handleExpire = useCallback(() => {
-    redirectToResult('expired');
+    redirectToResult();
   }, [redirectToResult]);
 
   // No invoice in the URL at all — nothing to fetch, nothing to render.
