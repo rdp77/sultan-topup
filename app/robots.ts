@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard', '/bayar', '/hasil', '/login', '/register', '/offline', '/api/'],
+        disallow: ['/dashboard', '/bayar', '/result', '/login', '/register', '/offline', '/api/'],
       },
     ],
     sitemap: 'https://sultantopup.com/sitemap.xml',

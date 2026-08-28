@@ -5,12 +5,12 @@ export const metadata = {
   title: 'Status Pesanan — Sultan Top Up',
   description:
     'Lihat status transaksi top up game Anda. Informasi pembayaran, status pengiriman, dan detail pesanan.',
-  alternates: { canonical: 'https://sultantopup.com/hasil' },
+  alternates: { canonical: 'https://sultantopup.com/result' },
   robots: { index: false, follow: false },
   openGraph: {
     title: 'Status Pesanan — Sultan Top Up',
     description: 'Lihat status transaksi top up game Anda.',
-    url: 'https://sultantopup.com/hasil',
+    url: 'https://sultantopup.com/result',
     siteName: 'Sultan Top Up',
     images: [
       {

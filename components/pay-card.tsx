@@ -43,7 +43,7 @@ export function PayCard() {
       const redirect = new URLSearchParams();
       redirect.set('status', status);
       if (invoice) redirect.set('invoice', invoice);
-      router.push(`/hasil?${redirect.toString()}`);
+      router.push(`/result?${redirect.toString()}`);
     },
     [invoice, router]
   );
