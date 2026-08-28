@@ -5,7 +5,6 @@
 This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to semantic CSS variables (`bg-primary`).
 
 **Benefits:**
-
 - Automatic dark mode support
 - Consistent color usage
 - Single source of truth
@@ -16,16 +15,16 @@ This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to s
 
 ## Semantic Color Mapping
 
-| Hardcoded Color                 | CSS Variable                          | Use Case                                |
-| ------------------------------- | ------------------------------------- | --------------------------------------- |
-| `bg-red-*` / `text-red-*`       | `bg-destructive` / `text-destructive` | Critical issues, errors, delete actions |
-| `bg-green-*` / `text-green-*`   | `bg-success` / `text-success`         | Success states, positive metrics        |
-| `bg-yellow-*` / `text-yellow-*` | `bg-warning` / `text-warning`         | Warnings, moderate issues               |
-| `bg-blue-*` / `text-blue-*`     | `bg-info` or `bg-primary`             | Info boxes, primary actions             |
-| `bg-gray-*` / `text-gray-*`     | `bg-muted` / `text-muted-foreground`  | Backgrounds, secondary text             |
-| `bg-purple-*`                   | `bg-info`                             | Remove - use blue instead               |
-| `bg-orange-*`                   | `bg-warning`                          | Remove - use yellow instead             |
-| `bg-emerald-*`                  | `bg-success`                          | Remove - use green instead              |
+| Hardcoded Color | CSS Variable | Use Case |
+|----------------|--------------|----------|
+| `bg-red-*` / `text-red-*` | `bg-destructive` / `text-destructive` | Critical issues, errors, delete actions |
+| `bg-green-*` / `text-green-*` | `bg-success` / `text-success` | Success states, positive metrics |
+| `bg-yellow-*` / `text-yellow-*` | `bg-warning` / `text-warning` | Warnings, moderate issues |
+| `bg-blue-*` / `text-blue-*` | `bg-info` or `bg-primary` | Info boxes, primary actions |
+| `bg-gray-*` / `text-gray-*` | `bg-muted` / `text-muted-foreground` | Backgrounds, secondary text |
+| `bg-purple-*` | `bg-info` | Remove - use blue instead |
+| `bg-orange-*` | `bg-warning` | Remove - use yellow instead |
+| `bg-emerald-*` | `bg-success` | Remove - use green instead |
 
 ---
 
@@ -34,13 +33,11 @@ This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to s
 ### Pattern 1: Solid Backgrounds
 
 ❌ **Before:**
-
 ```tsx
 <div className="bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-300">
 ```
 
 ✅ **After:**
-
 ```tsx
 <div className="bg-info/10 text-info">
 ```
@@ -52,13 +49,11 @@ This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to s
 ### Pattern 2: Borders
 
 ❌ **Before:**
-
 ```tsx
 <div className="border-2 border-green-200 dark:border-green-800">
 ```
 
 ✅ **After:**
-
 ```tsx
 <div className="border-2 border-success/30">
 ```
@@ -68,13 +63,11 @@ This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to s
 ### Pattern 3: Text Colors
 
 ❌ **Before:**
-
 ```tsx
 <span className="text-red-600 dark:text-red-400">
 ```
 
 ✅ **After:**
-
 ```tsx
 <span className="text-destructive">
 ```
@@ -84,13 +77,11 @@ This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to s
 ### Pattern 4: Icons
 
 ❌ **Before:**
-
 ```tsx
 <AlertCircle className="text-yellow-500" />
 ```
 
 ✅ **After:**
-
 ```tsx
 <AlertCircle className="text-warning" />
 ```
@@ -100,13 +91,11 @@ This guide helps you migrate from hardcoded Tailwind colors (`bg-blue-600`) to s
 ### Pattern 5: Gradients
 
 ❌ **Before:**
-
 ```tsx
 <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
 ```
 
 ✅ **After:**
-
 ```tsx
 <div className="bg-gradient-to-r from-success/10 to-success/20">
 ```
@@ -170,7 +159,6 @@ grep -r "border-\(red\|yellow\|blue\|green\|purple\|orange\|pink\|emerald\)-[0-9
 ### Step 3: Replace Component by Component
 
 Start with high-impact components:
-
 1. Buttons
 2. Badges
 3. Alert boxes
@@ -180,7 +168,6 @@ Start with high-impact components:
 ### Step 4: Test Both Themes
 
 After each component:
-
 - [ ] Check light mode appearance
 - [ ] Check dark mode appearance
 - [ ] Verify text contrast
@@ -191,7 +178,6 @@ After each component:
 ## Example: Badge Component
 
 ❌ **Before:**
-
 ```tsx
 const severityConfig = {
   critical: {
@@ -208,12 +194,11 @@ const severityConfig = {
     color: 'text-blue-500',
     bg: 'bg-blue-500/10',
     border: 'border-blue-500/20',
-  },
-};
+  }
+}
 ```
 
 ✅ **After:**
-
 ```tsx
 const severityConfig = {
   critical: {
@@ -230,8 +215,8 @@ const severityConfig = {
     color: 'text-info',
     bg: 'bg-info/10',
     border: 'border-info/20',
-  },
-};
+  }
+}
 ```
 
 ---
@@ -239,7 +224,6 @@ const severityConfig = {
 ## Testing Checklist
 
 After migration:
-
 - [ ] All severity levels (critical/warning/info) visually distinct
 - [ ] Text has proper contrast in both light and dark modes
 - [ ] No hardcoded color classes remain
@@ -269,19 +253,16 @@ grep -r "text-success" src/components/
 ## Performance Impact
 
 **Before:** Every component has `dark:` variants
-
 ```tsx
 <div className="bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800">
 ```
 
 **After:** Single class, CSS handles switching
-
 ```tsx
 <div className="bg-info/10 text-info border-info/30">
 ```
 
 **Result:**
-
 - 60% fewer CSS classes in markup
 - Smaller HTML payload
 - Faster rendering
@@ -324,7 +305,6 @@ If migration causes issues:
 ## Further Customization
 
 After migration, you can easily:
-
 - Add new semantic colors
 - Create theme variants (high contrast, etc.)
 - Support multiple brand themes
