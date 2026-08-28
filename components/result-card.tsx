@@ -22,13 +22,13 @@ const statusConfig: Record<
   OrderStatus,
   { icon: typeof CheckCircle2; title: string; desc: string; color: string }
 > = {
-  success: {
+  completed: {
     icon: CheckCircle2,
     title: 'Pembayaran Berhasil',
     desc: 'Top up kamu sudah masuk ke akun game. Selamat bermain!',
     color: 'text-success',
   },
-  processing: {
+  pending: {
     icon: Clock3,
     title: 'Sedang Diproses',
     desc: 'Pembayaran diterima. Top up sedang dikirim ke akun kamu, biasanya kurang dari 1 menit.',
@@ -40,7 +40,7 @@ const statusConfig: Record<
     desc: 'Terjadi kendala saat memproses pembayaran. Dana yang terpotong akan dikembalikan otomatis.',
     color: 'text-destructive',
   },
-  expired: {
+  cancelled: {
     icon: TimerOff,
     title: 'Pesanan Kedaluwarsa',
     desc: 'Batas waktu pembayaran telah habis. Silakan buat pesanan baru.',
@@ -50,7 +50,7 @@ const statusConfig: Record<
 
 export function ResultCard() {
   const params = useSearchParams();
-  const [status, setStatus] = useState<OrderStatus>('processing');
+  const [status, setStatus] = useState<OrderStatus>('pending');
   const capturedRef = useRef(false);
 
   const game = params.get('game') ?? 'Mobile Legends';
@@ -77,7 +77,7 @@ export function ResultCard() {
 
   // Capture order result viewed once the final status is known
   useEffect(() => {
-    if (capturedRef.current || status === 'processing') return;
+    if (capturedRef.current || status === 'pending') return;
     capturedRef.current = true;
     posthog.capture('order_result_viewed', {
       order_status: status,
@@ -101,7 +101,7 @@ export function ResultCard() {
         className={cn(
           'size-20 transition-colors duration-300',
           config.color,
-          status === 'processing' && 'animate-pulse'
+          status === 'pending' && 'animate-pulse'
         )}
         aria-hidden="true"
       />

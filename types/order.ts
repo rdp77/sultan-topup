@@ -27,7 +27,7 @@ export interface OrderLookupResponse {
   message?: string;
 }
 
-export type OrderStatus = 'success' | 'failed' | 'processing' | 'expired';
+export type OrderStatus = 'pending' | 'completed' | 'failed' | 'cancelled';
 
 export type Order = {
   invoice: string;
