@@ -1,20 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { type Order, type OrderStatus } from '@/types/order';
+import { type Order, type OrderApiItem } from '@/types/order';
 import { formatDate } from '@/lib/utils';
 import { OrderService } from '@/services';
-import type { OrderApiItem } from '@/types/order';
 
 const MAX_ROWS = 15;
-
-const STATUS_MAP: Record<string, OrderStatus> = {
-  completed: 'success',
-  failed: 'failed',
-  pending: 'processing',
-};
 
 function toOrder(item: OrderApiItem): Order {
   return {
@@ -28,7 +21,7 @@ function toOrder(item: OrderApiItem): Order {
     userId: item.email,
     playerId: item.player_id,
     phone: item.phone,
-    status: STATUS_MAP[item.status] ?? 'failed',
+    status: item.status || 'failed',
     date: item.created_at,
   };
 }
@@ -50,6 +43,8 @@ export function TransactionTable() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const SKELETON_ROW_KEYS = Array.from({ length: 5 }, () => crypto.randomUUID());
+  const SKELETON_COL_KEYS = Array.from({ length: HEADERS.length }, () => crypto.randomUUID());
 
   useEffect(() => {
     OrderService.list()
@@ -78,10 +73,10 @@ export function TransactionTable() {
               </tr>
             </thead>
             <tbody>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i} className="border-border/30 border-b last:border-b-0">
-                  {Array.from({ length: HEADERS.length }).map((_, j) => (
-                    <td key={j} className="px-5 py-4">
+              {SKELETON_ROW_KEYS.map((rowId) => (
+                <tr key={rowId} className="border-border/30 border-b last:border-b-0">
+                  {SKELETON_COL_KEYS.map((colId) => (
+                    <td key={`${rowId}-${colId}`} className="px-5 py-4">
                       <span className="bg-muted block h-3.5 w-20 animate-pulse rounded" />
                     </td>
                   ))}

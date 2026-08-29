@@ -20,7 +20,7 @@ export const OrderService = {
    */
   list(): Promise<OrderListApiResponse> {
     return apiFetch<OrderListApiResponse>('/orders', {
-      // next: { revalidate: 30 },
+      next: { revalidate: 30 },
     });
   },
 };

@@ -22,7 +22,7 @@ function toOrder(item: OrderApiItem): Order {
     userId: item.email,
     phone: item.phone,
     playerId: item.player_id,
-    status: item.status ?? 'failed',
+    status: item.status || 'failed',
     date: item.created_at,
   };
 }
