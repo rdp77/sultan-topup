@@ -15,15 +15,15 @@ import {
 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { cn, formatRupiah } from '@/lib/utils';
-import { type OrderStatus, type PaymentStatus } from '@/types/order';
+import { type PaymentStatus } from '@/types/order';
 import { usePaymentPolling } from '@/hooks/use-payment-polling';
 import { ResultCardSkeleton } from '@/components/result-card-skeleton';
 
 const statusConfig: Record<
-  OrderStatus,
+  PaymentStatus,
   { icon: typeof CheckCircle2; title: string; desc: string; color: string }
 > = {
-  completed: {
+  paid: {
     icon: CheckCircle2,
     title: 'Pembayaran Berhasil',
     desc: 'Top up kamu sudah masuk ke akun game. Selamat bermain!',
@@ -41,7 +41,7 @@ const statusConfig: Record<
     desc: 'Terjadi kendala saat memproses pembayaran. Dana yang terpotong akan dikembalikan otomatis.',
     color: 'text-destructive',
   },
-  cancelled: {
+  expired: {
     icon: TimerOff,
     title: 'Pesanan Kedaluwarsa',
     desc: 'Batas waktu pembayaran telah habis. Silakan buat pesanan baru.',
@@ -49,18 +49,11 @@ const statusConfig: Record<
   },
 };
 
-const paymentStatusToOrderStatus: Record<PaymentStatus, OrderStatus> = {
-  pending: 'pending',
-  paid: 'completed',
-  failed: 'failed',
-  expired: 'cancelled',
-};
-
 export function ResultCard() {
   const params = useSearchParams();
   // null = status not confirmed yet (still loading, or data just arrived and
-  // hasn't been mapped by the effect below) — never defaulted to 'pending'.
-  const [status, setStatus] = useState<OrderStatus | null>(null);
+  // hasn't been read by the effect below) — never defaulted to 'pending'.
+  const [status, setStatus] = useState<PaymentStatus | null>(null);
   const capturedRef = useRef(false);
 
   const game = params.get('game') ?? 'Mobile Legends';
@@ -74,14 +67,13 @@ export function ResultCard() {
   const invoice = params.get('invoice');
   const { data, isLoading } = usePaymentPolling(invoice);
 
-  // Status comes only from the server-reported PAYMENT status (data.payment.status),
-  // mapped to the order-status labels this card displays. The `status` URL param is
-  // intentionally never read, so it can't be spoofed by editing the address bar.
+  // Status comes only from the server-reported PAYMENT status (data.payment.status).
+  // The `status` URL param is intentionally never read, so it can't be spoofed by
+  // editing the address bar.
   useEffect(() => {
     const paymentStatus = data?.payment.status as PaymentStatus | undefined;
     if (!paymentStatus) return;
-    const mapped = paymentStatusToOrderStatus[paymentStatus] ?? 'failed';
-    queueMicrotask(() => setStatus(mapped));
+    queueMicrotask(() => setStatus(paymentStatus));
   }, [data]);
 
   // Capture order result viewed once the final status is known
