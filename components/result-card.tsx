@@ -55,15 +55,11 @@ export function ResultCard() {
   // hasn't been read by the effect below) — never defaulted to 'pending'.
   const [status, setStatus] = useState<PaymentStatus | null>(null);
   const capturedRef = useRef(false);
-
-  const game = params.get('game') ?? 'Mobile Legends';
-  const product = params.get('product') ?? '514 Diamonds';
-  const price = Number(params.get('price') ?? 126500);
-  const fee = Number(params.get('fee') ?? 886);
-  const method = params.get('method') ?? 'QRIS';
-  const uid = params.get('uid') ?? '12345678 (2001)';
   const [copied, setCopied] = useState(false);
-  // No dummy fallback — a missing/empty invoice must 404, not fetch a fake one.
+
+  // `invoice` is the ONLY value read from the URL. Every other displayed field
+  // comes from the polled API response (`data`) below — never from params —
+  // so a reload / deep-link / shared URL always shows real, current data.
   const invoice = params.get('invoice');
   const { data, isLoading } = usePaymentPolling(invoice);
 
@@ -78,20 +74,19 @@ export function ResultCard() {
 
   // Capture order result viewed once the final status is known
   useEffect(() => {
-    if (capturedRef.current || !status || status === 'pending') return;
+    if (capturedRef.current || !status || status === 'pending' || !data) return;
     capturedRef.current = true;
     posthog.capture('order_result_viewed', {
       order_status: status,
-      game,
-      product,
-      price,
-      fee,
-      total: price + fee,
-      payment_method: method,
-      invoice_id: invoice,
+      game: data.order.game.name,
+      product: data.order.product.name,
+      price: data.order.subtotal,
+      fee: data.order.fee,
+      total: data.order.total_price,
+      payment_method: data.payment.method.name,
+      invoice_id: data.order.invoice_number,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, data]);
 
   // No invoice in the URL at all (missing or empty) — nothing to fetch, nothing to render.
   if (!invoice) {
@@ -116,6 +111,7 @@ export function ResultCard() {
 
   const config = statusConfig[status];
   const Icon = config.icon;
+  const { order, payment } = data;
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -137,12 +133,12 @@ export function ResultCard() {
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Invoice</dt>
             <dd className="flex items-center gap-2 font-mono text-xs">
-              {invoice}
+              {order.invoice_number}
               <button
                 type="button"
                 onClick={() => {
                   if (copied) return;
-                  navigator.clipboard?.writeText(invoice);
+                  navigator.clipboard?.writeText(order.invoice_number);
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
                 }}
@@ -160,31 +156,38 @@ export function ResultCard() {
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Game</dt>
-            <dd>{game}</dd>
+            <dd>{order.game.name}</dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Produk</dt>
-            <dd>{product}</dd>
+            <dd>{order.product.name}</dd>
           </div>
-          <div className="flex justify-between gap-4">
+          {/* CheckoutOrder/CheckoutPayment don't return playerId/zoneId even though
+              CheckoutRequest sent them — there is currently no real value to show
+              here. Labeled explicitly instead of silently hiding the row or
+              showing a fabricated placeholder. Remove this branch once the
+              backend echoes the player/zone ID back in the order response. */}
+          {/* <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">User ID</dt>
-            <dd>{uid}</dd>
-          </div>
+            <dd className="text-muted-foreground italic">Tidak tersedia</dd>
+          </div> */}
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Metode</dt>
-            <dd>{method}</dd>
+            <dd>{payment.method.name}</dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Harga</dt>
-            <dd>{formatRupiah(price)}</dd>
+            <dd>{formatRupiah(order.subtotal)}</dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-muted-foreground">Biaya Admin</dt>
-            <dd>{formatRupiah(fee)}</dd>
+            <dd>{formatRupiah(order.fee)}</dd>
           </div>
           <div className="border-border flex justify-between gap-4 border-t pt-3 text-base font-semibold">
             <dt>Total</dt>
-            <dd className="text-primary">{formatRupiah(price + fee)}</dd>
+            {/* Server-computed total, not price + fee re-derived on the client —
+                avoids drifting from the actual charged amount (rounding, discounts). */}
+            <dd className="text-primary">{formatRupiah(order.total_price)}</dd>
           </div>
         </dl>
       </div>
