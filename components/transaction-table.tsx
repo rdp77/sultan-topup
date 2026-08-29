@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
 import { type Order, type OrderApiItem } from '@/types/order';
