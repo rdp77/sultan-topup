@@ -1,0 +1,1 @@
+Pada result-card.tsx untuk penentu sekarang gunakan status pembayaran (payment_status) bukan order status dan ketika loading statenya jangan default pending, berikan saja efek loading skeleton

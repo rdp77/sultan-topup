@@ -5,15 +5,9 @@ import { Loader2, Search, SearchX } from 'lucide-react';
 import posthog from 'posthog-js';
 import { z } from 'zod';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { type Order, type OrderStatus, type OrderApiItem } from '@/types/order';
+import { type Order, type OrderApiItem } from '@/types/order';
 import { formatRupiah, formatDateTime } from '@/lib/utils';
 import { OrderService } from '@/services';
-
-const STATUS_MAP: Record<string, OrderStatus> = {
-  completed: 'success',
-  failed: 'failed',
-  pending: 'processing',
-};
 
 const orderLookupSchema = z.object({
   invoice: z.string().min(1, 'Nomor invoice wajib diisi'),
@@ -38,7 +32,7 @@ function toOrder(item: OrderApiItem): Order {
     userId: item.email,
     phone: item.phone,
     playerId: item.player_id,
-    status: STATUS_MAP[item.status] ?? 'failed',
+    status: item.status ?? 'failed',
     date: item.created_at,
   };
 }

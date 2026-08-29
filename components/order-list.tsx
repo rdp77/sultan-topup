@@ -4,17 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Loader2, Plus, PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { type OrderApiItem, type Order, type OrderStatus } from '@/types/order';
+import { type OrderApiItem, type Order } from '@/types/order';
 import { OrderService } from '@/services';
 import { formatRupiah } from '@/lib/utils';
 
 const PAGE_SIZE = 6;
-
-const STATUS_MAP: Record<string, OrderStatus> = {
-  completed: 'success',
-  failed: 'failed',
-  pending: 'processing',
-};
 
 function toOrder(item: OrderApiItem): Order {
   return {
@@ -28,7 +22,7 @@ function toOrder(item: OrderApiItem): Order {
     userId: item.email,
     phone: item.phone,
     playerId: item.player_id,
-    status: STATUS_MAP[item.status] ?? 'failed',
+    status: item.status ?? 'failed',
     date: item.created_at,
   };
 }

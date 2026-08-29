@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { cn, formatRupiah } from '@/lib/utils';
-import { type OrderStatus } from '@/types/order';
+import { type OrderStatus, type PaymentStatus } from '@/types/order';
 import { usePaymentPolling } from '@/hooks/use-payment-polling';
 import { ResultCardSkeleton } from '@/components/result-card-skeleton';
 
@@ -49,9 +49,18 @@ const statusConfig: Record<
   },
 };
 
+const paymentStatusToOrderStatus: Record<PaymentStatus, OrderStatus> = {
+  pending: 'pending',
+  paid: 'completed',
+  failed: 'failed',
+  expired: 'cancelled',
+};
+
 export function ResultCard() {
   const params = useSearchParams();
-  const [status, setStatus] = useState<OrderStatus>('pending');
+  // null = status not confirmed yet (still loading, or data just arrived and
+  // hasn't been mapped by the effect below) — never defaulted to 'pending'.
+  const [status, setStatus] = useState<OrderStatus | null>(null);
   const capturedRef = useRef(false);
 
   const game = params.get('game') ?? 'Mobile Legends';
@@ -65,24 +74,19 @@ export function ResultCard() {
   const invoice = params.get('invoice');
   const { data, isLoading } = usePaymentPolling(invoice);
 
-  // Status comes only from the server-reported ORDER status (data.order.status)
-  // — not data.payment.status, which is the raw status of one payment attempt
-  // and can lag/differ from the order (e.g. still 'pending' or 'cancelled' on
-  // an expired attempt after the order itself is 'completed' via a retry).
-  // The `status` URL param is intentionally never read, so it can't be
-  // spoofed by editing the address bar.
+  // Status comes only from the server-reported PAYMENT status (data.payment.status),
+  // mapped to the order-status labels this card displays. The `status` URL param is
+  // intentionally never read, so it can't be spoofed by editing the address bar.
   useEffect(() => {
-    const serverStatus = data?.order.status;
-    if (!serverStatus || serverStatus === 'pending') return;
-    const isKnownStatus = (Object.keys(statusConfig) as OrderStatus[]).includes(
-      serverStatus as OrderStatus
-    );
-    queueMicrotask(() => setStatus(isKnownStatus ? (serverStatus as OrderStatus) : 'failed'));
+    const paymentStatus = data?.payment.status as PaymentStatus | undefined;
+    if (!paymentStatus) return;
+    const mapped = paymentStatusToOrderStatus[paymentStatus] ?? 'failed';
+    queueMicrotask(() => setStatus(mapped));
   }, [data]);
 
   // Capture order result viewed once the final status is known
   useEffect(() => {
-    if (capturedRef.current || status === 'pending') return;
+    if (capturedRef.current || !status || status === 'pending') return;
     capturedRef.current = true;
     posthog.capture('order_result_viewed', {
       order_status: status,
@@ -110,6 +114,12 @@ export function ResultCard() {
   // Fetch failed (including 404 from the backend) on the first attempt — nothing to show.
   if (!data) {
     notFound();
+  }
+
+  // Data just arrived but the mapping effect above hasn't run yet — keep
+  // showing the skeleton instead of a stale/default status.
+  if (!status) {
+    return <ResultCardSkeleton />;
   }
 
   const config = statusConfig[status];
