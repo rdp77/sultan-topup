@@ -2,11 +2,11 @@ import { cn } from '@/lib/utils';
 import type { OrderStatus } from '@/types/order';
 
 const config: Record<OrderStatus, { label: string; className: string }> = {
-  success: { label: 'Berhasil', className: 'bg-success/15 text-success' },
-  processing: { label: 'Diproses', className: 'bg-warning/15 text-warning' },
+  completed: { label: 'Berhasil', className: 'bg-success/15 text-success' },
+  pending: { label: 'Diproses', className: 'bg-warning/15 text-warning' },
   failed: { label: 'Gagal', className: 'bg-destructive/15 text-destructive' },
-  expired: {
-    label: 'Kedaluwarsa',
+  cancelled: {
+    label: 'Dibatalkan',
     className: 'bg-muted-foreground/15 text-muted-foreground border border-border/60',
   },
 };
