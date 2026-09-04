@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Loader2, ShieldCheck } from 'lucide-react';
 import Turnstile from 'react-turnstile';
 import { cn, formatRupiah } from '@/lib/utils';
@@ -41,6 +42,15 @@ export function OrderSummary({
   checkoutLoading = false,
   checkoutError = null,
 }: Readonly<OrderSummaryProps>) {
+  // Tandai bahwa sticky bar checkout aktif, agar FloatingWhatsApp (global)
+  // bisa mengangkat dirinya ke atas bar ini di mobile (lihat globals.css).
+  useEffect(() => {
+    document.body.dataset.checkoutBar = 'true';
+    return () => {
+      delete document.body.dataset.checkoutBar;
+    };
+  }, []);
+
   return (
     <>
       {/* Inline section — full-width on desktop; on mobile, buttons and error messages are moved to the sticky bar */}

@@ -128,3 +128,11 @@
     }
   }
 }
+
+/* Angkat FloatingWhatsApp di atas sticky bar Ringkasan Pesanan (mobile saja).
+   Atribut data-checkout-bar di-set/dihapus oleh OrderSummary saat mount/unmount. */
+@media (max-width: 767px) {
+  body[data-checkout-bar] .floating-whatsapp {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom));
+  }
+}
