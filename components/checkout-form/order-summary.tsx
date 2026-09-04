@@ -74,6 +74,7 @@ export function OrderSummary({
           onExpire={onTurnstileExpireOrError}
           onError={onTurnstileExpireOrError}
           theme="dark"
+          size="flexible"
         />
         {!turnstileToken && (
           <p className="text-muted-foreground mt-3 text-center text-xs">
