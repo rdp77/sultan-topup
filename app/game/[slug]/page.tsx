@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { after } from 'next/server';
 import { ShieldCheck, Zap } from 'lucide-react';
 import { GameService, PaymentMethodService } from '@/services';
 import { CheckoutForm } from '@/components/checkout-form';
@@ -74,7 +75,8 @@ export default async function GamePage({ params }: PageProps) {
       product_count: game.products.length,
     },
   });
-  await posthog.flush();
+  // Flush analytics after the response is sent — don't block rendering on it.
+  after(() => posthog.flush());
 
   // JSON-LD: BreadcrumbList + SoftwareApplication
   const gameJsonLd = {
