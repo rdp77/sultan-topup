@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { validatePlayerAction } from '@/app/actions/checkout';
 import type { PlayerValidationData, PlayerValidationError } from '@/types/player-validation';
 
@@ -31,8 +31,17 @@ export function usePlayerIdValidation() {
 
   const loadingRef = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function cancelDebounce() {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+  }
 
   function reset() {
+    cancelDebounce();
     abortRef.current?.abort();
     abortRef.current = null;
     loadingRef.current = false;
@@ -42,7 +51,10 @@ export function usePlayerIdValidation() {
     setErrorMessage(null);
   }
 
+  useEffect(() => cancelDebounce, []);
+
   async function validate(params: ValidateParams) {
+    cancelDebounce();
     const playerId = params.playerId.trim();
     if (!playerId || loadingRef.current) return;
 
@@ -139,5 +151,13 @@ export function usePlayerIdValidation() {
     setPlayerInfo(null);
   }
 
-  return { state, player, playerInfo, errorMessage, validate, reset };
+  function validateDebounced(params: ValidateParams, delay = 600) {
+    cancelDebounce();
+    debounceRef.current = setTimeout(() => {
+      debounceRef.current = null;
+      void validate(params);
+    }, delay);
+  }
+
+  return { state, player, playerInfo, errorMessage, validate, validateDebounced, cancelDebounce, reset };
 }

@@ -85,12 +85,12 @@ export function AccountStep({
             )}
           </div>
 
-          <div className="shrink-0">
+          <div className="w-full shrink-0 sm:w-auto">
             <button
               type="button"
               onClick={() => playerId.validate({ playerId: playerIdValue, zoneId, gameSlug })}
               disabled={playerId.state === 'loading' || playerIdValue.trim().length < 3}
-              className="press border-border text-foreground hover:bg-card inline-flex h-10.5 shrink-0 items-center gap-1.5 rounded-lg border px-4 text-xs font-medium transition-colors duration-200 disabled:opacity-50"
+              className="press border-border text-foreground hover:bg-card inline-flex h-10.5 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg border px-4 text-xs font-medium transition-colors duration-200 sm:w-auto disabled:opacity-50"
             >
               {playerId.state === 'loading' ? (
                 <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />

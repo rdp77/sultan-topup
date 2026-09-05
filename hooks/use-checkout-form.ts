@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { z } from 'zod';
@@ -111,6 +111,25 @@ export function useCheckoutForm({
     setPlayerIdInput(value);
     playerIdValidation.reset();
   }
+
+  function handleZoneIdChange(value: string) {
+    setZoneId(value);
+    playerIdValidation.reset();
+  }
+
+  // Auto-check akun dengan debounce: dipanggil otomatis saat User ID / Zone ID
+  // berubah dan sudah memenuhi syarat minimal, agar tidak spam request.
+  const zoneOk = !formConfig.needsZone || zoneId.trim().length >= 1;
+  const playerIdReady = playerIdInput.trim().length >= 3 && zoneOk;
+  useEffect(() => {
+    if (!playerIdReady) return;
+    playerIdValidation.validateDebounced({
+      playerId: playerIdInput,
+      zoneId,
+      gameSlug,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerIdReady, playerIdInput, zoneId, gameSlug]);
 
   const subPrice = useMemo(
     () => (selectedDenom ? selectedDenom.price * quantity : 0),
@@ -264,7 +283,7 @@ export function useCheckoutForm({
     playerId: playerIdInput,
     handlePlayerIdChange,
     zoneId,
-    setZoneId,
+    setZoneId: handleZoneIdChange,
     whatsapp,
     setWhatsapp,
     email,
