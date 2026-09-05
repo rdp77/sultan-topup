@@ -38,7 +38,7 @@ interface LookupPageProps {
   searchParams: Promise<{ invoice?: string; contact?: string }>;
 }
 
-export default async function LookupPage({ searchParams }: LookupPageProps) {
+export default async function LookupPage({ searchParams }: Readonly<LookupPageProps>) {
   // GET via Server Component — leverage the Next.js Data Cache (revalidate: 30s).
   const res = await OrderService.list().catch(() => ({ data: [] }));
   const orders = res.data.map(toOrder);
