@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { validateEmailAction } from '@/app/actions/validation';
-import isEmail from 'validator/lib/isEmail';
+import { emailSchema } from '@/lib/order-lookup-schema';
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
@@ -25,7 +25,7 @@ export function useEmailValidation(email: string) {
   const [fetchingRaw, setFetchingRaw] = useState(false);
 
   const trimmed = email.trim();
-  const formatOk = useMemo(() => isEmail(trimmed), [trimmed]);
+  const formatOk = useMemo(() => emailSchema.safeParse(trimmed).success, [trimmed]);
   const debouncedEmail = useDebouncedValue(trimmed, 600);
 
   const isPending = formatOk && trimmed !== debouncedEmail;

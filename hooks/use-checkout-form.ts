@@ -11,6 +11,7 @@ import { createCheckoutAction } from '@/app/actions/checkout';
 import { calcFee } from '@/lib/utils';
 import { usePlayerIdValidation } from './use-player-id-validation';
 import { useEmailValidation } from './use-email-validation';
+import { waPhoneSchema } from '@/lib/order-lookup-schema';
 
 interface UseCheckoutFormParams {
   gameId: number;
@@ -34,9 +35,9 @@ export function useCheckoutForm({
       z
         .object({
           playerId: z.string().min(3, `${formConfig.idLabel} minimal 3 karakter`),
-          zoneId: z.string(),
+          zoneId: z.string().max(32),
           email: z.email('Format email tidak valid'),
-          whatsapp: z.string().regex(/^08\d{8,12}$/, 'Nomor WA tidak valid (contoh: 0812xxxx)'),
+          whatsapp: waPhoneSchema,
           selectedDenom: z
             .object({
               id: z.number(),
@@ -121,7 +122,7 @@ export function useCheckoutForm({
   );
 
   const waClean = whatsapp.replace(/\D/g, '');
-  const waValid = /^08\d{8,12}$/.test(waClean);
+  const waValid = waPhoneSchema.safeParse(waClean).success;
   const idValid =
     playerIdInput.trim().length >= 3 && (!formConfig.needsZone || zoneId.trim().length >= 1);
   const idChecked = playerIdValidation.state === 'found';
@@ -135,8 +136,8 @@ export function useCheckoutForm({
     selectedMethod !== null &&
     turnstileToken !== null;
 
-  function getSubmitError(): string {
-    const result = z.safeParse(checkoutSchema, {
+  function collectFormInput() {
+    return {
       playerId: playerIdInput,
       zoneId,
       email,
@@ -144,7 +145,11 @@ export function useCheckoutForm({
       selectedDenom,
       selectedMethod,
       turnstileToken,
-    });
+    };
+  }
+
+  function getSubmitError(): string {
+    const result = z.safeParse(checkoutSchema, collectFormInput());
     if (!result.success) {
       const first = result.error.issues[0];
       return first?.message ?? '';
@@ -157,19 +162,11 @@ export function useCheckoutForm({
   async function handleSubmit() {
     setTouched(true);
 
-    const result = z.safeParse(checkoutSchema, {
-      playerId: playerIdInput,
-      zoneId,
-      email,
-      whatsapp: waClean,
-      selectedDenom,
-      selectedMethod,
-      turnstileToken,
-    });
+    const result = z.safeParse(checkoutSchema, collectFormInput());
     if (!result.success) {
       const errors: Record<string, string> = {};
       for (const issue of result.error.issues) {
-        const field = issue.path[0] as string;
+        const field = String(issue.path[0] ?? '');
         if (!errors[field]) errors[field] = issue.message;
       }
       setZodFieldErrors(errors);
