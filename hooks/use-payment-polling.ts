@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getOrderStatusAction } from '@/app/actions/checkout';
-import type { CheckoutResult } from '@/types/checkout';
+import type { CheckoutServiceResult, CheckoutResult } from '@/types/checkout';
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -11,7 +10,9 @@ interface UsePaymentPollingResult {
 }
 
 /**
- * Polls order/payment status by invoice number every POLL_INTERVAL_MS.
+ * Polls order/payment status by invoice number every POLL_INTERVAL_MS via
+ * the GET /api/orders/{invoice} Route Handler (lightweight, server-side
+ * proxied to the upstream API).
  * Stops polling automatically once payment.status leaves 'pending'.
  * Does NOT trigger navigation — callers should react to the returned
  * `data.payment.status` themselves (see BayarCard's redirect effect).
@@ -30,13 +31,13 @@ export function usePaymentPolling(invoice: string | null): UsePaymentPollingResu
 
     async function poll() {
       try {
-        const response = await getOrderStatusAction(invoice as string);
+        const res = await fetch(`/api/orders/${encodeURIComponent(invoice as string)}`, {
+          headers: { Accept: 'application/json' },
+        });
+        const response = (await res.json()) as CheckoutServiceResult;
         if (cancelled) return;
 
-        // `success` is a plain boolean (not a discriminated union literal),
-        // so `data` is still `CheckoutResult | undefined` here even after
-        // checking `success` alone — we must also guard on `data` itself.
-        if (!response.success || !response.data) {
+        if (!res.ok || !response.success || !response.data) {
           setHasFetchError(true);
           return;
         }

@@ -5,8 +5,8 @@ import type { OrderLookupResponse } from '@/types/order';
 
 /**
  * Look up an order by invoice + contact (GET /orders/lookup).
- * User-triggered read via form submit — routed through a Server Action.
- * Returns null when the order is not found or the API fails.
+ * NOTE: /lookup now renders results server-side via SearchParams, so this
+ * Server Action is unused by the UI but kept as a programmatic entry point.
  */
 export async function lookupOrderAction(
   invoice: string,

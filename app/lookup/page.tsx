@@ -1,7 +1,9 @@
 import { OrderLookup } from '@/components/order-lookup';
 import { TransactionTable } from '@/components/transaction-table';
+import { LookupResultSection } from '@/components/lookup-result';
 import { OrderService } from '@/services';
 import { toOrder } from '@/lib/order-utils';
+import { validateOrderLookup } from '@/lib/order-lookup-schema';
 
 export const metadata = {
   title: 'Lacak Pesanan — Sultan Top Up',
@@ -32,10 +34,21 @@ export const metadata = {
   },
 };
 
-export default async function LookupPage() {
+interface LookupPageProps {
+  searchParams: Promise<{ invoice?: string; contact?: string }>;
+}
+
+export default async function LookupPage({ searchParams }: LookupPageProps) {
   // GET via Server Component — leverage the Next.js Data Cache (revalidate: 30s).
   const res = await OrderService.list().catch(() => ({ data: [] }));
   const orders = res.data.map(toOrder);
+
+  const sp = await searchParams;
+  const invoice = sp.invoice?.trim();
+  const contact = sp.contact?.trim();
+  const hasQuery = Boolean(invoice || contact);
+  const errors = hasQuery ? validateOrderLookup({ invoice, contact }) : null;
+  const queryValid = hasQuery && !errors;
 
   return (
     <main id="main" className="flex-1">
@@ -49,9 +62,17 @@ export default async function LookupPage() {
 
         <div className="mt-8 flex justify-center">
           <div className="w-full max-w-lg">
-            <OrderLookup />
+            <OrderLookup defaultInvoice={invoice} defaultContact={contact} errors={errors} />
           </div>
         </div>
+
+        {queryValid && invoice && contact && (
+          <div className="mt-6 flex justify-center">
+            <div className="w-full max-w-lg">
+              <LookupResultSection invoice={invoice} contact={contact} />
+            </div>
+          </div>
+        )}
 
         <div className="border-border mt-12 border-t pt-10">
           <h2 className="text-lg font-bold tracking-tight">Semua Transaksi</h2>

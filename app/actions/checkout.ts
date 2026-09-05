@@ -45,8 +45,9 @@ export async function validatePlayerAction(
 
 /**
  * Fetch order/payment status by invoice (GET /orders/{invoice}).
- * User-triggered read (payment polling) — routed through a Server Action
- * so the client never hits the upstream API directly.
+ * NOTE: the payment page now polls via the GET /api/orders/[invoice]
+ * Route Handler instead (lighter weight, HTTP-cacheable). This action is
+ * kept as a synchronous server-side entry point if needed elsewhere.
  */
 export async function getOrderStatusAction(invoice: string): Promise<CheckoutServiceResult> {
   try {
