@@ -67,6 +67,10 @@ async function fetchOnce<T>(url: string, path: string, init: RequestInit): Promi
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      // Identifies traffic from this Next.js server so the upstream API's
+      // Cloudflare bot protection can whitelist it (see WAF custom rule).
+      // Browsers ignore this header, so it is harmless on the client.
+      'User-Agent': 'SultanTopUp-Server/1.0',
       ...init.headers,
     },
   });
