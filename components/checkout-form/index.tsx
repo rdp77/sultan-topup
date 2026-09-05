@@ -5,7 +5,7 @@ import { toDenominations } from '@/lib/product-utils';
 import { useCheckoutForm } from '@/hooks/use-checkout-form';
 import { AccountStep } from './account-step';
 import { ProductStep } from './product-step';
-// import { QuantityStep } from './quantity-step'; {/* Quantity step sementara tidak dibutuhkan */}
+// import { QuantityStep } from './quantity-step'; {/* Quantity step temporarily unused */}
 import { ContactStep } from './contact-step';
 import { PaymentMethodStep } from './payment-method-step';
 import { OrderSummary } from './order-summary';

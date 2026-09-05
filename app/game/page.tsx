@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
-// /game tanpa slug — redirect ke home (#games section)
-// Alternatif: bisa diganti halaman index game jika diperlukan nanti
+// /game without a slug — redirect to home (#games section)
+// Alternative: could be replaced with a game index page if needed later
 export default function GameIndexPage() {
   redirect('/#games');
 }

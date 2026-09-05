@@ -42,8 +42,8 @@ export function OrderSummary({
   checkoutLoading = false,
   checkoutError = null,
 }: Readonly<OrderSummaryProps>) {
-  // Tandai bahwa sticky bar checkout aktif, agar FloatingWhatsApp (global)
-  // bisa mengangkat dirinya ke atas bar ini di mobile (lihat globals.css).
+  // Mark the checkout sticky bar as active so FloatingWhatsApp (global) can
+  // lift itself above this bar on mobile (see globals.css).
   useEffect(() => {
     document.body.dataset.checkoutBar = 'true';
     return () => {

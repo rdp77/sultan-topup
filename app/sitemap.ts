@@ -48,26 +48,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   });
 
-  entries.push({
-    url: `${BASE_URL}/login`,
-    lastModified: STATIC_UPDATED,
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  });
-
-  entries.push({
-    url: `${BASE_URL}/register`,
-    lastModified: STATIC_UPDATED,
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  });
-
-  entries.push({
-    url: `${BASE_URL}/dashboard`,
-    lastModified: STATIC_UPDATED,
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  });
+  // Private pages (/login, /register, /dashboard) are intentionally excluded —
+  // they're disallowed in robots.txt, so they must not appear in the sitemap
+  // (avoids "Submitted URL blocked by robots.txt" errors in Search Console).
 
   // Legal pages
   for (const slug of Object.keys(legalPages)) {

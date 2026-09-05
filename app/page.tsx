@@ -6,7 +6,9 @@ import { Games } from '@/components/games';
 import type { Game } from '@/types/games';
 import type { PaginationMeta } from '@/types/pagination';
 
-export const dynamic = 'force-dynamic';
+// ISR: cache the page for 5 minutes for a low TTFB (SEO/Core Web Vitals) while
+// keeping the games list reasonably fresh. GameService.list itself revalidates every 60s.
+export const revalidate = 300;
 
 const FALLBACK_META: PaginationMeta = {
   current_page: 1,

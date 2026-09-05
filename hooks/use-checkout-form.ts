@@ -117,8 +117,8 @@ export function useCheckoutForm({
     playerIdValidation.reset();
   }
 
-  // Auto-check akun dengan debounce: dipanggil otomatis saat User ID / Zone ID
-  // berubah dan sudah memenuhi syarat minimal, agar tidak spam request.
+  // Auto-check account with debounce: runs automatically when User ID / Zone ID
+  // changes and meets the minimum requirements, to avoid spamming requests.
   const zoneOk = !formConfig.needsZone || zoneId.trim().length >= 1;
   const playerIdReady = playerIdInput.trim().length >= 3 && zoneOk;
   useEffect(() => {
@@ -267,7 +267,7 @@ export function useCheckoutForm({
       setCheckoutLoading(false);
     } finally {
       if (!checkoutError) {
-        // hanya reset loading kalau bukan jalur redirect sukses
+        // only reset loading if this isn't the successful redirect path
       }
       setSubmitting(false);
       setCheckoutLoading(false);

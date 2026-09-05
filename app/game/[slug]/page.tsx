@@ -78,7 +78,10 @@ export default async function GamePage({ params }: PageProps) {
   // Flush analytics after the response is sent — don't block rendering on it.
   after(() => posthog.flush());
 
-  // JSON-LD: BreadcrumbList + SoftwareApplication
+  // JSON-LD: BreadcrumbList + Product (real prices from the product list)
+  const prices = game.products
+    .map((p) => Number(p.sell_price))
+    .filter((p) => Number.isFinite(p) && p > 0);
   const gameJsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -95,18 +98,21 @@ export default async function GamePage({ params }: PageProps) {
         ],
       },
       {
-        '@type': 'SoftwareApplication',
-        name: game.name,
-        applicationCategory: 'GameApplication',
-        operatingSystem: 'Android, iOS',
+        '@type': 'Product',
+        name: `Top Up ${game.name}`,
+        description: `Top up ${game.name} murah, cepat, dan aman. Publisher: ${game.publisher}. Proses otomatis 24 jam di Sultan Top Up.`,
+        image: game.cover || undefined,
+        brand: { '@type': 'Brand', name: game.publisher },
         offers: {
-          '@type': 'Offer',
-          price: '0',
+          '@type': 'AggregateOffer',
           priceCurrency: 'IDR',
+          lowPrice: prices.length > 0 ? Math.min(...prices) : 0,
+          highPrice: prices.length > 0 ? Math.max(...prices) : 0,
+          offerCount: game.products.length,
           availability: 'https://schema.org/InStock',
           url: `https://sultantopup.com/game/${game.slug}`,
+          seller: { '@id': 'https://sultantopup.com' },
         },
-        description: game.publisher,
         url: `https://sultantopup.com/game/${game.slug}`,
       },
     ],
@@ -128,7 +134,7 @@ export default async function GamePage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(gameJsonLd).replaceAll('<', String.raw`<`),
+          __html: JSON.stringify(gameJsonLd).replaceAll('<', String.raw`\u003c`),
         }}
       />
       {/* Banner */}
