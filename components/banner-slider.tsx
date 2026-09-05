@@ -14,18 +14,18 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    srcDesktop: '/banners/banner1.png',
-    srcMobile: '/banners/banner1.png',
+    srcDesktop: '/banners/desktop/banner1.png',
+    srcMobile: '/banners/mobile/banner1.png',
     alt: 'Top up diamond game favoritmu',
   },
   {
-    srcDesktop: '/banners/banner2.png',
-    srcMobile: '/banners/banner2.png',
+    srcDesktop: '/banners/desktop/banner2.png',
+    srcMobile: '/banners/mobile/banner2.png',
     alt: 'Pembayaran QRIS dan E-Wallet',
   },
   {
-    srcDesktop: '/banners/banner3.png',
-    srcMobile: '/banners/banner3.png',
+    srcDesktop: '/banners/desktop/banner3.png',
+    srcMobile: '/banners/mobile/banner3.png',
     alt: 'Event dan promo terbaru',
   },
 ];
