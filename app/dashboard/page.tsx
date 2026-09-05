@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { OrderList } from '@/components/order-list';
+import { OrderService } from '@/services';
+import { toOrder } from '@/lib/order-utils';
 
 export const metadata = {
   title: 'Dashboard — Sultan Top Up',
@@ -32,7 +34,11 @@ export const metadata = {
   },
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  // GET via Server Component — leverage the Next.js Data Cache (revalidate: 30s).
+  const res = await OrderService.list().catch(() => ({ data: [] }));
+  const orders = res.data.map(toOrder);
+
   return (
     <main id="main" className="flex-1">
       <div className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
@@ -53,7 +59,7 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        <OrderList />
+        <OrderList orders={orders} />
       </div>
     </main>
   );

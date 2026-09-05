@@ -1,4 +1,8 @@
-import { LeaderboardSection } from '@/components/leaderboard/leaderboard-section';
+import { Suspense } from 'react';
+import {
+  LeaderboardSection,
+  LeaderboardSkeleton,
+} from '@/components/leaderboard/leaderboard-section';
 
 export const metadata = {
   title: 'Leaderboard — Sultan Top Up',
@@ -42,7 +46,9 @@ export default function LeaderboardPage() {
           </p>
 
           <div className="mt-8">
-            <LeaderboardSection />
+            <Suspense fallback={<LeaderboardSkeleton />}>
+              <LeaderboardSection />
+            </Suspense>
           </div>
         </section>
       </div>

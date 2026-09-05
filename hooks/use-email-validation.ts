@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { validateEmailAction } from '@/app/actions/validation';
 import isEmail from 'validator/lib/isEmail';
 
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -37,12 +38,7 @@ export function useEmailValidation(email: string) {
     (async () => {
       setFetchingRaw(true);
       try {
-        const res = await fetch('/api/validate-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: debouncedEmail }),
-        });
-        const data = await res.json();
+        const data = await validateEmailAction(debouncedEmail);
         if (!cancelled) setResult({ email: debouncedEmail, valid: data.valid === true });
       } catch {
         if (!cancelled) setResult({ email: debouncedEmail, valid: null });

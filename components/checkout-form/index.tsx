@@ -11,10 +11,22 @@ import { PaymentMethodStep } from './payment-method-step';
 import { OrderSummary } from './order-summary';
 import { NoProductsAvailable } from './no-products-available';
 import type { GameDetail } from '@/types/games';
+import type { PaymentGroup } from '@/types/payment-method';
 
-export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
+interface CheckoutFormProps {
+  game: GameDetail;
+  /** Payment groups fetched on the server (see app/game/[slug]/page.tsx). */
+  paymentGroups: PaymentGroup[];
+}
+
+export function CheckoutForm({ game, paymentGroups }: Readonly<CheckoutFormProps>) {
   const denominations = useMemo(() => toDenominations(game.products), [game.products]);
-  const form = useCheckoutForm({ gameId: game.id, gameName: game.name, gameSlug: game.slug });
+  const form = useCheckoutForm({
+    gameId: game.id,
+    gameName: game.name,
+    gameSlug: game.slug,
+    paymentGroups,
+  });
 
   if (denominations.length === 0) {
     return <NoProductsAvailable />;
@@ -64,9 +76,6 @@ export function CheckoutForm({ game }: Readonly<{ game: GameDetail }>) {
         onSelect={form.setSelectedMethod}
         selectedDenom={form.selectedDenom}
         paymentGroups={form.paymentGroups}
-        isLoading={form.paymentMethodsLoading}
-        error={form.paymentMethodsError}
-        onRetry={form.retryPaymentMethods}
       />
       <OrderSummary
         selectedDenom={form.selectedDenom}

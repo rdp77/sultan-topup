@@ -4,22 +4,28 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { z } from 'zod';
-import { type PaymentMethod } from '@/types/payment-method';
+import { type PaymentMethod, type PaymentGroup } from '@/types/payment-method';
 import { getGameFormConfig } from '@/lib/game-form-config';
 import type { DenominationView } from '@/lib/product-utils';
-import { CheckoutService } from '@/services';
+import { createCheckoutAction } from '@/app/actions/checkout';
 import { calcFee } from '@/lib/utils';
 import { usePlayerIdValidation } from './use-player-id-validation';
 import { useEmailValidation } from './use-email-validation';
-import { usePaymentMethods } from './use-payment-methods';
 
 interface UseCheckoutFormParams {
   gameId: number;
   gameName: string;
   gameSlug: string;
+  /** Payment groups fetched on the server and passed down as props. */
+  paymentGroups: PaymentGroup[];
 }
 
-export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormParams) {
+export function useCheckoutForm({
+  gameId,
+  gameName,
+  gameSlug,
+  paymentGroups,
+}: UseCheckoutFormParams) {
   const router = useRouter();
   const formConfig = getGameFormConfig(gameSlug);
 
@@ -99,12 +105,6 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
 
   const playerIdValidation = usePlayerIdValidation();
   const emailValidation = useEmailValidation(email);
-  const {
-    paymentGroups,
-    isLoading: paymentMethodsLoading,
-    error: paymentMethodsError,
-    retry: retryPaymentMethods,
-  } = usePaymentMethods(gameId);
 
   function handlePlayerIdChange(value: string) {
     setPlayerIdInput(value);
@@ -206,7 +206,7 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     };
 
     try {
-      const response = await CheckoutService.create(request, idempotencyKey);
+      const response = await createCheckoutAction(request, idempotencyKey);
 
       if (!response.success) {
         setCheckoutError(response.error);
@@ -292,9 +292,6 @@ export function useCheckoutForm({ gameId, gameName, gameSlug }: UseCheckoutFormP
     checkoutError,
     setCheckoutError,
     paymentGroups,
-    paymentMethodsLoading,
-    paymentMethodsError,
-    retryPaymentMethods,
     zodFieldErrors,
   };
 }

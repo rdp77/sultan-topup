@@ -2,9 +2,10 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ShieldCheck, Zap } from 'lucide-react';
-import { GameService } from '@/services';
+import { GameService, PaymentMethodService } from '@/services';
 import { CheckoutForm } from '@/components/checkout-form';
 import { getPostHogClient } from '@/lib/posthog-server';
+import { mapPaymentGroups } from '@/lib/payment-methods';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -56,6 +57,11 @@ export default async function GamePage({ params }: PageProps) {
   const { slug } = await params;
   const { data: game } = await GameService.detail(slug).catch(() => ({ data: null }));
   if (!game) notFound();
+
+  // Fetch payment methods on the server (GET → Server Component).
+  const paymentGroups = mapPaymentGroups(
+    (await PaymentMethodService.list(game.id).catch(() => [])) ?? []
+  );
 
   const posthog = getPostHogClient();
   posthog.capture({
@@ -170,7 +176,7 @@ export default async function GamePage({ params }: PageProps) {
 
         {/* Checkout */}
         <div className="mx-auto mt-6 max-w-3xl pb-16 md:mt-8 md:pb-24">
-          <CheckoutForm game={game} />
+          <CheckoutForm game={game} paymentGroups={paymentGroups} />
         </div>
       </div>
     </main>

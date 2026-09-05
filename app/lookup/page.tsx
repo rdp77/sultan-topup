@@ -1,5 +1,7 @@
 import { OrderLookup } from '@/components/order-lookup';
 import { TransactionTable } from '@/components/transaction-table';
+import { OrderService } from '@/services';
+import { toOrder } from '@/lib/order-utils';
 
 export const metadata = {
   title: 'Lacak Pesanan — Sultan Top Up',
@@ -30,7 +32,11 @@ export const metadata = {
   },
 };
 
-export default function LookupPage() {
+export default async function LookupPage() {
+  // GET via Server Component — leverage the Next.js Data Cache (revalidate: 30s).
+  const res = await OrderService.list().catch(() => ({ data: [] }));
+  const orders = res.data.map(toOrder);
+
   return (
     <main id="main" className="flex-1">
       <div className="mx-auto max-w-5xl px-4 py-12 md:px-6 md:py-16">
@@ -50,7 +56,7 @@ export default function LookupPage() {
         <div className="border-border mt-12 border-t pt-10">
           <h2 className="text-lg font-bold tracking-tight">Semua Transaksi</h2>
           <p className="text-muted-foreground mt-1 text-sm">Riwayat lengkap pesanan top up.</p>
-          <TransactionTable />
+          <TransactionTable orders={orders} />
         </div>
       </div>
     </main>

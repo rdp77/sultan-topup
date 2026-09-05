@@ -7,7 +7,8 @@ import { z } from 'zod';
 import { OrderStatusBadge } from '@/components/order-status-badge';
 import { type Order, type OrderApiItem } from '@/types/order';
 import { formatRupiah, formatDateTime } from '@/lib/utils';
-import { OrderService } from '@/services';
+import { lookupOrderAction } from '@/app/actions/orders';
+import { toOrder } from '@/lib/order-utils';
 
 const orderLookupSchema = z.object({
   invoice: z.string().min(1, 'Nomor invoice wajib diisi'),
@@ -19,23 +20,6 @@ const orderLookupSchema = z.object({
       'Masukkan email atau nomor WA yang valid'
     ),
 });
-
-function toOrder(item: OrderApiItem): Order {
-  return {
-    invoice: item.invoice_number,
-    game: item.game,
-    product: item.product,
-    price: item.total_price,
-    fee: 0,
-    total: item.total_price,
-    method: item.payment_method,
-    userId: item.email,
-    phone: item.phone,
-    playerId: item.player_id,
-    status: item.status || 'failed',
-    date: item.created_at,
-  };
-}
 
 export function OrderLookup() {
   const [invoice, setInvoice] = useState('');
@@ -66,8 +50,8 @@ export function OrderLookup() {
     setResult(null);
 
     try {
-      const res = await OrderService.lookup(invoice.trim(), contact.trim());
-      const found = res.data ?? null;
+      const res = await lookupOrderAction(invoice.trim(), contact.trim());
+      const found = res?.data ?? null;
       posthog.capture('order_lookup_performed', {
         found: !!found,
         order_status: found?.status ?? null,

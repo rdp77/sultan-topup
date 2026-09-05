@@ -1,30 +1,9 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { type Order, type OrderApiItem } from '@/types/order';
+import { type Order } from '@/types/order';
 import { formatDate } from '@/lib/utils';
-import { OrderService } from '@/services';
 
 const MAX_ROWS = 15;
-
-function toOrder(item: OrderApiItem): Order {
-  return {
-    invoice: item.invoice_number,
-    game: item.game,
-    product: item.product,
-    price: item.total_price,
-    fee: 0,
-    total: item.total_price,
-    method: item.payment_method,
-    userId: item.email,
-    playerId: item.player_id,
-    phone: item.phone,
-    status: item.status || 'failed',
-    date: item.created_at,
-  };
-}
 
 const HEADERS = [
   'Invoice',
@@ -39,57 +18,18 @@ const HEADERS = [
   'Total',
 ];
 
-export function TransactionTable() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const SKELETON_ROW_KEYS = Array.from({ length: 5 }, () => crypto.randomUUID());
-  const SKELETON_COL_KEYS = Array.from({ length: HEADERS.length }, () => crypto.randomUUID());
+interface TransactionTableProps {
+  /** All orders — fetched on the server (see app/lookup/page.tsx). */
+  orders: Order[];
+}
 
-  useEffect(() => {
-    OrderService.list()
-      .then((res) => setOrders(res.data.slice(0, MAX_ROWS).map(toOrder)))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
+/**
+ * Server Component — renders the transaction table from server-fetched data.
+ */
+export function TransactionTable({ orders }: Readonly<TransactionTableProps>) {
+  const rows = orders.slice(0, MAX_ROWS);
 
-  if (error) return null;
-
-  if (loading) {
-    return (
-      <div className="reveal border-border/50 bg-card mt-8 overflow-hidden rounded-xl border">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-border/50 border-b">
-                {HEADERS.map((h) => (
-                  <th
-                    key={h}
-                    className="text-muted-foreground px-5 py-3 text-left text-[11px] font-semibold tracking-wider whitespace-nowrap"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {SKELETON_ROW_KEYS.map((rowId) => (
-                <tr key={rowId} className="border-border/30 border-b last:border-b-0">
-                  {SKELETON_COL_KEYS.map((colId) => (
-                    <td key={`${rowId}-${colId}`} className="px-5 py-4">
-                      <span className="bg-muted block h-3.5 w-20 animate-pulse rounded" />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
-
-  if (orders.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="border-border bg-card/40 mt-8 flex flex-col items-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center">
         <span className="bg-card text-muted-foreground flex size-12 items-center justify-center rounded-full">

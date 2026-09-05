@@ -1,12 +1,10 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import { Trophy } from 'lucide-react';
 import { type LeaderboardEntry } from '@/types/leaderboard';
 import { formatRupiah } from '@/lib/utils';
 import { LeaderboardService } from '@/services';
 
-function Skeleton() {
+/** Skeleton used as the Suspense fallback while the server fetches data. */
+export function LeaderboardSkeleton() {
   return (
     <div className="flex flex-col gap-2" aria-busy="true" aria-label="Memuat leaderboard">
       {Array.from({ length: 3 }).map((_, i) => (
@@ -83,34 +81,20 @@ function getRowClass(rank: number): string {
   return '';
 }
 
-export function LeaderboardSection() {
-  const [data, setData] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+/**
+ * Server Component — fetches the leaderboard with GET via the Server
+ * Component data layer (Next.js Data Cache, revalidate: 60s).
+ */
+export async function LeaderboardSection() {
+  let data: LeaderboardEntry[] = [];
+  let error: string | null = null;
 
-  useEffect(() => {
-    let cancelled = false;
-
-    LeaderboardService.list()
-      .then((res) => {
-        if (!cancelled) {
-          setData(res.data ?? []);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError('Gagal memuat data leaderboard.');
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (loading) return <Skeleton />;
+  try {
+    const res = await LeaderboardService.list();
+    data = res.data ?? [];
+  } catch {
+    error = 'Gagal memuat data leaderboard.';
+  }
 
   if (error) {
     return (

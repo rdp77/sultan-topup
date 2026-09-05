@@ -1,82 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Loader2, Plus, PackageOpen } from 'lucide-react';
 import { OrderStatusBadge } from '@/components/order-status-badge';
-import { type OrderApiItem, type Order } from '@/types/order';
-import { OrderService } from '@/services';
+import { type Order } from '@/types/order';
 import { formatRupiah } from '@/lib/utils';
 
 const PAGE_SIZE = 6;
 
-function toOrder(item: OrderApiItem): Order {
-  return {
-    invoice: item.invoice_number,
-    game: item.game,
-    product: item.product,
-    price: item.total_price,
-    fee: 0,
-    total: item.total_price,
-    method: item.payment_method,
-    userId: item.email,
-    phone: item.phone,
-    playerId: item.player_id,
-    status: item.status || 'failed',
-    date: item.created_at,
-  };
+interface OrderListProps {
+  /** All orders — fetched on the server (see app/dashboard/page.tsx). */
+  orders: Order[];
 }
 
-export function OrderList() {
-  const [allOrders, setAllOrders] = useState<Order[]>([]);
-  const [visible, setVisible] = useState<Order[]>([]);
+export function OrderList({ orders }: Readonly<OrderListProps>) {
   const [count, setCount] = useState(PAGE_SIZE);
-  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  useEffect(() => {
-    OrderService.list()
-      .then((res) => {
-        const mapped = res.data.map(toOrder);
-        setAllOrders(mapped);
-        setVisible(mapped.slice(0, PAGE_SIZE));
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const visible = orders.slice(0, count);
 
   function handleLoadMore() {
     setLoadingMore(true);
     const next = count + PAGE_SIZE;
     // simulate network delay for smooth UX
     setTimeout(() => {
-      setVisible(allOrders.slice(0, next));
       setCount(next);
       setLoadingMore(false);
     }, 400);
-  }
-
-  // Skeleton state while loading first page
-  if (loading) {
-    return (
-      <ul className="mt-8 flex flex-col gap-3" aria-busy="true" aria-label="Memuat transaksi">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <li key={i} className="border-border/50 bg-card rounded-xl border p-4">
-            <div className="flex items-center justify-between">
-              <span className="bg-muted h-3 w-28 animate-pulse rounded" />
-              <span className="bg-muted h-5 w-16 animate-pulse rounded" />
-            </div>
-            <div className="mt-3 flex items-end justify-between gap-2">
-              <div className="flex flex-col gap-2">
-                <span className="bg-muted h-4 w-32 animate-pulse rounded" />
-                <span className="bg-muted h-3 w-40 animate-pulse rounded" />
-                <span className="bg-muted h-3 w-24 animate-pulse rounded" />
-              </div>
-              <span className="bg-muted h-4 w-20 animate-pulse rounded" />
-            </div>
-          </li>
-        ))}
-      </ul>
-    );
   }
 
   if (visible.length === 0) {
@@ -128,7 +79,7 @@ export function OrderList() {
         ))}
       </ul>
 
-      {count < allOrders.length && (
+      {count < orders.length && (
         <div className="mt-5 flex justify-center">
           <button
             type="button"

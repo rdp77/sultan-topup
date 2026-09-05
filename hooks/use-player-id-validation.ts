@@ -1,8 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { PlayerService } from '@/services';
-import { ApiError } from '@/lib/api-client';
+import { validatePlayerAction } from '@/app/actions/checkout';
 import type { PlayerValidationData, PlayerValidationError } from '@/types/player-validation';
 
 function getErrorMessage(error: string | PlayerValidationError): string {
@@ -62,32 +61,36 @@ export function usePlayerIdValidation() {
     setErrorMessage(null);
 
     try {
-      console.log('[CekAkun] Calling API...');
-      const response = await PlayerService.validate(request);
-      console.log('[CekAkun] API response:', response);
-      handleResponse(response);
-    } catch (err) {
-      const isServerError = err instanceof ApiError && err.status >= 500;
-      const isClientError = err instanceof ApiError && err.status >= 400 && err.status < 500;
+      console.log('[CekAkun] Calling server action...');
+      const result = await validatePlayerAction(request);
+      if (!result.ok) {
+        const isServerError = result.status >= 500 || result.status === 0;
+        const isClientError = result.status >= 400 && result.status < 500;
 
-      let msg: string;
-      if (isServerError) {
-        msg = 'Gagal menghubungi server game. Coba lagi nanti.';
-      } else if (err instanceof Error) {
-        msg = err.message;
-      } else {
-        msg = 'Gagal menghubungi server game';
+        const msg = isServerError
+          ? 'Gagal menghubungi server game. Coba lagi nanti.'
+          : result.message;
+
+        console.error(
+          '[CekAkun] Error:',
+          msg,
+          `(status: ${result.status})`
+        );
+
+        loadingRef.current = false;
+        setState(isClientError ? 'not-found' : 'error');
+        setPlayer(null);
+        setPlayerInfo(null);
+        setErrorMessage(msg);
+        return;
       }
-
-      console.error(
-        '[CekAkun] Error:',
-        msg,
-        `(status: ${err instanceof ApiError ? err.status : 'N/A'})`,
-        err
-      );
-
+      console.log('[CekAkun] API response:', result.data);
+      handleResponse(result.data);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal menghubungi server game';
+      console.error('[CekAkun] Error:', msg, err);
       loadingRef.current = false;
-      setState(isClientError ? 'not-found' : 'error');
+      setState('error');
       setPlayer(null);
       setPlayerInfo(null);
       setErrorMessage(msg);

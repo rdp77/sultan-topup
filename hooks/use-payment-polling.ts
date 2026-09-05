@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CheckoutService } from '@/services';
+import { getOrderStatusAction } from '@/app/actions/checkout';
 import type { CheckoutResult } from '@/types/checkout';
 
 const POLL_INTERVAL_MS = 5000;
@@ -30,7 +30,7 @@ export function usePaymentPolling(invoice: string | null): UsePaymentPollingResu
 
     async function poll() {
       try {
-        const response = await CheckoutService.getStatus(invoice as string);
+        const response = await getOrderStatusAction(invoice as string);
         if (cancelled) return;
 
         // `success` is a plain boolean (not a discriminated union literal),
