@@ -20,8 +20,8 @@ export function Footer() {
             <Image
               src="/logo.png"
               alt="Sultan Top Up Logo"
-              width={32}
-              height={32}
+              width={888}
+              height={128}
               className="h-8 w-auto"
             />
           </div>
