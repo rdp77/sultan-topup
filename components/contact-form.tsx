@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { Send, CheckCircle, AlertCircle, Loader2, AlertTriangle, Check } from 'lucide-react';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
+import posthog from 'posthog-js';
 import { useEmailValidation } from '@/hooks/use-email-validation';
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? '';
@@ -142,6 +143,7 @@ export function ContactForm() {
         const data = await response.json();
 
         if (data.success) {
+          posthog.capture('contact_form_submitted', { subject });
           setStatus('success');
           setAlertMessage(
             data.message || 'Pesan berhasil dikirim! Tim kami akan membalas dalam 1x24 jam.'
@@ -154,10 +156,12 @@ export function ContactForm() {
           setHcaptchaToken('');
           setTouched(false);
         } else {
+          posthog.capture('contact_form_failed', { subject });
           setStatus('error');
           setAlertMessage(data.message || 'Gagal mengirim pesan. Silakan coba lagi.');
         }
       } catch {
+        posthog.capture('contact_form_failed', { subject });
         setStatus('error');
         setAlertMessage('Terjadi kesalahan jaringan. Silakan coba lagi nanti.');
       }

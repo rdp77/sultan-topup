@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import { RotateCcw, AlertTriangle } from 'lucide-react';
 
 export default function Error({
@@ -12,8 +13,9 @@ export default function Error({
   reset: () => void;
 }>) {
   useEffect(() => {
-    // Surface the error to APM/analytics if needed
+    // Surface the error to APM/analytics
     console.error('[app/error.tsx]', error);
+    posthog.captureException(error, { digest: error.digest });
   }, [error]);
 
   return (

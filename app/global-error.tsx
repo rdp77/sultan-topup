@@ -3,10 +3,17 @@
 import * as Sentry from '@sentry/nextjs';
 import NextError from 'next/error';
 import { useEffect } from 'react';
+import posthog from 'posthog-js';
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
     Sentry.captureException(error);
+    // Guard: PostHog may not be initialized when the root layout fails to render.
+    try {
+      posthog.captureException(error, { digest: error.digest });
+    } catch {
+      // analytics must never mask the error UI
+    }
   }, [error]);
 
   return (

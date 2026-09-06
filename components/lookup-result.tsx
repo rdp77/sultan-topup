@@ -4,7 +4,7 @@ import { OrderStatusBadge } from '@/components/order-status-badge';
 import { OrderService } from '@/services';
 import { toOrder } from '@/lib/order-utils';
 import { formatRupiah, formatDateTime } from '@/lib/utils';
-import { getPostHogClient } from '@/lib/posthog-server';
+import { getPostHogClient, getPostHogServerContext } from '@/lib/posthog-server';
 
 /** Skeleton — same shape as the result card, used as the Suspense fallback. */
 export function LookupResultSkeleton() {
@@ -56,10 +56,12 @@ export async function LookupResult({ invoice, contact }: Readonly<LookupResultPr
   const found = res?.data ?? null;
 
   const posthog = getPostHogClient();
+  const { distinctId, sessionId } = await getPostHogServerContext();
   posthog.capture({
-    distinctId: 'anonymous',
+    distinctId,
     event: 'order_lookup_performed',
     properties: {
+      $session_id: sessionId,
       found: !!found,
       order_status: found?.status ?? null,
     },

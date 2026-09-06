@@ -1,6 +1,7 @@
 'use server';
 
 import { OrderService } from '@/services';
+import { captureServerException } from '@/lib/posthog-server';
 import type { OrderLookupResponse } from '@/types/order';
 
 /**
@@ -16,6 +17,7 @@ export async function lookupOrderAction(
     return await OrderService.lookup(invoice, contact);
   } catch (error) {
     console.error('[lookupOrderAction]', error);
+    captureServerException(error, { action: 'lookupOrderAction' });
     return null;
   }
 }

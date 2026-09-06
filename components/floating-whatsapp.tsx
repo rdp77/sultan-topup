@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 type FloatingWhatsAppProps = {
   href?: string;
@@ -15,6 +18,7 @@ export function FloatingWhatsApp({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
+      onClick={() => posthog.capture('whatsapp_contact_clicked')}
       className="floating-whatsapp press fixed right-4 bottom-4 z-50 grid aspect-square size-12 shrink-0 place-items-center rounded-full bg-[#25D366] leading-none text-white shadow-lg transition hover:scale-105 hover:bg-[#20bd5a] active:scale-95 md:right-6 md:bottom-6 md:size-14"
     >
       <svg

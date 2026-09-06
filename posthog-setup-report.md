@@ -15,6 +15,18 @@ The wizard has completed a deep integration of PostHog analytics into Sultan Top
 | `user_registered`         | User submits the registration form to create a new account.                              | `components/auth-form.tsx`                         |
 | `user_logged_in`          | User submits the login form to sign in to their account.                                 | `components/auth-form.tsx`                         |
 | `order_lookup_performed`  | User submits the order tracking form to check an order's status.                         | `components/order-lookup.tsx`                      |
+| `contact_form_submitted`  | Contact form sent successfully via Web3Forms (subject category only, no PII).            | `components/contact-form.tsx`                      |
+| `contact_form_failed`     | Contact form submission failed (API error or network error).                             | `components/contact-form.tsx`                      |
+| `whatsapp_contact_clicked`| User clicks the floating WhatsApp support button — signal of needing help.               | `components/floating-whatsapp.tsx`                 |
+| `payment_status_changed`  | Payment reached a terminal status; includes `wait_time_ms` and `poll_count`.             | `hooks/use-payment-polling.ts`                     |
+
+## Updates (PostHog optimization pass)
+
+- **User identification**: `posthog.identify(email, { email, name })` is now called on login/register (email doubles as distinct ID while auth is a stub). Call `posthog.reset()` once a real logout exists.
+- **Client–server correlation**: server-side captures (`game_page_viewed`, `order_lookup_performed`) now read the PostHog browser cookie via `getPostHogServerContext()` in `lib/posthog-server.ts`, so server events attach to the same person/session as client events instead of the literal `'anonymous'` ID.
+- **Server error tracking**: `captureServerException()` (posthog-node `captureException` + immediate flush) wired into `app/api/orders/[invoice]/route.ts`, `app/actions/checkout.ts`, and `app/actions/orders.ts`.
+- **Client error tracking**: `posthog.captureException` added to `app/error.tsx` and `app/global-error.tsx` (guarded), alongside Sentry.
+- No PII is sent in `capture()` properties — emails/names live only in `identify()` person properties.
 
 ## Next steps
 

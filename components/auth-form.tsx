@@ -16,7 +16,25 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
-    posthog.capture(isLogin ? 'user_logged_in' : 'user_registered');
+
+    const formData = new FormData(e.currentTarget);
+    const email = String(formData.get('email') ?? '').trim();
+    const name = String(formData.get('name') ?? '').trim();
+
+    // Identify ties all pre-auth anonymous events to this person. Auth is
+    // currently a stub (no backend call), so the verified email doubles as
+    // the distinct ID. PII lives only in identify() person properties —
+    // never in capture() event properties.
+    if (email) {
+      posthog.identify(email, {
+        email,
+        ...(name ? { name } : {}),
+      });
+    }
+    posthog.capture(isLogin ? 'user_logged_in' : 'user_registered', {
+      method: 'email',
+    });
+
     setTimeout(() => router.push('/dashboard'), 900);
   }
 
@@ -48,6 +66,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
             </label>
             <input
               id="name"
+              name="name"
               type="text"
               required
               placeholder="Nama kamu"
@@ -61,6 +80,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
           </label>
           <input
             id="auth-email"
+            name="email"
             type="email"
             required
             placeholder="nama@email.com"

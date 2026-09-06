@@ -2,6 +2,7 @@
 
 import { PlayerService, CheckoutService } from '@/services';
 import { ApiError } from '@/lib/api-client';
+import { captureServerException } from '@/lib/posthog-server';
 import { safeParseCheckoutRequest } from '@/lib/order-lookup-schema';
 import type { CheckoutRequest, CheckoutServiceResult } from '@/types/checkout';
 import type { PlayerValidationRequest, PlayerValidationResponse } from '@/types/player-validation';
@@ -22,6 +23,7 @@ export async function createCheckoutAction(
     return await CheckoutService.create(parsed.data, idempotencyKey);
   } catch (error) {
     console.error('[createCheckoutAction]', error);
+    captureServerException(error, { action: 'createCheckoutAction' });
     return { success: false, error: 'Gagal menghubungi server. Coba lagi.' };
   }
 }
@@ -54,6 +56,7 @@ export async function validatePlayerAction(
     const message =
       error instanceof Error ? error.message : 'Gagal menghubungi server game';
     console.error('[validatePlayerAction]', message, `(status: ${status})`, error);
+    captureServerException(error, { action: 'validatePlayerAction', status });
     return { ok: false, status, message };
   }
 }
@@ -69,6 +72,7 @@ export async function getOrderStatusAction(invoice: string): Promise<CheckoutSer
     return await CheckoutService.getStatus(invoice);
   } catch (error) {
     console.error('[getOrderStatusAction]', error);
+    captureServerException(error, { action: 'getOrderStatusAction' });
     return { success: false, error: 'Gagal memuat status pesanan.' };
   }
 }

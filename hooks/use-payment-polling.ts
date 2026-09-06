@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CheckoutServiceResult, CheckoutResult } from '@/types/checkout';
+import posthog from 'posthog-js';
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -22,12 +23,18 @@ export function usePaymentPolling(invoice: string | null): UsePaymentPollingResu
   // Lazy initial state avoids a synchronous setState in the "no invoice" branch below.
   const [isLoading, setIsLoading] = useState(() => Boolean(invoice));
   const [hasFetchError, setHasFetchError] = useState(false);
+  // Payment funnel timing: how long the user waits for the payment to settle.
+  // Set inside the effect (refs must stay pure during render).
+  const startRef = useRef<number | null>(null);
+  const pollsRef = useRef(0);
 
   useEffect(() => {
     if (!invoice) return;
 
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout>;
+
+    if (startRef.current === null) startRef.current = Date.now();
 
     async function poll() {
       try {
@@ -43,11 +50,22 @@ export function usePaymentPolling(invoice: string | null): UsePaymentPollingResu
         }
 
         const result = response.data;
+        pollsRef.current += 1;
         setData(result);
         setHasFetchError(false);
 
         if (result.payment.status !== 'pending') {
-          return; // Terminal state reached — stop polling, let the caller react to `data`.
+          // Terminal state reached — track how long payment settlement took.
+          // This is a sync with an external system (payment status), so a
+          // capture here is intentional, not a user-event side effect.
+          posthog.capture('payment_status_changed', {
+            invoice_id: result.order.invoice_number,
+            order_status: result.payment.status,
+            wait_time_ms: startRef.current !== null ? Date.now() - startRef.current : 0,
+            poll_count: pollsRef.current,
+            payment_method: result.payment.method.name,
+          });
+          return; // Stop polling, let the caller react to `data`.
         }
       } catch {
         if (!cancelled) setHasFetchError(true);

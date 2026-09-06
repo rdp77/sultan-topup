@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { CheckoutService } from '@/services';
 import { ApiError } from '@/lib/api-client';
+import { captureServerException } from '@/lib/posthog-server';
 import type { CheckoutServiceResult } from '@/types/checkout';
 
 /**
@@ -38,6 +39,7 @@ export async function GET(
       );
     }
     console.error(`[GET /api/orders/${invoice}]`, error);
+    captureServerException(error, { route: '/api/orders/[invoice]', invoice });
     return NextResponse.json(
       { success: false, error: 'Gagal memuat status pesanan.' } satisfies CheckoutServiceResult,
       { status: 502 }

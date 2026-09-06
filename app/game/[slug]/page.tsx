@@ -5,7 +5,7 @@ import { after } from 'next/server';
 import { ShieldCheck, Zap } from 'lucide-react';
 import { GameService, PaymentMethodService } from '@/services';
 import { CheckoutForm } from '@/components/checkout-form';
-import { getPostHogClient } from '@/lib/posthog-server';
+import { getPostHogClient, getPostHogServerContext } from '@/lib/posthog-server';
 import { mapPaymentGroups } from '@/lib/payment-methods';
 
 interface PageProps {
@@ -65,10 +65,12 @@ export default async function GamePage({ params }: PageProps) {
   );
 
   const posthog = getPostHogClient();
+  const { distinctId, sessionId } = await getPostHogServerContext();
   posthog.capture({
-    distinctId: 'anonymous',
+    distinctId,
     event: 'game_page_viewed',
     properties: {
+      $session_id: sessionId,
       game_slug: slug,
       game_name: game.name,
       game_publisher: game.publisher,
