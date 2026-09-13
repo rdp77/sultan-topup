@@ -44,6 +44,10 @@ export function CheckoutForm({ game, paymentGroups }: Readonly<CheckoutFormProps
         onZoneIdChange={form.setZoneId}
         touched={form.touched}
         playerId={form.playerIdValidation}
+        saveAccount={form.saveAccount}
+        onSaveAccountChange={form.toggleSaveAccount}
+        hasSavedAccount={form.hasSavedAccount}
+        onRemoveSavedAccount={form.removeSavedAccount}
       />
       <ProductStep
         step={2}
