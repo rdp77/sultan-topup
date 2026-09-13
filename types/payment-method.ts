@@ -1,5 +1,7 @@
-// Response from GET /payment-methods — array of groups, already grouped by API
-export type PaymentMethodListResponse = ApiPaymentMethodGroup[];
+// Response from GET /payment-methods — { data: [...] }, already grouped by API
+export type PaymentMethodListResponse = {
+  data: ApiPaymentMethodGroup[];
+};
 
 export interface ApiPaymentMethodGroup {
   group_id: number;
@@ -13,7 +15,7 @@ export interface ApiPaymentMethodItem {
   code: string;
   name: string;
   type: 'va' | 'ewallet' | 'qris' | 'retail';
-  fee_type: 'flat' | 'percent';
+  fee_type: 'flat' | 'percent' | 'combined';
   fee_flat: string; // "1000.00"
   fee_percentage: string;
   min_amount: string | null;

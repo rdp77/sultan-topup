@@ -61,7 +61,7 @@ export default async function GamePage({ params }: PageProps) {
 
   // Fetch payment methods on the server (GET → Server Component).
   const paymentGroups = mapPaymentGroups(
-    (await PaymentMethodService.list(game.id).catch(() => [])) ?? []
+    (await PaymentMethodService.list(game.id).catch(() => ({ data: [] }))) ?? { data: [] }
   );
 
   const posthog = getPostHogClient();
