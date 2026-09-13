@@ -7,7 +7,7 @@ export interface CheckoutRequest {
   sku: string;
   quantity: number;
   email: string;
-  whatsapp: string;
+  whatsapp: string | null;
   paymentMethod: string;
 }
 
