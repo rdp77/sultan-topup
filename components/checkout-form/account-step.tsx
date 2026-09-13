@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Loader2, Search, UserCheck } from 'lucide-react';
+import { AlertTriangle, Loader2, Search, Trash2, UserCheck } from 'lucide-react';
 import { SectionHeading } from './section-heading';
 import { InfoTooltip } from './info-tooltip';
 import type { usePlayerIdValidation } from '@/hooks/use-player-id-validation';
@@ -16,6 +16,12 @@ interface AccountStepProps {
   onZoneIdChange: (value: string) => void;
   touched: boolean;
   playerId: ReturnType<typeof usePlayerIdValidation>;
+  /** Whether the user opted in to remember this account for future purchases. */
+  saveAccount: boolean;
+  onSaveAccountChange: (value: boolean) => void;
+  /** Whether any account data is currently stored for this game. */
+  hasSavedAccount: boolean;
+  onRemoveSavedAccount: () => void;
 }
 
 export function AccountStep({
@@ -28,6 +34,10 @@ export function AccountStep({
   onZoneIdChange,
   touched,
   playerId,
+  saveAccount,
+  onSaveAccountChange,
+  hasSavedAccount,
+  onRemoveSavedAccount,
 }: Readonly<AccountStepProps>) {
   return (
     <section className="bg-card rounded-xl p-4 md:p-6">
@@ -90,7 +100,7 @@ export function AccountStep({
               type="button"
               onClick={() => playerId.validate({ playerId: playerIdValue, zoneId, gameSlug })}
               disabled={playerId.state === 'loading' || playerIdValue.trim().length < 3}
-              className="press border-border text-foreground hover:bg-card inline-flex h-10.5 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg border px-4 text-xs font-medium transition-colors duration-200 sm:w-auto disabled:opacity-50"
+              className="press border-border text-foreground hover:bg-card inline-flex h-10.5 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg border px-4 text-xs font-medium transition-colors duration-200 disabled:opacity-50 sm:w-auto"
             >
               {playerId.state === 'loading' ? (
                 <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
@@ -121,6 +131,48 @@ export function AccountStep({
               {playerId.errorMessage ?? 'Terjadi kesalahan. Coba lagi nanti.'}
             </p>
           )}
+        </div>
+
+        <div className="border-input bg-background flex items-start justify-between gap-3 rounded-md border p-3">
+          <div className="min-w-0 flex-1">
+            <label htmlFor="save-account-toggle" className="text-sm font-medium">
+              Simpan Data Akun untuk pembelian berikutnya
+            </label>
+            <p className="text-muted-foreground mt-0.5 text-xs">
+              Akun ini disimpan di perangkat kamu dan hanya bisa diterapkan untuk game ini.
+            </p>
+            {hasSavedAccount && (
+              <div className="text-muted-foreground mt-1.5 flex items-center gap-2 text-xs">
+                <span>Data akun untuk game ini telah tersimpan.</span>
+                <button
+                  type="button"
+                  onClick={onRemoveSavedAccount}
+                  className="text-destructive hover:text-destructive/80 focus-visible:ring-primary/60 inline-flex items-center gap-1 rounded underline underline-offset-2 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  <Trash2 className="size-3" aria-hidden="true" />
+                  Hapus data akun
+                </button>
+              </div>
+            )}
+          </div>
+          <button
+            id="save-account-toggle"
+            type="button"
+            role="switch"
+            aria-checked={saveAccount}
+            aria-label="Simpan Data Akun untuk pembelian berikutnya"
+            onClick={() => onSaveAccountChange(!saveAccount)}
+            className={`focus:ring-primary/30 relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 outline-none focus:ring-2 ${
+              saveAccount ? 'bg-primary' : 'bg-input'
+            }`}
+          >
+            <span
+              aria-hidden="true"
+              className={`inline-block size-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                saveAccount ? 'translate-x-5' : 'translate-x-0.5'
+              }`}
+            />
+          </button>
         </div>
       </div>
     </section>

@@ -12,6 +12,7 @@ import { calcFee } from '@/lib/utils';
 import { usePlayerIdValidation } from './use-player-id-validation';
 import { useEmailValidation } from './use-email-validation';
 import { waPhoneSchema } from '@/lib/order-lookup-schema';
+import { deleteSavedAccount, loadSavedAccount, saveAccount } from '@/lib/saved-account';
 
 interface UseCheckoutFormParams {
   gameId: number;
@@ -94,11 +95,20 @@ export function useCheckoutForm({
     [formConfig, waMarketing]
   );
 
+  // Pre-fill the account fields from any account previously saved for this game.
+  // gameSlug is stable for the lifetime of this hook, so reading once here and
+  // seeding the initial state is safe (no effect needed).
+  const savedAccount = loadSavedAccount(gameSlug);
+
   const [selectedDenom, setSelectedDenom] = useState<DenominationView | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [playerIdInput, setPlayerIdInput] = useState('');
-  const [zoneId, setZoneId] = useState('');
+  const [playerIdInput, setPlayerIdInput] = useState(savedAccount?.playerId ?? '');
+  const [zoneId, setZoneId] = useState(savedAccount?.zoneId ?? '');
   const [whatsapp, setWhatsapp] = useState('');
+  // Privacy-first opt-in: never persist account data unless the user enables it.
+  const [saveAccountFlag, setSaveAccountFlag] = useState(false);
+  // Tracks whether any data is currently stored for this game (drives the delete UI).
+  const [hasSavedAccount, setHasSavedAccount] = useState(savedAccount !== null);
   const [email, setEmail] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -182,6 +192,20 @@ export function useCheckoutForm({
     return '';
   }
 
+  // Flip the "Simpan Data Akun" preference. Only ever persists on a successful
+  // checkout, so toggling alone is harmless.
+  function toggleSaveAccount() {
+    setSaveAccountFlag((prev) => !prev);
+  }
+
+  // Explicit user action to forget the stored account for this game. Also turns
+  // the toggle off so it isn't immediately re-saved on the next checkout.
+  function removeSavedAccount() {
+    deleteSavedAccount(gameSlug);
+    setHasSavedAccount(false);
+    setSaveAccountFlag(false);
+  }
+
   async function handleSubmit() {
     setTouched(true);
 
@@ -260,6 +284,13 @@ export function useCheckoutForm({
         wa_marketing: waMarketing,
       });
 
+      // Persist the account only when the purchase actually succeeded AND the
+      // user opted-in, so data is never saved unless explicitly requested.
+      if (saveAccountFlag) {
+        saveAccount(gameSlug, { playerId: playerIdInput.trim(), zoneId: zoneId.trim() });
+        setHasSavedAccount(true);
+      }
+
       sessionStorage.removeItem('checkout:pending:key');
 
       const params = new URLSearchParams({
@@ -291,6 +322,10 @@ export function useCheckoutForm({
     handlePlayerIdChange,
     zoneId,
     setZoneId: handleZoneIdChange,
+    saveAccount: saveAccountFlag,
+    toggleSaveAccount,
+    hasSavedAccount,
+    removeSavedAccount,
     whatsapp,
     setWhatsapp,
     waMarketing,
