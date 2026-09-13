@@ -30,6 +30,9 @@ export function useCheckoutForm({
   const router = useRouter();
   const formConfig = getGameFormConfig(gameSlug);
 
+  // Opt-in to receive promos & latest info via WhatsApp. Default: ON.
+  const [waMarketing, setWaMarketing] = useState(true);
+
   const checkoutSchema = useMemo(
     () =>
       z
@@ -37,7 +40,8 @@ export function useCheckoutForm({
           playerId: z.string().min(3, `${formConfig.idLabel} minimal 3 karakter`),
           zoneId: z.string().max(32),
           email: z.email('Format email tidak valid'),
-          whatsapp: waPhoneSchema,
+          // WA is only required (and only sent) when the promo opt-in is active.
+          whatsapp: waMarketing ? waPhoneSchema : z.string().nullable(),
           selectedDenom: z
             .object({
               id: z.number(),
@@ -87,7 +91,7 @@ export function useCheckoutForm({
             });
           }
         }),
-    [formConfig]
+    [formConfig, waMarketing]
   );
 
   const [selectedDenom, setSelectedDenom] = useState<DenominationView | null>(null);
@@ -151,7 +155,7 @@ export function useCheckoutForm({
     idValid &&
     idChecked &&
     emailValidation.isValid &&
-    waValid &&
+    (waMarketing ? waValid : true) &&
     selectedMethod !== null &&
     turnstileToken !== null;
 
@@ -217,7 +221,9 @@ export function useCheckoutForm({
       sku: selectedDenom.sku,
       quantity,
       email: email.trim(),
-      whatsapp: waClean,
+      // The backend `whatsapp` field is nullable: the WA number is only sent
+      // when the user consents to receiving promos via WhatsApp.
+      whatsapp: waMarketing ? waClean : null,
       paymentMethod: selectedMethod.id,
     };
 
@@ -251,6 +257,7 @@ export function useCheckoutForm({
         payment_method_name: selectedMethod.name,
         invoice_id: responseData.order.invoice_number,
         order_id: responseData.order.id,
+        wa_marketing: waMarketing,
       });
 
       sessionStorage.removeItem('checkout:pending:key');
@@ -286,6 +293,8 @@ export function useCheckoutForm({
     setZoneId: handleZoneIdChange,
     whatsapp,
     setWhatsapp,
+    waMarketing,
+    setWaMarketing,
     email,
     setEmail,
     selectedMethod,

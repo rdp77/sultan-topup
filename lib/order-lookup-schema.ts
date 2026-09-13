@@ -15,7 +15,8 @@ const checkoutRequestSchema = z.object({
   sku: z.string().min(1).max(64),
   quantity: z.number().int().min(1).max(100),
   email: emailSchema,
-  whatsapp: waPhoneSchema,
+  // whatsapp is nullable (when the user does not consent to receiving promos via WA).
+  whatsapp: waPhoneSchema.nullable(),
   paymentMethod: z.string().min(1).max(64),
 });
 
@@ -37,8 +38,7 @@ export const orderLookupSchema = z.object({
     .min(1, 'Email atau nomor WA wajib diisi')
     .refine(
       (v) =>
-        emailSchema.safeParse(v).success ||
-        waPhoneSchema.safeParse(v.replace(/\D/g, '')).success,
+        emailSchema.safeParse(v).success || waPhoneSchema.safeParse(v.replace(/\D/g, '')).success,
       'Masukkan email atau nomor WA yang valid'
     ),
 });

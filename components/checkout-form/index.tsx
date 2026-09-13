@@ -69,6 +69,8 @@ export function CheckoutForm({ game, paymentGroups }: Readonly<CheckoutFormProps
         onWhatsappChange={form.setWhatsapp}
         waValid={form.waValid}
         touched={form.touched}
+        waMarketing={form.waMarketing}
+        onWaMarketingChange={form.setWaMarketing}
       />
       <PaymentMethodStep
         step={4}
