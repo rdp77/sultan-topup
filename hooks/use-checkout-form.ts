@@ -18,6 +18,8 @@ interface UseCheckoutFormParams {
   gameId: number;
   gameName: string;
   gameSlug: string;
+  /** From `GameDetail.needs_zone_id` — whether the game requires a zone ID. */
+  needsZoneId: boolean;
   /** Payment groups fetched on the server and passed down as props. */
   paymentGroups: PaymentGroup[];
 }
@@ -26,10 +28,11 @@ export function useCheckoutForm({
   gameId,
   gameName,
   gameSlug,
+  needsZoneId,
   paymentGroups,
 }: UseCheckoutFormParams) {
   const router = useRouter();
-  const formConfig = getGameFormConfig(gameSlug);
+  const formConfig = getGameFormConfig(gameSlug, needsZoneId);
 
   // Opt-in to receive promos & latest info via WhatsApp. Default: ON.
   const [waMarketing, setWaMarketing] = useState(true);
