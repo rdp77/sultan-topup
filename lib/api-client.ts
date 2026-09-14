@@ -97,6 +97,6 @@ export async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promis
     }
   }
 
-  // Unreachable — loop always returns or throws
+  // Unreachable - loop always returns or throws
   throw new ApiError('Unexpected fetch error', 0);
 }

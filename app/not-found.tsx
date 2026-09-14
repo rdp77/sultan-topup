@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Home } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Halaman Tidak Ditemukan — Sultan Top Up',
+  title: 'Halaman Tidak Ditemukan - Sultan Top Up',
   robots: { index: false, follow: false },
 };
 

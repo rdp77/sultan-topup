@@ -18,7 +18,7 @@ interface UseCheckoutFormParams {
   gameId: number;
   gameName: string;
   gameSlug: string;
-  /** From `GameDetail.needs_zone_id` — whether the game requires a zone ID. */
+  /** From `GameDetail.needs_zone_id` - whether the game requires a zone ID. */
   needsZoneId: boolean;
   /** Payment groups fetched on the server and passed down as props. */
   paymentGroups: PaymentGroup[];

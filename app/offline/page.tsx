@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Home, WifiOff } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Offline — Sultan Top Up',
+  title: 'Offline - Sultan Top Up',
   description: 'Anda sedang offline. Silakan periksa koneksi internet Anda dan coba lagi.',
   robots: { index: false, follow: false },
 };

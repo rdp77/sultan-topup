@@ -8,7 +8,7 @@ export function QrImage({ amount, data }: Readonly<{ amount: number; data?: stri
         <QRCodeSVG
           value={data}
           size={192}
-          level="H" // required when embedding a logo — lower levels risk unscannable codes
+          level="H" // required when embedding a logo - lower levels risk unscannable codes
           imageSettings={{
             src: '/favicon-96x96.png', // small monochrome mark, NOT full logo with wordmark
             width: 36, // keep under ~20% of `size` to stay within level H tolerance

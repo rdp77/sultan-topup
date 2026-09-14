@@ -5,12 +5,12 @@ import {
 } from '@/components/leaderboard/leaderboard-section';
 
 export const metadata = {
-  title: 'Leaderboard — Sultan Top Up',
+  title: 'Leaderboard - Sultan Top Up',
   description:
     'Leaderboard Top Spender Sultan Top Up. Lihat peringkat pembeli terbanyak bulan ini dan terus top up untuk naik peringkat.',
   alternates: { canonical: 'https://sultantopup.com/leaderboard' },
   openGraph: {
-    title: 'Leaderboard Top Spender — Sultan Top Up',
+    title: 'Leaderboard Top Spender - Sultan Top Up',
     description: 'Peringkat pembeli terbanyak bulan ini. Terus top up untuk naik peringkat.',
     url: 'https://sultantopup.com/leaderboard',
     siteName: 'Sultan Top Up',
@@ -27,7 +27,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Leaderboard Top Spender — Sultan Top Up',
+    title: 'Leaderboard Top Spender - Sultan Top Up',
     description: 'Peringkat pembeli terbanyak bulan ini. Terus top up untuk naik peringkat.',
     images: ['https://sultantopup.com/og-image.png'],
   },

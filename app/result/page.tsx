@@ -3,13 +3,13 @@ import { ResultCard } from '@/components/result-card';
 import { ResultCardSkeleton } from '@/components/result-card-skeleton';
 
 export const metadata = {
-  title: 'Status Pesanan — Sultan Top Up',
+  title: 'Status Pesanan - Sultan Top Up',
   description:
     'Lihat status transaksi top up game Anda. Informasi pembayaran, status pengiriman, dan detail pesanan.',
   alternates: { canonical: 'https://sultantopup.com/result' },
   robots: { index: false, follow: false },
   openGraph: {
-    title: 'Status Pesanan — Sultan Top Up',
+    title: 'Status Pesanan - Sultan Top Up',
     description: 'Lihat status transaksi top up game Anda.',
     url: 'https://sultantopup.com/result',
     siteName: 'Sultan Top Up',
@@ -26,7 +26,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Status Pesanan — Sultan Top Up',
+    title: 'Status Pesanan - Sultan Top Up',
     description: 'Lihat status transaksi top up game Anda.',
     images: ['https://sultantopup.com/og-image.png'],
   },

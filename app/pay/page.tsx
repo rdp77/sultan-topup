@@ -2,13 +2,13 @@ import { Suspense } from 'react';
 import { PayCard } from '@/components/pay-card';
 
 export const metadata = {
-  title: 'Pembayaran — Sultan Top Up',
+  title: 'Pembayaran - Sultan Top Up',
   description:
     'Selesaikan pembayaran top up game Anda. Proses otomatis, konfirmasi instan via WhatsApp dan email.',
   alternates: { canonical: 'https://sultantopup.com/bayar' },
   robots: { index: false, follow: false },
   openGraph: {
-    title: 'Pembayaran — Sultan Top Up',
+    title: 'Pembayaran - Sultan Top Up',
     description: 'Selesaikan pembayaran top up game Anda.',
     url: 'https://sultantopup.com/bayar',
     siteName: 'Sultan Top Up',
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pembayaran — Sultan Top Up',
+    title: 'Pembayaran - Sultan Top Up',
     description: 'Selesaikan pembayaran top up game Anda.',
     images: ['https://sultantopup.com/og-image.png'],
   },

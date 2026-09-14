@@ -4,7 +4,7 @@ export interface GameFormConfig {
   needsZone: boolean;
 }
 
-// Per-game field labels. The `needsZone` flag is NOT hardcoded here anymore —
+// Per-game field labels. The `needsZone` flag is NOT hardcoded here anymore -
 // it comes from the API (`GameDetail.needs_zone_id`, see getGameFormConfig).
 // Keep only presentation-ish config in this map.
 const GAME_FORM_CONFIG: Record<string, Pick<GameFormConfig, 'idLabel' | 'idPlaceholder'>> = {
@@ -27,7 +27,7 @@ const DEFAULT_FORM_CONFIG: Pick<GameFormConfig, 'idLabel' | 'idPlaceholder'> = {
  */
 export function getGameFormConfig(slug: string, needsZoneId: boolean): GameFormConfig {
   const base = GAME_FORM_CONFIG[slug] ?? DEFAULT_FORM_CONFIG;
-  // Treat missing/empty as `true` — the field is shown (and required) unless the
+  // Treat missing/empty as `true` - the field is shown (and required) unless the
   // API explicitly says the game doesn't need a zone, so the UI never silently
   // drops the input before the backend ships the flag.
   return { ...base, needsZone: needsZoneId !== false };

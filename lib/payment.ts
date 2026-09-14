@@ -4,7 +4,7 @@ export type PaymentType = 'qris' | 'va' | 'other';
 
 /**
  * Derives the payment type from server data. Returns null until payment
- * data is available — callers should treat that as "not ready yet"
+ * data is available - callers should treat that as "not ready yet"
  * rather than guessing a default.
  */
 export function resolvePaymentType(

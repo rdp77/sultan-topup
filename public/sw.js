@@ -1,4 +1,4 @@
-// Sultan Top Up — Service Worker
+// Sultan Top Up - Service Worker
 // Caches core assets for offline-ready PWA experience.
 
 const CACHE = 'sultan-topup-v1'

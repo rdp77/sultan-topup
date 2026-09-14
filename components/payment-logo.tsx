@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 type LogoProps = { className?: string };
 
 export function PaymentLogo({ id, className }: { id: string; className?: string }) {
-  // API sends full code like "bca-virtual-account_midtrans" — extract prefix for logo lookup
+  // API sends full code like "bca-virtual-account_midtrans" - extract prefix for logo lookup
   const logoKey = id.includes('-') || id.includes('_') ? extractLogoKey(id) : id;
 
   const map: Record<string, (p: LogoProps) => React.ReactElement | null> = {

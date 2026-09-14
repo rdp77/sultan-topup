@@ -16,7 +16,7 @@ export function VaNumberDisplay({
         />
       </div>
       <span className="text-foreground font-mono text-lg font-semibold tracking-wide">
-        {number || '—'}
+        {number || '-'}
       </span>
       <p className="text-muted-foreground text-xs">
         Penerima:{' '}

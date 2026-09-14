@@ -4,7 +4,7 @@ import { legalPages } from '@/components/legal-content';
 
 const BASE_URL = 'https://sultantopup.com';
 
-// Fixed dates for static pages — avoids sending "today" to crawlers every build
+// Fixed dates for static pages - avoids sending "today" to crawlers every build
 const STATIC_UPDATED = '2026-07-27';
 const LEGAL_UPDATED = '2026-07-22';
 
@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   });
 
-  // Private pages (/login, /register, /dashboard) are intentionally excluded —
+  // Private pages (/login, /register, /dashboard) are intentionally excluded -
   // they're disallowed in robots.txt, so they must not appear in the sitemap
   // (avoids "Submitted URL blocked by robots.txt" errors in Search Console).
 
@@ -83,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       hasMore = page < meta.last_page;
       page++;
     } catch {
-      // API unreachable — stop trying further pages
+      // API unreachable - stop trying further pages
       hasMore = false;
     }
   }

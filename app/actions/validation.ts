@@ -20,7 +20,7 @@ export async function validateEmailAction(email: string): Promise<ValidateEmailR
 
   const domain = trimmed.slice(atIdx + 1);
 
-  // Check MX records — if domain has no mail server, it can't receive email
+  // Check MX records - if domain has no mail server, it can't receive email
   try {
     const records = await dns.resolveMx(domain);
     if (!records || records.length === 0) {

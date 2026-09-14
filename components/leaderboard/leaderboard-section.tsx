@@ -82,7 +82,7 @@ function getRowClass(rank: number): string {
 }
 
 /**
- * Server Component — fetches the leaderboard with GET via the Server
+ * Server Component - fetches the leaderboard with GET via the Server
  * Component data layer (Next.js Data Cache, revalidate: 60s).
  */
 export async function LeaderboardSection() {
@@ -112,7 +112,7 @@ export async function LeaderboardSection() {
 
   return (
     <div>
-      {/* Top 3 — podium */}
+      {/* Top 3 - podium */}
       <div className="flex flex-col gap-2">
         {top3.map((entry) => (
           <div

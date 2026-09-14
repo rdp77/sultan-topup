@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sultantopup.com'),
-  title: 'Sultan Top Up — Top Up Game Cepat & Aman',
+  title: 'Sultan Top Up - Top Up Game Cepat & Aman',
   description:
     'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
   keywords: [
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   creator: 'Sultan Top Up',
   publisher: 'Sultan Top Up',
   openGraph: {
-    title: 'Sultan Top Up — Top Up Game Cepat & Aman',
+    title: 'Sultan Top Up - Top Up Game Cepat & Aman',
     description:
       'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
     url: 'https://sultantopup.com',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
         url: 'https://sultantopup.com/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Sultan Top Up — Top Up Game Cepat & Aman',
+        alt: 'Sultan Top Up - Top Up Game Cepat & Aman',
       },
     ],
     locale: 'id_ID',
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@sultantopupofficial',
     creator: '@sultantopupofficial',
-    title: 'Sultan Top Up — Top Up Game Cepat & Aman',
+    title: 'Sultan Top Up - Top Up Game Cepat & Aman',
     description:
       'Top up diamond, UC, dan voucher game favoritmu dalam hitungan detik. Proses otomatis 24 jam, pembayaran QRIS, E-Wallet, dan Virtual Account.',
     images: [
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
         url: 'https://sultantopup.com/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Sultan Top Up — Top Up Game Cepat & Aman',
+        alt: 'Sultan Top Up - Top Up Game Cepat & Aman',
       },
     ],
   },

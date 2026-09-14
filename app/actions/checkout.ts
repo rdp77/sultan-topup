@@ -9,7 +9,7 @@ import type { PlayerValidationRequest, PlayerValidationResponse } from '@/types/
 
 /**
  * Create a new checkout order (POST /checkout).
- * Server Action — mutations always run on the server.
+ * Server Action - mutations always run on the server.
  */
 export async function createCheckoutAction(
   request: CheckoutRequest,
@@ -29,8 +29,7 @@ export async function createCheckoutAction(
 }
 
 export type ValidatePlayerResult =
-  | { ok: true; data: PlayerValidationResponse }
-  | { ok: false; status: number; message: string };
+  { ok: true; data: PlayerValidationResponse } | { ok: false; status: number; message: string };
 
 /**
  * Validate game account (POST /validate-account).
@@ -53,8 +52,7 @@ export async function validatePlayerAction(
     return { ok: true, data: await PlayerService.validate({ playerId, zoneId, gameSlug }) };
   } catch (error) {
     const status = error instanceof ApiError ? error.status : 0;
-    const message =
-      error instanceof Error ? error.message : 'Gagal menghubungi server game';
+    const message = error instanceof Error ? error.message : 'Gagal menghubungi server game';
     console.error('[validatePlayerAction]', message, `(status: ${status})`, error);
     captureServerException(error, { action: 'validatePlayerAction', status });
     return { ok: false, status, message };
