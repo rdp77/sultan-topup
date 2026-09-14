@@ -68,32 +68,31 @@ export function AccountStep({
             )}
           </div>
 
-          <div className="w-full sm:w-36">
-            <label
-              htmlFor="zone-id"
-              className="text-muted-foreground mb-1.5 flex items-center text-sm"
-            >
-              Server / Zone ID
-              <InfoTooltip>
-                {formConfig.needsZone
-                  ? 'Buka profil game lalu cari angka di samping nama karakter, biasanya dalam format (1234).'
-                  : 'Beberapa game seperti Mobile Legends memerlukan Zone ID. Jika gamenya tidak butuh, biarkan kosong.'}
-              </InfoTooltip>
-            </label>
-            <input
-              id="zone-id"
-              type="text"
-              inputMode="numeric"
-              value={zoneId}
-              onChange={(e) => onZoneIdChange(e.target.value)}
-              placeholder={formConfig.needsZone ? 'Contoh: 2001' : 'Opsional'}
-              disabled={!formConfig.needsZone}
-              className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-40"
-            />
-            {formConfig.needsZone && touched && zoneId.trim().length < 1 && (
-              <p className="text-destructive mt-1.5 text-xs">Zone ID wajib diisi</p>
-            )}
-          </div>
+          {formConfig.needsZone && (
+            <div className="w-full sm:w-36">
+              <label
+                htmlFor="zone-id"
+                className="text-muted-foreground mb-1.5 flex items-center text-sm"
+              >
+                Server / Zone ID
+                <InfoTooltip>
+                  Buka profil game lalu cari angka di samping nama karakter, biasanya dalam format (1234).
+                </InfoTooltip>
+              </label>
+              <input
+                id="zone-id"
+                type="text"
+                inputMode="numeric"
+                value={zoneId}
+                onChange={(e) => onZoneIdChange(e.target.value)}
+                placeholder="Contoh: 2001"
+                className="border-input bg-background placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/30 w-full rounded-md border px-3 py-2.5 text-sm transition-colors duration-200 outline-none focus:ring-2"
+              />
+              {touched && zoneId.trim().length < 1 && (
+                <p className="text-destructive mt-1.5 text-xs">Zone ID wajib diisi</p>
+              )}
+            </div>
+          )}
 
           <div className="w-full shrink-0 sm:w-auto">
             <button

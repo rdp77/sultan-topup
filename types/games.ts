@@ -23,5 +23,7 @@ export interface GameDetail {
   name: string;
   slug: string;
   publisher: string;
+  /** Whether this game requires a server/zone ID when entering account data. */
+  needs_zone_id: boolean;
   products: GameProduct[];
 }

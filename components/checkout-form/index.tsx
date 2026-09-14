@@ -25,6 +25,7 @@ export function CheckoutForm({ game, paymentGroups }: Readonly<CheckoutFormProps
     gameId: game.id,
     gameName: game.name,
     gameSlug: game.slug,
+    needsZoneId: game.needs_zone_id,
     paymentGroups,
   });
 
