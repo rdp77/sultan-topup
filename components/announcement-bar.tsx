@@ -30,7 +30,7 @@ export function AnnouncementBar() {
       try {
         setDismissed(JSON.parse(localStorage.getItem('announcement-dismissed') ?? '[]'));
       } catch (err) {
-        console.warn('Gagal membaca announcement-dismissed dari localStorage:', err);
+        console.warn('Failed to read announcement-dismissed from localStorage:', err);
       }
       setHydrated(true);
     });
@@ -46,7 +46,7 @@ export function AnnouncementBar() {
     try {
       localStorage.setItem('announcement-dismissed', JSON.stringify(next));
     } catch (err) {
-      console.warn('Gagal menyimpan announcement-dismissed ke localStorage:', err);
+      console.warn('Failed to save announcement-dismissed to localStorage:', err);
     }
   }
 
