@@ -6,10 +6,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        // Private/transaction pages — not meant to be indexed
+        // Private/transaction pages - not meant to be indexed
         disallow: ['/dashboard', '/pay', '/result', '/login', '/register', '/offline', '/api/'],
       },
-      // AI crawlers — allowed so content can surface in AI answers (ChatGPT, Perplexity, etc.)
+      // AI crawlers - allowed so content can surface in AI answers (ChatGPT, Perplexity, etc.)
       {
         userAgent: ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot'],
         allow: '/',

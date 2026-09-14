@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Sultan Top Up — Top Up Game Cepat & Aman',
+    name: 'Sultan Top Up - Top Up Game Cepat & Aman',
     short_name: 'SultanTopUp',
     description:
       'Platform top up game tercepat di Indonesia. Proses otomatis 24 jam, pembayaran lengkap, harga bersahabat.',

@@ -23,7 +23,7 @@ export interface PaginationLinks {
   next: string | null;
 }
 
-// Generic wrapper — reuse for any paginated Laravel resource
+// Generic wrapper - reuse for any paginated Laravel resource
 export interface PaginatedResponse<T> {
   data: T[];
   links: PaginationLinks;

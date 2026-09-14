@@ -52,13 +52,13 @@ const statusConfig: Record<
 export function ResultCard() {
   const params = useSearchParams();
   // null = status not confirmed yet (still loading, or data just arrived and
-  // hasn't been read by the effect below) — never defaulted to 'pending'.
+  // hasn't been read by the effect below) - never defaulted to 'pending'.
   const [status, setStatus] = useState<PaymentStatus | null>(null);
   const capturedRef = useRef(false);
   const [copied, setCopied] = useState(false);
 
   // `invoice` is the ONLY value read from the URL. Every other displayed field
-  // comes from the polled API response (`data`) below — never from params —
+  // comes from the polled API response (`data`) below - never from params -
   // so a reload / deep-link / shared URL always shows real, current data.
   const invoice = params.get('invoice');
   const { data, isLoading } = usePaymentPolling(invoice);
@@ -88,7 +88,7 @@ export function ResultCard() {
     });
   }, [status, data]);
 
-  // No invoice in the URL at all (missing or empty) — nothing to fetch, nothing to render.
+  // No invoice in the URL at all (missing or empty) - nothing to fetch, nothing to render.
   if (!invoice) {
     notFound();
   }
@@ -98,12 +98,12 @@ export function ResultCard() {
     return <ResultCardSkeleton />;
   }
 
-  // Fetch failed (including 404 from the backend) on the first attempt — nothing to show.
+  // Fetch failed (including 404 from the backend) on the first attempt - nothing to show.
   if (!data) {
     notFound();
   }
 
-  // Data just arrived but the mapping effect above hasn't run yet — keep
+  // Data just arrived but the mapping effect above hasn't run yet - keep
   // showing the skeleton instead of a stale/default status.
   if (!status) {
     return <ResultCardSkeleton />;
@@ -163,7 +163,7 @@ export function ResultCard() {
             <dd>{order.product.name}</dd>
           </div>
           {/* CheckoutOrder/CheckoutPayment don't return playerId/zoneId even though
-              CheckoutRequest sent them — there is currently no real value to show
+              CheckoutRequest sent them - there is currently no real value to show
               here. Labeled explicitly instead of silently hiding the row or
               showing a fabricated placeholder. Remove this branch once the
               backend echoes the player/zone ID back in the order response. */}
@@ -185,7 +185,7 @@ export function ResultCard() {
           </div>
           <div className="border-border flex justify-between gap-4 border-t pt-3 text-base font-semibold">
             <dt>Total</dt>
-            {/* Server-computed total, not price + fee re-derived on the client —
+            {/* Server-computed total, not price + fee re-derived on the client -
                 avoids drifting from the actual charged amount (rounding, discounts). */}
             <dd className="text-primary">{formatRupiah(order.total_price)}</dd>
           </div>

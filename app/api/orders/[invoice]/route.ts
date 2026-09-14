@@ -10,17 +10,11 @@ import type { CheckoutServiceResult } from '@/types/checkout';
  * the upstream API is never called directly from the browser (its
  * User-Agent allows whitelisting in Cloudflare).
  */
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ invoice: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ invoice: string }> }) {
   const { invoice } = await params;
 
   if (!invoice) {
-    return NextResponse.json(
-      { success: false, error: 'Invoice is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ success: false, error: 'Invoice is required' }, { status: 400 });
   }
 
   try {
@@ -31,7 +25,7 @@ export async function GET(
     return NextResponse.json(result);
   } catch (error) {
     const status = error instanceof ApiError ? error.status : 0;
-    // Not found vs upstream failure — 404 lets the client stop early.
+    // Not found vs upstream failure - 404 lets the client stop early.
     if (status === 404) {
       return NextResponse.json(
         { success: false, error: 'Order not found' } satisfies CheckoutServiceResult,

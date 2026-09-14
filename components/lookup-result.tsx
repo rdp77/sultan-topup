@@ -6,7 +6,7 @@ import { toOrder } from '@/lib/order-utils';
 import { formatRupiah, formatDateTime } from '@/lib/utils';
 import { getPostHogClient, getPostHogServerContext } from '@/lib/posthog-server';
 
-/** Skeleton — same shape as the result card, used as the Suspense fallback. */
+/** Skeleton - same shape as the result card, used as the Suspense fallback. */
 export function LookupResultSkeleton() {
   return (
     <div className="bg-card rounded-xl p-5" aria-busy="true" aria-label="Mencari pesanan">
@@ -48,7 +48,7 @@ interface LookupResultProps {
 }
 
 /**
- * Server Component — performs the order lookup on the server so the result
+ * Server Component - performs the order lookup on the server so the result
  * URL (/lookup?invoice=...&contact=...) is shareable and refreshable.
  */
 export async function LookupResult({ invoice, contact }: Readonly<LookupResultProps>) {

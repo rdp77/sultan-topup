@@ -17,10 +17,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { data: game } = await GameService.detail(slug).catch(() => ({ data: null }));
 
   if (!game) {
-    return { title: 'Game Tidak Ditemukan — Sultan Top Up' };
+    return { title: 'Game Tidak Ditemukan - Sultan Top Up' };
   }
 
-  const title = `Top Up ${game.name} — Cepat, Murah, Aman | Sultan Top Up`;
+  const title = `Top Up ${game.name} - Cepat, Murah, Aman | Sultan Top Up`;
   const description = `Top up ${game.name} murah, cepat, dan aman. ${game.publisher}. Pembayaran QRIS, E-Wallet, Virtual Account. Proses otomatis 24 jam.`;
 
   return {
@@ -77,7 +77,7 @@ export default async function GamePage({ params }: PageProps) {
       product_count: game.products.length,
     },
   });
-  // Flush analytics after the response is sent — don't block rendering on it.
+  // Flush analytics after the response is sent - don't block rendering on it.
   after(() => posthog.flush());
 
   // JSON-LD: BreadcrumbList + Product (real prices from the product list)
@@ -153,7 +153,7 @@ export default async function GamePage({ params }: PageProps) {
       </div>
 
       <div className="mx-auto max-w-300 px-4 md:px-6">
-        {/* Game info — solid panel pulled over the banner so name/publisher
+        {/* Game info - solid panel pulled over the banner so name/publisher
               stay readable on desktop (where the overlap sits on a bright part
               of the banner) and on mobile alike. */}
         <div className="border-border bg-background/90 supports-backdrop-filter:bg-background/70 -mt-12 rounded-2xl border p-4 backdrop-blur md:-mt-16 md:flex md:items-end md:gap-5 md:p-5">

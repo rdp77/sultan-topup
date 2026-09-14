@@ -53,25 +53,25 @@ export function OrderSummary({
 
   return (
     <>
-      {/* Inline section — full-width on desktop; on mobile, buttons and error messages are moved to the sticky bar */}
+      {/* Inline section - full-width on desktop; on mobile, buttons and error messages are moved to the sticky bar */}
       <section className="bg-card rounded-xl p-4 pb-24 md:pb-6">
         <h2 className="text-base font-semibold">Ringkasan Pesanan</h2>
         <dl className="mt-4 flex flex-col gap-2.5 text-sm">
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Produk</dt>
-            <dd>{selectedDenom ? selectedDenom.amount : '—'}</dd>
+            <dd>{selectedDenom ? selectedDenom.amount : '-'}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Harga</dt>
-            <dd>{selectedDenom ? formatRupiah(subPrice) : '—'}</dd>
+            <dd>{selectedDenom ? formatRupiah(subPrice) : '-'}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Biaya Admin</dt>
-            <dd>{selectedMethod && selectedDenom ? formatRupiah(fee) : '—'}</dd>
+            <dd>{selectedMethod && selectedDenom ? formatRupiah(fee) : '-'}</dd>
           </div>
           <div className="border-border flex justify-between border-t pt-2.5 text-base font-semibold">
             <dt>Total</dt>
-            <dd className="text-primary">{selectedDenom ? formatRupiah(subPrice + fee) : '—'}</dd>
+            <dd className="text-primary">{selectedDenom ? formatRupiah(subPrice + fee) : '-'}</dd>
           </div>
         </dl>
 
@@ -125,7 +125,7 @@ export function OrderSummary({
         )}
       </section>
 
-      {/* Sticky bottom bar — only mobile: total + CTA always visible while scrolling */}
+      {/* Sticky bottom bar - only mobile: total + CTA always visible while scrolling */}
       <div className="border-border bg-card/95 fixed inset-x-0 bottom-0 z-50 border-t p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden">
         {touched && !allValid && !checkoutLoading && submitError && (
           <div className="bg-destructive/10 text-destructive mb-2 rounded-lg p-2.5 text-center text-xs">
@@ -145,7 +145,7 @@ export function OrderSummary({
             <p className="text-base leading-tight font-bold">
               <span className="text-muted-foreground mr-1 text-xs font-medium">Total:</span>
               <span className="text-primary">
-                {selectedDenom ? formatRupiah(subPrice + fee) : '—'}
+                {selectedDenom ? formatRupiah(subPrice + fee) : '-'}
               </span>
             </p>
           </div>

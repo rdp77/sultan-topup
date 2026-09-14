@@ -19,12 +19,12 @@ const HEADERS = [
 ];
 
 interface TransactionTableProps {
-  /** All orders — fetched on the server (see app/lookup/page.tsx). */
+  /** All orders - fetched on the server (see app/lookup/page.tsx). */
   orders: Order[];
 }
 
 /**
- * Server Component — renders the transaction table from server-fetched data.
+ * Server Component - renders the transaction table from server-fetched data.
  */
 export function TransactionTable({ orders }: Readonly<TransactionTableProps>) {
   const rows = orders.slice(0, MAX_ROWS);

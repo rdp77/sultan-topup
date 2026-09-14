@@ -1,4 +1,4 @@
-// Response from GET /payment-methods — { data: [...] }, already grouped by API
+// Response from GET /payment-methods - { data: [...] }, already grouped by API
 export type PaymentMethodListResponse = {
   data: ApiPaymentMethodGroup[];
 };

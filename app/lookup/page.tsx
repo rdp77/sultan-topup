@@ -6,12 +6,12 @@ import { toOrder } from '@/lib/order-utils';
 import { validateOrderLookup } from '@/lib/order-lookup-schema';
 
 export const metadata = {
-  title: 'Lacak Pesanan — Sultan Top Up',
+  title: 'Lacak Pesanan - Sultan Top Up',
   description:
     'Lacak status pesanan top up game Anda. Masukkan nomor invoice dan kontak yang Anda gunakan saat checkout.',
   alternates: { canonical: 'https://sultantopup.com/lookup' },
   openGraph: {
-    title: 'Lacak Pesanan — Sultan Top Up',
+    title: 'Lacak Pesanan - Sultan Top Up',
     description: 'Lacak status pesanan top up game Anda. Masukkan nomor invoice dan kontak.',
     url: 'https://sultantopup.com/lookup',
     siteName: 'Sultan Top Up',
@@ -28,7 +28,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Lacak Pesanan — Sultan Top Up',
+    title: 'Lacak Pesanan - Sultan Top Up',
     description: 'Lacak status pesanan top up game Anda.',
     images: ['https://sultantopup.com/og-image.png'],
   },
@@ -39,7 +39,7 @@ interface LookupPageProps {
 }
 
 export default async function LookupPage({ searchParams }: Readonly<LookupPageProps>) {
-  // GET via Server Component — leverage the Next.js Data Cache (revalidate: 30s).
+  // GET via Server Component - leverage the Next.js Data Cache (revalidate: 30s).
   const res = await OrderService.list().catch(() => ({ data: [] }));
   const orders = res.data.map(toOrder);
 

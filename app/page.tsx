@@ -30,7 +30,7 @@ export default async function HomePage() {
     games = res.data;
     meta = res.meta;
   } catch {
-    // API unreachable during build — render static shell, no crash
+    // API unreachable during build - render static shell, no crash
   }
 
   return (

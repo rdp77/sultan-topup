@@ -10,7 +10,7 @@ import { formatRupiah } from '@/lib/utils';
 const PAGE_SIZE = 6;
 
 interface OrderListProps {
-  /** All orders — fetched on the server (see app/dashboard/page.tsx). */
+  /** All orders - fetched on the server (see app/dashboard/page.tsx). */
   orders: Order[];
 }
 

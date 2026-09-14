@@ -15,7 +15,7 @@ export const OrderService = {
   },
 
   /**
-   * List all transactions. API returns { data: [...] } — no server pagination.
+   * List all transactions. API returns { data: [...] } - no server pagination.
    * Revalidate every 30s.
    */
   list(): Promise<OrderListApiResponse> {

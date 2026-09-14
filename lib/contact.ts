@@ -2,7 +2,7 @@
  * Centralized Contact Support Configuration
  *
  * All contact support values are sourced from environment variables.
- * To change contact info, only update the .env file — all pages (contact,
+ * To change contact info, only update the .env file - all pages (contact,
  * legal, FAQ, etc.) will automatically reflect the new values.
  */
 

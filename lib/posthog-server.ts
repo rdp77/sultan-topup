@@ -26,9 +26,7 @@ export interface PostHogServerContext {
 export async function getPostHogServerContext(): Promise<PostHogServerContext> {
   try {
     const cookieStore = await cookies();
-    const phCookie = cookieStore
-      .getAll()
-      .find((c) => /^ph_phc_.*_posthog$/.test(c.name));
+    const phCookie = cookieStore.getAll().find((c) => /^ph_phc_.*_posthog$/.test(c.name));
 
     if (phCookie?.value) {
       const parsed = JSON.parse(phCookie.value) as {
@@ -43,7 +41,7 @@ export async function getPostHogServerContext(): Promise<PostHogServerContext> {
       }
     }
   } catch {
-    // Not in a request scope (build/ISR) or malformed cookie — fall through.
+    // Not in a request scope (build/ISR) or malformed cookie - fall through.
   }
   return { distinctId: 'anonymous', sessionId: null };
 }

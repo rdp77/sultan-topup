@@ -23,7 +23,7 @@ export function AuthForm({ mode }: Readonly<{ mode: 'login' | 'register' }>) {
 
     // Identify ties all pre-auth anonymous events to this person. Auth is
     // currently a stub (no backend call), so the verified email doubles as
-    // the distinct ID. PII lives only in identify() person properties —
+    // the distinct ID. PII lives only in identify() person properties -
     // never in capture() event properties.
     if (email) {
       posthog.identify(email, {

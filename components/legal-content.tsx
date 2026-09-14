@@ -16,7 +16,7 @@ export const legalPages: Record<string, LegalConfig> = {
     slug: 'privacy-policy',
     title: 'Kebijakan Privasi',
     description:
-      'Kebijakan Privasi Sultan Top Up — bagaimana kami mengumpulkan, menggunakan, dan melindungi data Anda.',
+      'Kebijakan Privasi Sultan Top Up - bagaimana kami mengumpulkan, menggunakan, dan melindungi data Anda.',
     lastUpdated: '2026-07-20',
   },
   'terms-and-conditions': {
@@ -29,7 +29,7 @@ export const legalPages: Record<string, LegalConfig> = {
     slug: 'refund-policy',
     title: 'Kebijakan Pengembalian Dana',
     description:
-      'Kebijakan Pengembalian Dana Sultan Top Up — kapan dan bagaimana refund dapat diajukan.',
+      'Kebijakan Pengembalian Dana Sultan Top Up - kapan dan bagaimana refund dapat diajukan.',
     lastUpdated: '2026-07-20',
   },
 };

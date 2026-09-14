@@ -15,11 +15,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const config = legalPages[slug];
 
   if (!config) {
-    return { title: 'Tidak Ditemukan — Sultan Top Up' };
+    return { title: 'Tidak Ditemukan - Sultan Top Up' };
   }
 
   return {
-    title: `${config.title} — Sultan Top Up`,
+    title: `${config.title} - Sultan Top Up`,
     description: config.description,
     alternates: { canonical: `https://sultantopup.com/legal/${slug}` },
   };

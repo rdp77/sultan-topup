@@ -38,7 +38,7 @@ export function PayCard() {
   const hasRedirectedRef = useRef(false);
   const hasTrackedViewRef = useRef(false);
 
-  // `/result` fetches the authoritative status itself by invoice — it no
+  // `/result` fetches the authoritative status itself by invoice - it no
   // longer trusts a `status` URL param, so this redirect doesn't send one.
   const redirectToResult = useCallback(() => {
     const redirect = new URLSearchParams();
@@ -77,7 +77,7 @@ export function PayCard() {
     redirectToResult();
   }, [redirectToResult]);
 
-  // No invoice in the URL at all — nothing to fetch, nothing to render.
+  // No invoice in the URL at all - nothing to fetch, nothing to render.
   if (!invoice) {
     notFound();
   }

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-/** Shared WA phone format — 08xxxxxxxx (8–12 digits after the 08 prefix). */
+/** Shared WA phone format - 08xxxxxxxx (8–12 digits after the 08 prefix). */
 export const waPhoneSchema = z
   .string()
   .regex(/^08\d{8,12}$/, 'Nomor WA tidak valid (contoh: 0812xxxx)');

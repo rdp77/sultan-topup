@@ -1,12 +1,12 @@
 import { AuthForm } from '@/components/auth-form';
 
 export const metadata = {
-  title: 'Daftar — Sultan Top Up',
+  title: 'Daftar - Sultan Top Up',
   description:
     'Daftar akun Sultan Top Up dan nikmati top up game lebih cepat, riwayat transaksi lengkap, dan promo spesial.',
   alternates: { canonical: 'https://sultantopup.com/register' },
   openGraph: {
-    title: 'Daftar — Sultan Top Up',
+    title: 'Daftar - Sultan Top Up',
     description: 'Daftar akun Sultan Top Up dan nikmati top up game lebih cepat.',
     url: 'https://sultantopup.com/register',
     siteName: 'Sultan Top Up',
@@ -23,7 +23,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Daftar — Sultan Top Up',
+    title: 'Daftar - Sultan Top Up',
     description: 'Daftar akun Sultan Top Up.',
     images: ['https://sultantopup.com/og-image.png'],
   },

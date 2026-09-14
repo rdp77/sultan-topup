@@ -19,7 +19,7 @@ export function Navbar() {
 
   return (
     <header className="border-border bg-background/90 border-b backdrop-blur">
-      {/* Skip link — keyboard a11y */}
+      {/* Skip link - keyboard a11y */}
       <a
         href="#main"
         className="focus:bg-primary focus:text-primary-foreground sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-60 focus:rounded-md focus:px-3 focus:py-2 focus:text-sm"
@@ -84,7 +84,7 @@ export function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile menu — CSS height transition instead of instant show/hide */}
+      {/* Mobile menu - CSS height transition instead of instant show/hide */}
       <div
         className="border-border overflow-hidden md:hidden"
         style={{

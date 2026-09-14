@@ -5,13 +5,13 @@ import { OrderService } from '@/services';
 import { toOrder } from '@/lib/order-utils';
 
 export const metadata = {
-  title: 'Dashboard — Sultan Top Up',
+  title: 'Dashboard - Sultan Top Up',
   description:
     'Dashboard akun Sultan Top Up. Lihat riwayat transaksi, status pesanan, dan kelola akun Anda.',
   alternates: { canonical: 'https://sultantopup.com/dashboard' },
   robots: { index: false, follow: false },
   openGraph: {
-    title: 'Dashboard — Sultan Top Up',
+    title: 'Dashboard - Sultan Top Up',
     description: 'Dashboard akun Sultan Top Up.',
     url: 'https://sultantopup.com/dashboard',
     siteName: 'Sultan Top Up',
@@ -28,14 +28,14 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dashboard — Sultan Top Up',
+    title: 'Dashboard - Sultan Top Up',
     description: 'Dashboard akun Sultan Top Up.',
     images: ['https://sultantopup.com/og-image.png'],
   },
 };
 
 export default async function DashboardPage() {
-  // GET via Server Component — leverage the Next.js Data Cache (revalidate: 30s).
+  // GET via Server Component - leverage the Next.js Data Cache (revalidate: 30s).
   const res = await OrderService.list().catch(() => ({ data: [] }));
   const orders = res.data.map(toOrder);
 

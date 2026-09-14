@@ -15,7 +15,7 @@ interface UsePaymentPollingResult {
  * the GET /api/orders/{invoice} Route Handler (lightweight, server-side
  * proxied to the upstream API).
  * Stops polling automatically once payment.status leaves 'pending'.
- * Does NOT trigger navigation — callers should react to the returned
+ * Does NOT trigger navigation - callers should react to the returned
  * `data.payment.status` themselves (see BayarCard's redirect effect).
  */
 export function usePaymentPolling(invoice: string | null): UsePaymentPollingResult {
@@ -55,7 +55,7 @@ export function usePaymentPolling(invoice: string | null): UsePaymentPollingResu
         setHasFetchError(false);
 
         if (result.payment.status !== 'pending') {
-          // Terminal state reached — track how long payment settlement took.
+          // Terminal state reached - track how long payment settlement took.
           // This is a sync with an external system (payment status), so a
           // capture here is intentional, not a user-event side effect.
           posthog.capture('payment_status_changed', {
